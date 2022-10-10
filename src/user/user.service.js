@@ -1,3 +1,6 @@
+const uuid = require("uuid");
+const bcrypt = require("bcrypt");
+
 const addGoogleUser = (User) => ({ id, email, firstName, lastName, profilePhoto }) => {
     const user = new User({
         id, email, firstName, lastName, profilePhoto, source: "google"
@@ -5,9 +8,12 @@ const addGoogleUser = (User) => ({ id, email, firstName, lastName, profilePhoto 
     return user.save()
 }
 
-const addLocalUser = (User) => ({ id, email, firstName, lastName, password }) => {
+const addLocalUser = async (User) => ({ email, firstName, lastName, password }) => {
+
+    const hashedPassword = bcrypt.hash(password, 10)
+
     const user = new User({
-        id, email, firstName, lastName, password, source: "local"
+        id: uuid.v4(), email, firstName, lastName, password: hashedPassword, source: "local"
     })
     return user.save()
 }

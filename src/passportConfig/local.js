@@ -1,12 +1,12 @@
 
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy;
-const UserService = require('../user')
+const { userService } = require('../user')
 const bcrypt = require('bcrypt');
 
 passport.use(new LocalStrategy(
   async function (email, password, done) {
-    const currentUser = await UserService.getUserByEmail({ email })
+    const currentUser = await userService.getUserByEmail({ email })
 
     if (!currentUser) {
       return done(null, false, { message: `User with email ${email} does not exist` });

@@ -9,13 +9,11 @@ const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const uuid = require("uuid");
-const bcrypt = require("bcrypt");
-const UserService = require("./user");
+const { AuthController } = require("./user");
 
-require("./config/passport");
-require("./config/local");
-require("./config/google");
+require("./passportConfig/passport");
+require("./passportConfig/local");
+require("./passportConfig/google");
 
 const mongodbUri = process.env.MONGO_URI;
 
@@ -77,64 +75,68 @@ app.get("/profile", isLoggedIn, (req, res) => {
   res.render("profile.ejs", { user: req.user });
 });
 
-app.get(
-  "/auth/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
-);
 
-app.get(
-  "/auth/google/callback",
-  passport.authenticate("google", {
-    failureRedirect: "/",
-    successRedirect: "/profile",
-    failureFlash: true,
-    successFlash: "Successfully logged in!",
-  })
-);
+app.use("/", AuthController);
 
-app.get("/auth/logout", (req, res) => {
-  req.flash("success", "Successfully logged out");
-  req.session.destroy(function () {
-    res.clearCookie("connect.sid");
-    res.redirect("/");
-  });
-});
 
-app.post("/auth/local/signup", async (req, res) => {
-  const { first_name, last_name, email, password } = req.body
+// app.get(
+//   "/auth/google",
+//   passport.authenticate("google", {
+//     scope: ["profile", "email"],
+//   })
+// );
 
-  if (password.length < 8) {
-    req.flash("error", "Account not created. Password must be 7+ characters long");
-    return res.redirect("/local/signup");
-  }
+// app.get(
+//   "/auth/google/callback",
+//   passport.authenticate("google", {
+//     failureRedirect: "/",
+//     successRedirect: "/profile",
+//     failureFlash: true,
+//     successFlash: "Successfully logged in!",
+//   })
+// );
 
-  const hashedPassword = await bcrypt.hash(password, 10)
+// app.get("/auth/logout", (req, res) => {
+//   req.flash("success", "Successfully logged out");
+//   req.session.destroy(function () {
+//     res.clearCookie("connect.sid");
+//     res.redirect("/");
+//   });
+// });
 
-  try {
-    await UserService.addLocalUser({
-      id: uuid.v4(),
-      email,
-      firstName: first_name,
-      lastName: last_name,
-      password: hashedPassword
-    })
-  } catch (e) {
-    req.flash("error", "Error creating a new account. Try a different login method.");
-    res.redirect("/local/signup")
-  }
+// app.post("/auth/local/signup", async (req, res) => {
+//   const { first_name, last_name, email, password } = req.body
 
-  res.redirect("/local/signin")
-});
+//   if (password.length < 8) {
+//     req.flash("error", "Account not created. Password must be 7+ characters long");
+//     return res.redirect("/local/signup");
+//   }
 
-app.post("/auth/local/signin",
-  passport.authenticate("local", {
-    successRedirect: "/profile",
-    failureRedirect: "/local/signin",
-    failureFlash: true
-  })
-);
+//   const hashedPassword = await bcrypt.hash(password, 10)
+
+//   try {
+//     await UserService.addLocalUser({
+//       id: uuid.v4(),
+//       email,
+//       firstName: first_name,
+//       lastName: last_name,
+//       password: hashedPassword
+//     })
+//   } catch (e) {
+//     req.flash("error", "Error creating a new account. Try a different login method.");
+//     res.redirect("/local/signup")
+//   }
+
+//   res.redirect("/local/signin")
+// });
+
+// app.post("/auth/local/signin",
+//   passport.authenticate("local", {
+//     successRedirect: "/profile",
+//     failureRedirect: "/local/signin",
+//     failureFlash: true
+//   })
+// );
 
 var port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 
