@@ -29,7 +29,6 @@ const getUserByEmail = (User) => async ({ email }) => {
 module.exports = (User) => {
     return {
         addGoogleUser: addGoogleUser(User),
-
         addLocalUser: addLocalUser(User),
         getUsers: getUsers(User),
         getUserByEmail: getUserByEmail(User)

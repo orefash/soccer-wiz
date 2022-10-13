@@ -17,6 +17,7 @@ const adminSchema = new Schema({
   lastName: String,
   profilePhoto: String,
   password: String,
+  userTag: { type: Number, default: 0 },
   level: {
     type: String,
     enum: levels,

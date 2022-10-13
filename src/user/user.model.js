@@ -7,7 +7,6 @@ const accountSchema = new Schema({
 });
 
 
-
 const userSchema = new Schema({
   id: {
     type: String,
@@ -21,6 +20,7 @@ const userSchema = new Schema({
   firstName: String,
   lastName: String,
   profilePhoto: String,
+  userTag: { type: Number, default: 1 },
   password: String,
   country: String,
   reward_points: { type: Number, default: 0 },

@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+const cors = require('cors');
+
 var path = require('path')
 const express = require("express");
 const app = express();
@@ -47,6 +49,24 @@ app.use(
 );
 
 app.use(flash());
+var whitelist = ['http://localhost:3001', 'http://localhost:3000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+// Then pass them to cors:
+// app.use(cors(corsOptions));
+// app.use(cors());
+app.use(cors({
+    origin : "http://localhost:3001", // (Whatever your frontend url is) 
+    credentials: true, // <= Accept credentials (cookies) sent by the client
+  }))
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -55,88 +75,8 @@ const isLoggedIn = (req, res, next) => {
   req.user ? next() : res.sendStatus(401);
 };
 
-app.get("/g", (req, res) => {
-  res.render("google.ejs");
-});
 
-app.get("/", (req, res) => {
-  res.render("index.ejs");
-});
-
-app.get("/local/signup", (req, res) => {
-  res.render("local/signup.ejs");
-});
-
-app.get("/local/signin", (req, res) => {
-  res.render("local/signin.ejs");
-});
-
-app.get("/profile", isLoggedIn, (req, res) => {
-  res.render("profile.ejs", { user: req.user });
-});
-
-
-app.use("/", AuthController);
-
-
-// app.get(
-//   "/auth/google",
-//   passport.authenticate("google", {
-//     scope: ["profile", "email"],
-//   })
-// );
-
-// app.get(
-//   "/auth/google/callback",
-//   passport.authenticate("google", {
-//     failureRedirect: "/",
-//     successRedirect: "/profile",
-//     failureFlash: true,
-//     successFlash: "Successfully logged in!",
-//   })
-// );
-
-// app.get("/auth/logout", (req, res) => {
-//   req.flash("success", "Successfully logged out");
-//   req.session.destroy(function () {
-//     res.clearCookie("connect.sid");
-//     res.redirect("/");
-//   });
-// });
-
-// app.post("/auth/local/signup", async (req, res) => {
-//   const { first_name, last_name, email, password } = req.body
-
-//   if (password.length < 8) {
-//     req.flash("error", "Account not created. Password must be 7+ characters long");
-//     return res.redirect("/local/signup");
-//   }
-
-//   const hashedPassword = await bcrypt.hash(password, 10)
-
-//   try {
-//     await UserService.addLocalUser({
-//       id: uuid.v4(),
-//       email,
-//       firstName: first_name,
-//       lastName: last_name,
-//       password: hashedPassword
-//     })
-//   } catch (e) {
-//     req.flash("error", "Error creating a new account. Try a different login method.");
-//     res.redirect("/local/signup")
-//   }
-
-//   res.redirect("/local/signin")
-// });
-
-// app.post("/auth/local/signin",
-//   passport.authenticate("local", {
-//     successRedirect: "/profile",
-//     failureRedirect: "/local/signin",
-//     failureFlash: true
-//   })
-// );
+app.use("/auth", AuthController);
 
 var port = process.env.PORT || process.env.VCAP_APP_PORT || 3000;
 

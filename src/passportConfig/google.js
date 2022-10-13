@@ -14,7 +14,7 @@ passport.use(
         async (accessToken, refreshToken, profile, done) => {
             const { userService } = require('../user')
 
-            console.log("Inside google strategy")
+            // console.log("Inside google strategy")
 
             // console.log("Profile: ", profile)
             const id = profile.id;
@@ -44,12 +44,11 @@ passport.use(
             }
 
             currentUser.lastVisited = new Date();
+
+            // console.log("In google login: ", currentUser)
             return done(null, currentUser);
 
 
-
-
-            // return done(null, profile)
         }
     )
 );

@@ -2,26 +2,10 @@ const express = require('express');
 const passport = require("passport");
 
 
-function authRoutes(UserService) {
+function authRoutes(AdminService) {
     const router = express.Router();
 
-    router.get(
-        "/google",
-        passport.authenticate("google", {
-            scope: ["profile", "email"],
-        })
-    );
-
-    router.get(
-        "/google/callback",
-        passport.authenticate("google", {
-            failureRedirect: "/login/failed",
-            successRedirect: process.env.CLIENT_URL
-            // failureFlash: true,
-            // successFlash: "Successfully logged in!",
-        })
-
-    );
+   
 
     router.get("/login/failed", (req, res) => {
         res.status(401).json({
@@ -32,13 +16,12 @@ function authRoutes(UserService) {
 
 
     router.get("/login/success", (req, res) => {
-        // console.log("In success login: ", req.sessionStore);
         if (req.user) {
 
             // console.log("In success login: yes: ", req.user);
             res.status(200).json({
                 success: true,
-                message: "successfull",
+                message: "successful",
                 user: req.user,
             });
         }
@@ -52,13 +35,7 @@ function authRoutes(UserService) {
 
     router.get("/logout", (req, res) => {
         
-        // req.logout(function(err) {
-        //     if (err) { 
-        //         console.log("logout error: ", err)
-        //         return next(err); 
-        //     }
-        //     res.redirect(CLIENT_URL);
-        //   });
+       
         req.logout();
         res.redirect(process.env.CLIENT_URL);
     });
