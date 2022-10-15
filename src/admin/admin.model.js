@@ -26,7 +26,8 @@ const adminSchema = new Schema({
   source: { type: String, required: [true, "source not specified"] },
   registerDate: { type: Date, default: new Date() },
   lastVisited: { type: Date, default: new Date() }
-});
+},
+{ timestamps: true });
 
 var adminModel = mongoose.model("admin", adminSchema, "admin");
 

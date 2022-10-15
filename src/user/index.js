@@ -2,9 +2,9 @@ const User = require('./user.model')
 const UserService = require('./user.service')
 const AuthController = require('./auth.controller')
 
-
+const userService = UserService(User);
 
 module.exports = {
-    userService: UserService(User),
-    AuthController: AuthController.authRoutes(UserService(User))
+    userService: userService,
+    AuthController: AuthController.authRoutes()
 }

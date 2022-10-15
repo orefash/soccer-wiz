@@ -4,7 +4,7 @@ let Schema = mongoose.Schema;
 const accountSchema = new Schema({
   number: String,
   bank: String
-});
+}, { _id : false });
 
 
 const userSchema = new Schema({
@@ -29,7 +29,8 @@ const userSchema = new Schema({
   source: { type: String, required: [true, "source not specified"] },
   registerDate: { type: Date, default: new Date() },
   lastVisited: { type: Date, default: new Date() }
-});
+},
+{ timestamps: true });
 
 var userModel = mongoose.model("user", userSchema, "user");
 

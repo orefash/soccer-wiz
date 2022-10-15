@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require("passport");
 
 
-function authRoutes(UserService) {
+function authRoutes() {
     const router = express.Router();
 
     router.get(
@@ -17,8 +17,6 @@ function authRoutes(UserService) {
         passport.authenticate("google", {
             failureRedirect: "/login/failed",
             successRedirect: process.env.CLIENT_URL
-            // failureFlash: true,
-            // successFlash: "Successfully logged in!",
         })
 
     );
