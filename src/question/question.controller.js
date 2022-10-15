@@ -70,18 +70,18 @@ function questionRoutes(QuestionService) {
 
     router.get("/category/:category", async (req, res) => {
         try {
-            console.log("Category param: ", req.params.category)
-            const question = await QuestionService.getQuestionsByCategory(req.params.category);
+            // console.log("Category param: ", req.params.category)
+            const questions = await QuestionService.getQuestionsByCategory(req.params.category);
 
-            if(question){
+            if(questions){
                 res.status(200).json({
                     success: true,
-                    question: question
+                    question: questions
                 });
             }else{
                 res.status(400).json({
                     success: false,
-                    message: "Question not found"
+                    message: "Questions not found"
                 });
             }
 
@@ -93,6 +93,35 @@ function questionRoutes(QuestionService) {
         }
 
     });
+
+
+    router.get("/category/:category/game", async (req, res) => {
+        try {
+            // console.log("Category param: ", req.params.category)
+            const questions = await QuestionService.getQuestionsByCategoryForGame(req.params.category, 2);
+
+            if(QuestionService){
+                res.status(200).json({
+                    success: true,
+                    question: questions
+                });
+            }else{
+                res.status(400).json({
+                    success: false,
+                    message: "Questions not found"
+                });
+            }
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error
+            });
+        }
+
+    });
+
+
 
     router.post("/", async (req, res) => {
         try {

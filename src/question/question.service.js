@@ -29,13 +29,25 @@ const getQuestions = (Question) => () => {
     return questions;
 }
 
-const getQuestionsByCategory = (Question) => ({ category, queryLimit = 0 }) => {
-    const questions = null;
+const getQuestionsByCategory = (Question) => (category, queryLimit = 0 ) => {
+    let questions = null;
 
-    if (limit > 0)
+    if (queryLimit > 0)
         questions = Question.find({ category: category }).limit(queryLimit);
     else
         questions = Question.find({ category: category });
+
+    return questions;
+}
+
+const getQuestionsByCategoryForGame = (Question) => ( category, queryLimit = 0 ) => {
+    let questions = null;
+
+    if (queryLimit > 0) {
+        questions = Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
+    }
+    else
+        questions = Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
 
     return questions;
 }
@@ -55,7 +67,8 @@ module.exports = (Question) => {
         updateQuestion: updateQuestion(Question),
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
-        getQuestionsByCategory: getQuestionsByCategory(Question)
-        
+        getQuestionsByCategory: getQuestionsByCategory(Question),
+        getQuestionsByCategoryForGame: getQuestionsByCategoryForGame(Question)
+
     }
 }
