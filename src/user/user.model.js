@@ -6,6 +6,7 @@ const accountSchema = new Schema({
   bank: String
 }, { _id : false });
 
+const statuses = ["active", "inactive", "suspended"]
 
 const userSchema = new Schema({
   id: {
@@ -19,13 +20,19 @@ const userSchema = new Schema({
   },
   firstName: String,
   lastName: String,
+  username: String,
   profilePhoto: String,
   userTag: { type: Number, default: 1 },
   password: String,
   country: String,
+  status: {
+    type: String,
+    enum: statuses,
+    default: 'active',
+  },
   reward_points: { type: Number, default: 0 },
   wallet_balance: { type: Number, default: 0 },
-  account: [accountSchema],
+  account: accountSchema,
   source: { type: String, required: [true, "source not specified"] },
   registerDate: { type: Date, default: new Date() },
   lastVisited: { type: Date, default: new Date() }

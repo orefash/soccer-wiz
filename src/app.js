@@ -9,7 +9,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
-const { AuthController } = require("./user");
+
+const { AuthController, UserController } = require("./user");
 const { QuestionController } = require("./question");
 
 require("./passportConfig/passport");
@@ -61,5 +62,6 @@ app.get("/api", (req, res) => {
 
 app.use("/auth", AuthController);
 app.use("/api/questions", QuestionController);
+app.use("/api/users", UserController);
 
 module.exports = app;
