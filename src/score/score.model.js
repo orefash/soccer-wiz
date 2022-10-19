@@ -9,7 +9,7 @@ const scoreSchema = new Schema({
 
 
 const highScoreSchema = new Schema({
-    player: {type: mongoose.Types.ObjectId, ref: "user"},
+    userID: {type: mongoose.Types.ObjectId, ref: "user"},
     username: String,
     daily: scoreSchema,
     weekly: scoreSchema,

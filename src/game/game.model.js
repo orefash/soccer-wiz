@@ -9,7 +9,9 @@ const attemptSchema = new Schema({
 
 
 const gameSchema = new Schema({
-    category: String,
+    category: {
+        type: String, index: true
+    },
     player: {type: mongoose.Types.ObjectId, ref: "user"},
     answers: [attemptSchema],
     score: {type: Number, default: 0},

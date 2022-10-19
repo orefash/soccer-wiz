@@ -7,7 +7,7 @@ function userRoutes(UserService) {
     router.patch("/details/:id", async (req, res) => {
         try {
             const { username, country } = req.body;
-            
+
             const userData = {
                 username, country
             }
@@ -24,6 +24,36 @@ function userRoutes(UserService) {
             res.status(500).json({
                 success: false,
                 message: "Error in user update"
+            });
+        }
+
+    });
+
+    router.post("/check-username", async (req, res) => {
+        try {
+            const { username } = req.body;
+
+
+            const user = await UserService.checkUsername( username );
+
+            if(user){
+                res.status(200).json({
+                    success: true,
+                    found: true
+                });
+            }else{
+                res.status(200).json({
+                    success: true,
+                    found: false
+                });
+            }
+
+
+        } catch (error) {
+            console.log("Error in Username check: ", error)
+            res.status(500).json({
+                success: false,
+                message: "Error in username check"
             });
         }
 

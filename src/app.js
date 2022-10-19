@@ -53,6 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const isLoggedIn = (req, res, next) => {
+    // console.log("In login check: ", req.user)
     req.user ? next() : res.sendStatus(401);
 };
 

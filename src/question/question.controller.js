@@ -3,8 +3,6 @@ const express = require('express');
 function questionRoutes(QuestionService) {
     const router = express.Router();
 
-
-
     router.get("/", async (req, res) => {
         try {
             const questions = await QuestionService.getQuestions();
@@ -48,6 +46,7 @@ function questionRoutes(QuestionService) {
         }
 
     });
+
 
     router.delete("/:id", async (req, res) => {
         try {
@@ -145,6 +144,8 @@ function questionRoutes(QuestionService) {
 
     });
 
+
+
     router.patch("/:id", async (req, res) => {
         try {
             const { question, category, answers } = req.body;
@@ -166,6 +167,8 @@ function questionRoutes(QuestionService) {
         }
 
     });
+
+
 
     return router;
 }

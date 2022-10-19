@@ -1,9 +1,9 @@
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 
-const addGoogleUser = (User) => ({ id, email, firstName, lastName, profilePhoto }) => {
+const addGoogleUser = (User) => ({ email, firstName, lastName, profilePhoto }) => {
     const user = new User({
-        id, email, firstName, lastName, profilePhoto, source: "google"
+        email, firstName, lastName, profilePhoto, source: "google"
     })
     return user.save()
 }
@@ -13,7 +13,7 @@ const addLocalUser = async (User) => ({ email, firstName, lastName, password }) 
     const hashedPassword = bcrypt.hash(password, 10)
 
     const user = new User({
-        id: uuid.v4(), email, firstName, lastName, password: hashedPassword, source: "local"
+        email, firstName, lastName, password: hashedPassword, source: "local"
     })
     return user.save()
 }
@@ -27,7 +27,11 @@ const getUserByEmail = (User) => async ({ email }) => {
 }
 
 const getUserById = (User) => async ( id ) => {
-    return await User.findOne({ id })
+    return await User.findOne({ _id: id })
+}
+
+const checkUsername = (User) => async ( username ) => {
+    return await User.findOne({ username })
 }
 
 const updateUsernameAndCountry = (User) => (id, { username, country }) => {
@@ -48,6 +52,7 @@ module.exports = (User) => {
         getUsers: getUsers(User),
         getUserByEmail: getUserByEmail(User),
         getUserById: getUserById(User),
-        updateUsernameAndCountry: updateUsernameAndCountry(User)
+        updateUsernameAndCountry: updateUsernameAndCountry(User),
+        checkUsername: checkUsername(User)
     }
 }

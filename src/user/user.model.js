@@ -20,7 +20,11 @@ const userSchema = new Schema({
   },
   firstName: String,
   lastName: String,
-  username: String,
+  username: {
+    type: String,
+    unique: true,
+    index: true
+  },
   profilePhoto: String,
   userTag: { type: Number, default: 1 },
   password: String,

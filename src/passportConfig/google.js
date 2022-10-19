@@ -29,7 +29,7 @@ passport.use(
 
             if (!currentUser) {
                 const newUser = await userService.addGoogleUser({
-                    id,
+                    
                     email,
                     firstName,
                     lastName,
