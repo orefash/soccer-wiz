@@ -1,4 +1,4 @@
-
+const checkTodayWithinMatchday = require("../utils/timeValidations");
 
 const addQuestion = (Question) => (data) => {
     const newQuestion = new Question(data)
@@ -29,7 +29,7 @@ const getQuestions = (Question) => () => {
     return questions;
 }
 
-const getQuestionsByCategory = (Question) => (category, queryLimit = 0 ) => {
+const getQuestionsByCategory = (Question) => (category, queryLimit = 0) => {
     let questions = null;
 
     if (queryLimit > 0)
@@ -40,16 +40,36 @@ const getQuestionsByCategory = (Question) => (category, queryLimit = 0 ) => {
     return questions;
 }
 
-const getQuestionsByCategoryForGame = (Question) => ( category, queryLimit = 0 ) => {
+const getQuestionsForGame = (Question, userService) => async ({ userId, category, demo }, queryLimit = 0) => {
+
+    let data = {
+        user: userId, sufficient_balance: true, demo: demo, in_matchday: true, error: true
+    };
     let questions = null;
 
-    if (queryLimit > 0) {
-        questions = Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
-    }
-    else
-        questions = Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
+    let user = await userService.getUserById(userId);
 
-    return questions;
+    if (!user)
+        throw new Error("User does not exist");
+
+    if (!demo && user.wallet_balance < 10) {
+        data.sufficient_balance = false
+        return data;
+    }
+
+    if (!demo && !checkTodayWithinMatchday()) {
+        data.in_matchday = false
+        return data;
+    }
+
+    if (queryLimit > 0)
+        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
+    else
+        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
+    // data.sufficient_balance = true;
+    data.questions = questions;
+
+    return data;
 }
 
 const getQuestionById = (Question) => (id) => {
@@ -60,7 +80,7 @@ const getQuestionById = (Question) => (id) => {
 }
 
 
-module.exports = (Question) => {
+module.exports = (Question, userService) => {
     return {
 
         addQuestion: addQuestion(Question),
@@ -69,7 +89,7 @@ module.exports = (Question) => {
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
         getQuestionsByCategory: getQuestionsByCategory(Question),
-        getQuestionsByCategoryForGame: getQuestionsByCategoryForGame(Question)
+        getQuestionsForGame: getQuestionsForGame(Question, userService)
 
     }
 }
