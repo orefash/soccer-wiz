@@ -13,6 +13,7 @@ const gameSchema = new Schema({
         type: String, index: true
     },
     player: {type: mongoose.Types.ObjectId, ref: "user"},
+    username: String,
     answers: [attemptSchema],
     score: {type: Number, default: 0},
     createdAt: { type: Date, default: new Date() }

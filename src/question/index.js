@@ -7,6 +7,7 @@ const { userService } = require('../user')
 const questionService = QuestionService(Question, userService);
 
 module.exports = {
-    // QuestionService: questionService,
+    questionService: questionService,
+    Question: Question,
     QuestionController: QuestionController.questionRoutes(questionService)
 }

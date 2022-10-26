@@ -6,6 +6,17 @@ const accountSchema = new Schema({
   bank: String
 }, { _id : false });
 
+const gamesPlayedSchema = new Schema({
+  live: {
+    type: Number,
+    default: 0
+  },
+  demo: {
+    type: Number,
+    default: 0
+  }
+}, { _id : false });
+
 const statuses = ["active", "inactive", "suspended"]
 
 const userSchema = new Schema({
@@ -36,6 +47,7 @@ const userSchema = new Schema({
   },
   reward_points: { type: Number, default: 0 },
   wallet_balance: { type: Number, default: 0 },
+  gamesPlayed: gamesPlayedSchema,
   account: accountSchema,
   source: { type: String, required: [true, "source not specified"] },
   registerDate: { type: Date, default: new Date() },

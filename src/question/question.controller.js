@@ -103,7 +103,7 @@ function questionRoutes(QuestionService) {
             }
 
             const questionData = {
-                demo, category, userId
+                demo, category, userId, date: new Date()
             }
 
             const data = await QuestionService.getQuestionsForGame(questionData, 2);
