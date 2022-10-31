@@ -1,6 +1,6 @@
 
 const Game = require('./game.model')
-const GameService = require('./games.service')
+const GameService = require('./game.service')
 
 const { userService } = require('../user')
 
@@ -8,6 +8,6 @@ const gameService = GameService(Game, userService);
 
 module.exports = {
     gameService: gameService,
-    // Question: Question,
+    Game: Game,
     // QuestionController: QuestionController.questionRoutes(questionService)
 }

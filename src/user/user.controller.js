@@ -34,7 +34,7 @@ function userRoutes(UserService) {
             const { username } = req.body;
 
 
-            const user = await UserService.checkUsername( username );
+            const user = await UserService.getUserByUsername( username );
 
             if(user){
                 res.status(200).json({
@@ -75,7 +75,6 @@ function userRoutes(UserService) {
         }
 
     });
-
 
 
     router.get("/:id", async (req, res) => {

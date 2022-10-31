@@ -2,64 +2,73 @@ const checkTodayWithinMatchday = require("../utils/timeValidations");
 
 const { calcGameScore } = require("../utils/gameScores")
 
+const saveGame = (Game) => async ({ player, category, gameWeek, score }) => {
 
-const submitGame = (Game, userService) => async ({ username, category, playerId, answers, demo }) => {
+    const newGame = new Game({ player, category, gameWeek, score })
+
+    return newGame.save()
+}
+
+
+const submitGame = (Game, userService) => async ({ gameWeek, category, playerId, answers, demo, today = new Date() }) => {
 
     let user = await userService.getUserById(playerId);
     if (!user)
         throw new Error("User does not exist");
 
-    
+    const gameScore = await calcGameScore(answers);
+
+    let responseData = { gameScore, playerId, demo, gameId: null }
+
+    if(!demo){
+        const inGameWeek = checkTodayWithinMatchday(today);
+
+        if(inGameWeek){
+            const updatedUser = await userService.updateGameRecords({ playerId, gameScore })
+
+            const newGame = await saveGame(Game)({ player: playerId, category, gameWeek, score: gameScore })
+
+            responseData.gameId = newGame._id;
+            responseData.submitLate = false
+        }else{
+            responseData.submitLate = true
+        }
+            
+    }
     
 
-
-    
-  
-
-    return updatedQuestion
+    return responseData
 }
 
+const getGames = (Game) => async () => {
+    const games = await Game.find();
 
+    return games;
+}
 
-const getQuestionsForGame = (Question, userService) => async ({ userId, category, demo }, queryLimit = 0) => {
+const getGameById = (Game) => async (id) => {
 
-    let data = {
-        user: userId, sufficient_balance: true, demo: demo, in_matchday: true, error: true
-    };
-    let questions = null;
+    const game = await Game.findById(id);
 
-    let user = await userService.getUserById(userId);
+    return game;
+}
 
-    if (!user)
-        throw new Error("User does not exist");
+const getGameByWeekday = (Game) => async (category, gameWeek) => {
+    let games = null;
 
-    if (!demo && user.wallet_balance < 10) {
-        data.sufficient_balance = false
-        return data;
-    }
+    games = await Game.find({ category: category, gameWeek: gameWeek });
 
-    if (!demo && !checkTodayWithinMatchday()) {
-        data.in_matchday = false
-        return data;
-    }
-
-    if (queryLimit > 0)
-        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
-    else
-        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
-    
-    data.error = false;
-    data.questions = questions;
-
-    return data;
+    return games;
 }
 
 
 
 module.exports = (Game, userService) => {
     return {
-
-        
-
+        submitGame: submitGame(Game, userService),
+        getGames: getGames(Game),
+        getGameById: getGameById(Game),
+        getGameByWeekday: getGameByWeekday(Game),
+        saveGame: saveGame(Game)
     }
 }
