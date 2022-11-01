@@ -10,7 +10,8 @@ const attemptSchema = new Schema({
 
 const gameSchema = new Schema({
     category: {
-        type: String, index: true
+        type: String, index: true,
+        trim: true,
     },
     player: {type: mongoose.Types.ObjectId, ref: "user"},
     gameWeek: {
