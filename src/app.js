@@ -58,7 +58,7 @@ const isLoggedIn = (req, res, next) => {
 };
 
 app.get("/api", (req, res) => {
-    res.status(200).json({ alive: "True" });
+    res.status(200).json({ alive: true });
 });
 
 app.use("/auth", AuthController);

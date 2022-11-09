@@ -1,24 +1,44 @@
 
 
-const saveGatewayTransaction = (Gatewaytransaction) => async ({ transactionId, name, email, amount, currency, paymentStatus, paymentGateway }) => {
+const saveGatewayTransaction = (GatewayTransaction) => async ({ userId, transactionId, name, email, amount, currency, paymentStatus, paymentGateway }) => {
 
-    const newTransaction = new Gatewaytransaction({ transactionId, name, email, amount, currency, paymentStatus, paymentGateway })
+    const newTransaction = new GatewayTransaction({ userId, transactionId, name, email, amount, currency, paymentStatus, paymentGateway })
 
     return newTransaction.save()
 }
 
 
+const updateGatewayTransactions = (GatewayTransaction) => async ({ id, paymentStatus }) => {
 
-const getGatewayTransactions = (Gatewaytransaction) => async () => {
-    const transactions = await Gatewaytransaction.find();
+    const updatedTransaction = await GatewayTransaction.findByIdAndUpdate(id, { paymentStatus }, {
+        new: true,
+    });
+
+    return updatedTransaction
+}
+
+
+const getGatewayTransactions = (GatewayTransaction) => async () => {
+    const transactions = await GatewayTransaction.find();
 
     return transactions;
 }
 
 
-module.exports = (Gatewaytransaction) => {
+const getGatewayTransactionByRef = (GatewayTransaction) => async (tx_ref) => {
+    const transaction = await GatewayTransaction.find({ transactionId: tx_ref });
+
+    if(transaction && transaction.length === 1)
+        return transaction[0];
+
+    return null;
+}
+
+module.exports = (GatewayTransaction) => {
     return {
-        saveGatewayTransaction: saveGatewayTransaction(Gatewaytransaction),
-        getGatewayTransactions: getGatewayTransactions(Gatewaytransaction)
+        saveGatewayTransaction: saveGatewayTransaction(GatewayTransaction),
+        getGatewayTransactions: getGatewayTransactions(GatewayTransaction),
+        getGatewayTransactionByRef: getGatewayTransactionByRef(GatewayTransaction),
+        updateGatewayTransactions: updateGatewayTransactions(GatewayTransaction)
     }
 }

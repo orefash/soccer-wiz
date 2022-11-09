@@ -9,12 +9,12 @@ const gatewayTransactionSchema = Schema(
             ref: "user",
         },
         transactionId: {
-            type: Number,
+            type: String,
             trim: true,
         },
         name: {
             type: String,
-            required: [true, "name is required"],
+            // required: [true, "name is required"],
             trim: true,
         },
         email: {

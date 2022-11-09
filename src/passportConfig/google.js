@@ -17,19 +17,21 @@ passport.use(
             // console.log("Inside google strategy")
 
             // console.log("Profile: ", profile)
-            const id = profile.id;
+            const profileId = profile.id;
             const email = profile.emails[0].value;
             const firstName = profile.name.givenName;
             const lastName = profile.name.familyName;
             const profilePhoto = profile.photos[0].value;
             const source = "google";
 
+            // console.log("PID: ", profileId)
 
-            const currentUser = await userService.getUserByEmail({ email })
+
+            const currentUser = await userService.getUserByEmail(email)
 
             if (!currentUser) {
                 const newUser = await userService.addGoogleUser({
-                    
+                    profileId,
                     email,
                     firstName,
                     lastName,

@@ -50,6 +50,8 @@ const getQuestionsByCategory = (Question) => async (category, queryLimit = 0) =>
 
 const getQuestionsForGame = (Question, userService) => async ({ userId, category, demo, date }, queryLimit = 0) => {
 
+    let required_game_credits = 10;
+
     let data = {
         user: userId, sufficient_balance: true, demo: demo, in_matchday: true, error: true
     };
@@ -60,7 +62,7 @@ const getQuestionsForGame = (Question, userService) => async ({ userId, category
     if (!user)
         throw new Error("User does not exist");
 
-    if (!demo && user.wallet_balance < 10) {
+    if (!demo && user.wallet_balance < required_game_credits) {
         data.sufficient_balance = false
         return data;
     }
@@ -75,6 +77,11 @@ const getQuestionsForGame = (Question, userService) => async ({ userId, category
         questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
     else
         questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
+
+    if(!demo){
+        let updatedUser = await userService.updateWalletBalance({id: userId, credits: -required_game_credits})
+
+    }
     
     data.error = false;
     data.questions = questions;

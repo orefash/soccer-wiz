@@ -21,10 +21,10 @@ const accountSchema = new Schema({
 const statuses = ["active", "inactive", "suspended"]
 
 const userSchema = new Schema({
-  // id: {
-  //   type: String,
-  //   default: null,
-  // },
+  profileId: {
+    type: String,
+    default: null,
+  },
   email: {
     type: String,
     required: [true, "email required"],
@@ -38,6 +38,7 @@ const userSchema = new Schema({
     index: true
   },
   profilePhoto: String,
+  phone: String,
   userTag: { type: Number, default: 1 },
   password: String,
   country: String,

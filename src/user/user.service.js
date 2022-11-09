@@ -21,19 +21,20 @@ function generateUniqueUserName(User, email) {
       });
   }
 
-const addGoogleUser = (User) => async ({ email, firstName, lastName, profilePhoto }) => {
+const addGoogleUser = (User) => async ({ profileId, email, firstName, lastName, profilePhoto }) => {
 
     let generatedUsername = await generateUniqueUserName(User, email);
 
     // console.log("Gen uname: ", generatedUsername)
 
+
     const user = new User({
-        email, firstName, lastName, profilePhoto, source: "google", username: generatedUsername
+        profileId, email, firstName, lastName, profilePhoto, source: "google", username: generatedUsername
     })
     return await user.save()
 }
 
-const addLocalUser =  (User) => async ({ email, firstName, lastName, password }) => {
+const addLocalUser =  (User) => async ({ email, phone, password }) => {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -41,7 +42,7 @@ const addLocalUser =  (User) => async ({ email, firstName, lastName, password })
 
 
     const user = new User({
-        email, firstName, lastName, password: hashedPassword, source: "local", username: generatedUsername
+        email, password: hashedPassword, source: "local", username: generatedUsername
     })
     return user.save()
 }
@@ -87,6 +88,22 @@ const updateGameRecords = (User) => async ({ id, score }) => {
     return updatedUser
 }
 
+const updateWalletBalance = (User) => async ({ id, credits }) => {
+
+    const updatedUser = await User.findByIdAndUpdate(
+        id,
+        {
+            $inc: { 'wallet_balance': credits } 
+        },
+        {
+            new: true,
+        }
+    );
+
+    return updatedUser
+}
+
+
 
 
 module.exports = (User) => {
@@ -98,6 +115,7 @@ module.exports = (User) => {
         getUserById: getUserById(User),
         updateUsernameAndCountry: updateUsernameAndCountry(User),
         getUserByUsername: getUserByUsername(User),
-        updateGameRecords: updateGameRecords(User)
+        updateGameRecords: updateGameRecords(User),
+        updateWalletBalance: updateWalletBalance(User)
     }
 }

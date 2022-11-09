@@ -57,8 +57,6 @@ describe('User Service', () => {
 
             const newUser = {
                 email: "orefash@gmail.com",
-                firstName: "Ore",
-                lastName: "Faseru",
                 password: "password",
                 source: "local"
             }
@@ -66,8 +64,6 @@ describe('User Service', () => {
             const savedUser = await userService.addLocalUser(newUser);
 
             expect(savedUser.email).toEqual(newUser.email)
-            expect(savedUser.firstName).toEqual(newUser.firstName)
-            expect(savedUser.lastName).toEqual(newUser.lastName)
             // expect(savedUser.profilePhoto).toEqual(newUser.profilePhoto)
             expect(savedUser.source).toEqual("local")
 
@@ -237,6 +233,50 @@ describe('User Service', () => {
 
             expect(fetchedUser.totalScore).toEqual(updateData.score);
             expect(fetchedUser.gamesPlayed).toEqual(1);
+
+        })
+
+    })
+
+
+    describe('updateWalletBalance', () => {
+        it('should be able to update User wallet Balance', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                firstName: "Ore",
+                lastName: "Faseru",
+                profilePhoto: "url",
+                source: "google",
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            expect(createdUser.wallet_balance).toEqual(0);
+
+            const updateData1 = {
+                id: createdUser._id,
+                credits: 20
+            }
+
+            const updateData2 = {
+                id: createdUser._id,
+                credits: -8
+            }
+
+            await userService.updateWalletBalance(updateData1);
+
+            const fetchedUser1 = await userService.getUserById(createdUser._id);
+
+            expect(fetchedUser1.wallet_balance).toEqual(20);
+            
+
+            await userService.updateWalletBalance(updateData2);
+
+            const fetchedUser2 = await userService.getUserById(createdUser._id);
+
+            expect(fetchedUser2.wallet_balance).toEqual(12);
 
         })
 

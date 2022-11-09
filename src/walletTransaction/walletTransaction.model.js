@@ -4,45 +4,31 @@ let Schema = mongoose.Schema;
 
 const walletTransactionSchema = Schema(
     {
+        amount: { type: Number, default: 0 },
+        credits: { type: Number, default: 0 },
+
+        // Even though user can be implied from wallet, let us
+        // double save it for security
         userId: {
-            type: Schema.Types.ObjectId,
+            type: String,
             ref: "user",
+            required: true,
         },
-        transactionId: {
-            type: Number,
-            trim: true,
-        },
-        name: {
-            type: String,
-            required: [true, "name is required"],
-            trim: true,
-        },
-        email: {
-            type: String,
-            required: [true, "email is required"],
-            trim: true,
-        },
-        phone: {
-            type: String,
-        },
-        amount: {
-            type: Number,
-            required: [true, "amount is required"],
-        },
+
+        isInflow: { type: Boolean },
+
+        paymentMethod: { type: String, default: "flutterwave" },
+
         currency: {
             type: String,
             required: [true, "currency is required"],
             enum: ["NGN", "USD", "EUR", "GBP"],
         },
-        paymentStatus: {
+
+        status: {
             type: String,
-            enum: ["successful", "pending", "failed"],
-            default: "pending",
-        },
-        paymentGateway: {
-            type: String,
-            required: [true, "payment gateway is required"],
-            enum: ["flutterwave"], // Payment gateway might differs as the application grows
+            required: [true, "payment status is required"],
+            enum: ["successful", "pending"],
         },
     },
     {
