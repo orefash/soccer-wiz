@@ -7,6 +7,7 @@ const userService = UserService(User);
 
 module.exports = {
     userService: userService,
+    User: User,
     AuthController: AuthController.authRoutes(),
     UserController: UserController.userRoutes(userService)
 }

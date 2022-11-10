@@ -34,10 +34,14 @@ function authRoutes() {
         if (req.user) {
 
             // console.log("In success login: yes: ", req.user);
+            let user = req.user
+            user.avgPoints = 0
+            if(user.gamesPlayed>0)
+                user.avgPoints = user.totalScore / user.gamesPlayed
             res.status(200).json({
                 success: true,
                 message: "successfull",
-                user: req.user,
+                user: user,
             });
         }
         else {

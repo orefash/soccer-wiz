@@ -16,7 +16,8 @@ const questionSchema = new Schema({
         trim: true,
 		minlength: 1,
     },
-    category: { type: String, index: true },
+    category: { type: String, index: true,
+        trim: true, },
     active: {
         type: Boolean,
         default: true

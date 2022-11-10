@@ -3,8 +3,6 @@ const express = require('express');
 function questionRoutes(QuestionService) {
     const router = express.Router();
 
-
-
     router.get("/", async (req, res) => {
         try {
             const questions = await QuestionService.getQuestions();
@@ -49,6 +47,7 @@ function questionRoutes(QuestionService) {
 
     });
 
+
     router.delete("/:id", async (req, res) => {
         try {
             const question = await QuestionService.deleteQuestion(req.params.id);
@@ -73,12 +72,12 @@ function questionRoutes(QuestionService) {
             // console.log("Category param: ", req.params.category)
             const questions = await QuestionService.getQuestionsByCategory(req.params.category);
 
-            if(questions){
+            if (questions) {
                 res.status(200).json({
                     success: true,
                     question: questions
                 });
-            }else{
+            } else {
                 res.status(400).json({
                     success: false,
                     message: "Questions not found"
@@ -95,17 +94,26 @@ function questionRoutes(QuestionService) {
     });
 
 
-    router.get("/category/:category/game", async (req, res) => {
+    router.post("/game", async (req, res) => {
         try {
-            // console.log("Category param: ", req.params.category)
-            const questions = await QuestionService.getQuestionsByCategoryForGame(req.params.category, 2);
+            const { demo, category, userId } = req.body;
 
-            if(QuestionService){
+            if (demo == null || !category || !userId) {
+                throw Error("Incomplete Request details")
+            }
+
+            const questionData = {
+                demo, category, userId, date: new Date()
+            }
+
+            const data = await QuestionService.getQuestionsForGame(questionData, 2);
+
+            if (data) {
                 res.status(200).json({
                     success: true,
-                    question: questions
+                    data: data
                 });
-            }else{
+            } else {
                 res.status(400).json({
                     success: false,
                     message: "Questions not found"
@@ -115,7 +123,7 @@ function questionRoutes(QuestionService) {
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: error
+                message: error.message
             });
         }
 
@@ -126,6 +134,11 @@ function questionRoutes(QuestionService) {
     router.post("/", async (req, res) => {
         try {
             const { question, category, answers } = req.body;
+
+            if (!question || !category || !answers) {
+                throw Error("Incomplete Request details")
+            }
+
             const questionData = {
                 question, category, answers
             }
@@ -145,9 +158,16 @@ function questionRoutes(QuestionService) {
 
     });
 
+
+
     router.patch("/:id", async (req, res) => {
         try {
             const { question, category, answers } = req.body;
+
+            if (!question || !category || !answers) {
+                throw Error("Incomplete Request details")
+            }
+
             const questionData = {
                 question, category, answers
             }
@@ -158,14 +178,16 @@ function questionRoutes(QuestionService) {
             });
 
         } catch (error) {
-            console.log("Error in questions: ", error)
+            // console.log("Error in questions: ", error)
             res.status(500).json({
                 success: false,
-                message: "Error in question add"
+                message: error.message
             });
         }
 
     });
+
+
 
     return router;
 }

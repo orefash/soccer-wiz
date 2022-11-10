@@ -9,9 +9,14 @@ const attemptSchema = new Schema({
 
 
 const gameSchema = new Schema({
-    category: String,
+    category: {
+        type: String, index: true,
+        trim: true,
+    },
     player: {type: mongoose.Types.ObjectId, ref: "user"},
-    answers: [attemptSchema],
+    gameWeek: {
+        type: Number, index: true
+    },
     score: {type: Number, default: 0},
     createdAt: { type: Date, default: new Date() }
 });

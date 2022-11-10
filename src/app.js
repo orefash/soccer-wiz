@@ -53,11 +53,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const isLoggedIn = (req, res, next) => {
+    // console.log("In login check: ", req.user)
     req.user ? next() : res.sendStatus(401);
 };
 
 app.get("/api", (req, res) => {
-    res.status(200).json({ alive: "True" });
+    res.status(200).json({ alive: true });
 });
 
 app.use("/auth", AuthController);

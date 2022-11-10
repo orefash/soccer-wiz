@@ -1,21 +1,29 @@
+const checkTodayWithinMatchday = require("../utils/timeValidations");
 
+const addQuestion = (Question) => async (data) => {
 
-const addQuestion = (Question) => (data) => {
+    const existing = await Question.findOne({ question: data.question })
+
+    // console.log("in create: ", existing)
+
+    if(existing)
+        throw new Error('Question already Exists')
+
     const newQuestion = new Question(data)
 
     return newQuestion.save()
 }
 
-const deleteQuestion = (Question) => (id) => {
-    const question = Question.findByIdAndDelete(id)
+const deleteQuestion = (Question) => async (id) => {
+    const question = await Question.findByIdAndDelete(id)
 
     return question;
 }
 
 
-const updateQuestion = (Question) => (id, { question, category, answers }) => {
+const updateQuestion = (Question) => async (id, { question, active, answers }) => {
 
-    const updatedQuestion = Question.findByIdAndUpdate(id, { question, category, answers }, {
+    const updatedQuestion = await Question.findByIdAndUpdate(id, { question, active, answers }, {
         new: true,
     });
 
@@ -23,43 +31,73 @@ const updateQuestion = (Question) => (id, { question, category, answers }) => {
 }
 
 
-const getQuestions = (Question) => () => {
-    const questions = Question.find();
+const getQuestions = (Question) => async () => {
+    const questions = await Question.find();
 
     return questions;
 }
 
-const getQuestionsByCategory = (Question) => (category, queryLimit = 0 ) => {
+const getQuestionsByCategory = (Question) => async (category, queryLimit = 0) => {
     let questions = null;
 
     if (queryLimit > 0)
-        questions = Question.find({ category: category }).limit(queryLimit);
+        questions = await Question.find({ category: category }).limit(queryLimit);
     else
-        questions = Question.find({ category: category });
+        questions = await Question.find({ category: category });
 
     return questions;
 }
 
-const getQuestionsByCategoryForGame = (Question) => ( category, queryLimit = 0 ) => {
+const getQuestionsForGame = (Question, userService) => async ({ userId, category, demo, date }, queryLimit = 0) => {
+
+    let required_game_credits = 10;
+
+    let data = {
+        user: userId, sufficient_balance: true, demo: demo, in_matchday: true, error: true
+    };
     let questions = null;
 
-    if (queryLimit > 0) {
-        questions = Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
-    }
-    else
-        questions = Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
+    let user = await userService.getUserById(userId);
 
-    return questions;
+    if (!user)
+        throw new Error("User does not exist");
+
+    if (!demo && user.wallet_balance < required_game_credits) {
+        data.sufficient_balance = false
+        return data;
+    }
+
+    if (!demo && !checkTodayWithinMatchday(date)) {
+        // console.log("In date check: ")
+        data.in_matchday = false
+        return data;
+    }
+
+    if (queryLimit > 0)
+        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
+    else
+        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
+
+    if(!demo){
+        let updatedUser = await userService.updateWalletBalance({id: userId, credits: -required_game_credits})
+
+    }
+    
+    data.error = false;
+    data.questions = questions;
+
+    return data;
 }
 
-const getQuestionById = (Question) => (id) => {
+const getQuestionById = (Question) => async (id) => {
 
-    const question = Question.findById(id);
+    const question = await Question.findById(id);
 
     return question;
 }
 
-module.exports = (Question) => {
+
+module.exports = (Question, userService) => {
     return {
 
         addQuestion: addQuestion(Question),
@@ -68,7 +106,7 @@ module.exports = (Question) => {
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
         getQuestionsByCategory: getQuestionsByCategory(Question),
-        getQuestionsByCategoryForGame: getQuestionsByCategoryForGame(Question)
+        getQuestionsForGame: getQuestionsForGame(Question, userService)
 
     }
 }

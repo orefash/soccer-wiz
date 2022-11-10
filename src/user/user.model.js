@@ -6,10 +6,22 @@ const accountSchema = new Schema({
   bank: String
 }, { _id : false });
 
+// const gameInfoSchema = new Schema({
+//   totalScore: {
+//     type: Number,
+//     default: 0
+//   },
+//   gamesPlayed: {
+//     type: Number,
+//     default: 0
+//   }
+// }, { _id : false });
+
+
 const statuses = ["active", "inactive", "suspended"]
 
 const userSchema = new Schema({
-  id: {
+  profileId: {
     type: String,
     default: null,
   },
@@ -20,8 +32,13 @@ const userSchema = new Schema({
   },
   firstName: String,
   lastName: String,
-  username: String,
+  username: {
+    type: String,
+    unique: true,
+    index: true
+  },
   profilePhoto: String,
+  phone: String,
   userTag: { type: Number, default: 1 },
   password: String,
   country: String,
@@ -32,6 +49,14 @@ const userSchema = new Schema({
   },
   reward_points: { type: Number, default: 0 },
   wallet_balance: { type: Number, default: 0 },
+  totalScore: {
+    type: Number,
+    default: 0
+  },
+  gamesPlayed: {
+    type: Number,
+    default: 0
+  },
   account: accountSchema,
   source: { type: String, required: [true, "source not specified"] },
   registerDate: { type: Date, default: new Date() },
