@@ -184,7 +184,7 @@ describe('Game Service', () => {
 
             let gameResponse = await gameService.submitGame(newGame);
 
-            expect(gameResponse.gameScore).toBe(4.9)
+            expect(gameResponse.gameScore.totalScore).toBe(4.9)
         })
 
     })
@@ -226,9 +226,9 @@ describe('Game Service', () => {
             let savedGame = await gameService.getGameById(gameResponse.gameId)
 
             
-            expect(gameResponse.gameScore).toBe(4.9)
+            expect(gameResponse.gameScore.totalScore).toBe(4.9)
             expect(gameResponse.submitLate).toBe(false)
-            expect(savedGame.score).toBe(gameResponse.gameScore)
+            expect(savedGame.score).toBe(gameResponse.gameScore.totalScore)
 
         })
 
@@ -253,7 +253,7 @@ describe('Game Service', () => {
             // let savedGame = await gameService.getGameById(gameResponse.gameId)
 
             
-            expect(gameResponse.gameScore).toBe(4.9)
+            expect(gameResponse.gameScore.totalScore).toBe(4.9)
             expect(gameResponse.submitLate).toBe(true)
             expect(gameResponse.gameId).toBe(null)
 

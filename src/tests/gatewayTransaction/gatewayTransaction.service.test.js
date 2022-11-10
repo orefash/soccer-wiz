@@ -21,8 +21,6 @@ describe('Gateway Transaction Service', () => {
     describe('saveGatewayTransaction', () => {
         it('should save gateway Transactions', async () => {
 
-
-
             const newTransaction = {
                 userId: '56cb91bdc3464f14678934ca',
                 transactionId: "12345",

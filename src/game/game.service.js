@@ -24,9 +24,9 @@ const submitGame = (Game, userService) => async ({ gameWeek, category, playerId,
         const inGameWeek = checkTodayWithinMatchday(today);
 
         if(inGameWeek){
-            const updatedUser = await userService.updateGameRecords({ playerId, gameScore })
+            const updatedUser = await userService.updateGameRecords({ playerId, gameScore: gameScore.totalScore })
 
-            const newGame = await saveGame(Game)({ player: playerId, category, gameWeek, score: gameScore })
+            const newGame = await saveGame(Game)({ player: playerId, category, gameWeek, score: gameScore.totalScore })
 
             responseData.gameId = newGame._id;
             responseData.submitLate = false
