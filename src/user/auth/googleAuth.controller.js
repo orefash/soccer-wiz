@@ -12,12 +12,21 @@ function authRoutes() {
         })
     );
 
+    const clientUrl = process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL_PROD : process.env.CLIENT_URL_DEV;
+
     router.get(
         "/google/callback",
         passport.authenticate("google", {
-            failureRedirect: "/login/failed",
-            successRedirect: process.env.CLIENT_URL
-        })
+            failureRedirect: "/",
+            // failureRedirect: "/login/failed",
+            // successRedirect: process.env.CLIENT_URL
+            session: false,
+        }),
+        (req, res) => {
+          const token = req.user.generateJWT();
+          res.cookie('x-auth-cookie', token);
+          res.redirect(clientUrl);
+        },
 
     );
 
@@ -52,18 +61,7 @@ function authRoutes() {
         }
     });
 
-    router.get("/logout", (req, res) => {
-        
-        // req.logout(function(err) {
-        //     if (err) { 
-        //         console.log("logout error: ", err)
-        //         return next(err); 
-        //     }
-        //     res.redirect(CLIENT_URL);
-        //   });
-        req.logout();
-        res.redirect(process.env.CLIENT_URL);
-    });
+    
 
     return router;
 

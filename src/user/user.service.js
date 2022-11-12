@@ -21,7 +21,7 @@ function generateUniqueUserName(User, email) {
       });
   }
 
-const addGoogleUser = (User) => async ({ profileId, email, firstName, lastName, profilePhoto }) => {
+const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 
     let generatedUsername = await generateUniqueUserName(User, email);
 
@@ -29,7 +29,20 @@ const addGoogleUser = (User) => async ({ profileId, email, firstName, lastName, 
 
 
     const user = new User({
-        profileId, email, firstName, lastName, profilePhoto, source: "google", username: generatedUsername
+        googleId, email, profilePhoto, source: "google", username: generatedUsername
+    })
+    return await user.save()
+}
+
+const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) => {
+
+    let generatedUsername = await generateUniqueUserName(User, email);
+
+    // console.log("Gen uname: ", generatedUsername)
+
+
+    const user = new User({
+        facebookId, email, profilePhoto, source: "facebook", username: generatedUsername
     })
     return await user.save()
 }
@@ -109,6 +122,7 @@ const updateWalletBalance = (User) => async ({ id, credits }) => {
 module.exports = (User) => {
     return {
         addGoogleUser: addGoogleUser(User),
+        addFacebookUser: addFacebookUser(User),
         addLocalUser: addLocalUser(User),
         getUsers: getUsers(User),
         getUserByEmail: getUserByEmail(User),

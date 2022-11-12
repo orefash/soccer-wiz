@@ -10,12 +10,16 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
 
-const { AuthController, UserController } = require("./user");
+const { GoogleAuthController, UserController, LocalAuthController, FacebookAuthController } = require("./user");
 const { QuestionController } = require("./question");
 
-require("./passportConfig/passport");
+app.use(passport.initialize());
+// app.use(passport.session());
+// require("./passportConfig/passport");
 require("./passportConfig/local");
 require("./passportConfig/google");
+require("./passportConfig/jwt");
+require("./passportConfig/facebook");
 
 
 app.use(bodyParser.json());
@@ -49,8 +53,7 @@ app.use(cors({
     credentials: true, // <= Accept credentials (cookies) sent by the client
 }))
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 const isLoggedIn = (req, res, next) => {
     // console.log("In login check: ", req.user)
@@ -61,7 +64,9 @@ app.get("/api", (req, res) => {
     res.status(200).json({ alive: true });
 });
 
-app.use("/auth", AuthController);
+app.use("/auth", GoogleAuthController);
+app.use("/auth", LocalAuthController);
+app.use("/auth", FacebookAuthController);
 app.use("/api/questions", QuestionController);
 app.use("/api/users", UserController);
 

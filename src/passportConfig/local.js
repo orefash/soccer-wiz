@@ -1,24 +1,37 @@
 
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy;
-const { adminService } = require('../admin')
+const { userService } = require('../user')
 const bcrypt = require('bcrypt');
 
-passport.use(new LocalStrategy(
+passport.use(new LocalStrategy({ // or whatever you want to use
+  usernameField: 'email',    // define the parameter in req.body that passport can use as username and password
+  passwordField: 'password'
+},
+
   async function (email, password, done) {
-    const currentUser = await adminService.getUserByEmail({ email })
 
-    if (!currentUser) {
-      return done(null, false, { message: `Admin with email ${email} does not exist` });
+    console.log("in local")
+    try {
+
+      const currentUser = await userService.getUserByEmail(email)
+
+      if (!currentUser) {
+        return done(null, false, { message: `Admin with email ${email} does not exist` });
+      }
+
+      if (currentUser.source != "local") {
+        return done(null, false, { message: `You have previously signed up with a different signin method` });
+      }
+
+      if (!bcrypt.compareSync(password, currentUser.password)) {
+        return done(null, false, { message: `Incorrect password provided` });
+      }
+      return done(null, currentUser);
+
+    } catch (err) {
+      return done(err);
     }
 
-    if (currentUser.source != "local") {
-      return done(null, false, { message: `You have previously signed up with a different signin method` });
-    }
-
-    if (!bcrypt.compareSync(password, currentUser.password)) {
-      return done(null, false, { message: `Incorrect password provided` });
-    }
-    return done(null, currentUser);
   }
 ));

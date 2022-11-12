@@ -3,26 +3,26 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 
+const { userService } = require('../user')
+
 
 passport.use(
     new GoogleStrategy(
         {
-            callbackURL: process.env.CALLBACK_URL,
-            clientID: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
+            callbackURL: process.env.GOOGLE_CALLBACK_URL,
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         },
         async (accessToken, refreshToken, profile, done) => {
-            const { userService } = require('../user')
 
             // console.log("Inside google strategy")
 
             // console.log("Profile: ", profile)
-            const profileId = profile.id;
+            const googleId = profile.id;
             const email = profile.emails[0].value;
             const firstName = profile.name.givenName;
-            const lastName = profile.name.familyName;
             const profilePhoto = profile.photos[0].value;
-            const source = "google";
+
 
             // console.log("PID: ", profileId)
 
@@ -31,21 +31,21 @@ passport.use(
 
             if (!currentUser) {
                 const newUser = await userService.addGoogleUser({
-                    profileId,
+                    googleId,
                     email,
-                    firstName,
-                    lastName,
-                    profilePhoto
+                    // username: `user${profile.id}`,
+                    profilePhoto,
+                    
                 })
                 return done(null, newUser);
             }
 
-            if (currentUser.source != "google") {
-                //return error
-                return done(null, false, { message: `You have previously signed up with a different signin method` });
-            }
+            // if (currentUser.source != "google") {
+            //     //return error
+            //     return done(null, false, { message: `You have previously signed up with a different signin method` });
+            // }
 
-            currentUser.lastVisited = new Date();
+            // currentUser.lastVisited = new Date();
 
             // console.log("In google login: ", currentUser)
             return done(null, currentUser);

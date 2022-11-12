@@ -1,8 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
+const requireJwtAuth = require('../middleware/requireJwtAuth');
+
 function userRoutes(UserService) {
     const router = express.Router();
+
+    router.get('/me', requireJwtAuth, (req, res) => {
+        let user = req.user.toJSON();
+        res.json({
+            success: true,
+            user: user
+        });
+    });
 
     router.patch("/details/:id", async (req, res) => {
         try {
@@ -34,14 +44,14 @@ function userRoutes(UserService) {
             const { username } = req.body;
 
 
-            const user = await UserService.getUserByUsername( username );
+            const user = await UserService.getUserByUsername(username);
 
-            if(user){
+            if (user) {
                 res.status(200).json({
                     success: true,
                     found: true
                 });
-            }else{
+            } else {
                 res.status(200).json({
                     success: true,
                     found: false
