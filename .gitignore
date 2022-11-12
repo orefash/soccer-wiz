@@ -8,8 +8,12 @@ build/Release
 node_modules
 coverage
 jspm_packages
-
+package-lock.json
 # Optional npm cache directory
 .npm
+
+/.vscode
+/security/cert.key
+/security/cert.pem
 
 .DS_Store
