@@ -6,6 +6,7 @@ const gameCategorySchema = new Schema({
     category: {
         type: String, 
         trim: true,
+        unique: true
     },
     isActive: {
         type: Boolean,
@@ -14,7 +15,7 @@ const gameCategorySchema = new Schema({
     }
 },
 {
-    timestamps: true,
+    timestamps: false,
 });
 
 var gameCategoryModel = mongoose.model("gameCategory", gameCategorySchema, "gameCategory");

@@ -1,13 +1,22 @@
 const checkTodayWithinMatchday = require("../utils/timeValidations");
 
-const addQuestion = (Question) => async (data) => {
+const addQuestion = (Question, gameCategoryService) => async (data) => {
+
+    if (data.answers.length !== 4)
+        throw new Error('Question requires 4 options')
 
     const existing = await Question.findOne({ question: data.question })
 
     // console.log("in create: ", existing)
 
-    if(existing)
+    if (existing)
         throw new Error('Question already Exists')
+
+    const category = await gameCategoryService.getCategoryByName(data.category)
+
+    if (!category)
+        throw new Error('Invalid Category')
+
 
     const newQuestion = new Question(data)
 
@@ -48,12 +57,12 @@ const getQuestionsByCategory = (Question) => async (category, queryLimit = 0) =>
     return questions;
 }
 
-const getQuestionsForGame = (Question, userService) => async ({ userId, category, demo, date }, queryLimit = 0) => {
+const getQuestionsForGame = (Question, userService, gameSettingService) => async ({ userId, category, demo, date }) => {
 
     let required_game_credits = 10;
 
     let data = {
-        user: userId, sufficient_balance: true, demo: demo, in_matchday: true, error: true
+        user: userId, sufficient_balance: true, demo: demo, in_matchday: false, error: true
     };
     let questions = null;
 
@@ -73,18 +82,29 @@ const getQuestionsForGame = (Question, userService) => async ({ userId, category
         return data;
     }
 
-    if (queryLimit > 0)
-        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
-    else
-        questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: 12 } }]);
+    const settings = await gameSettingService.getSettings();
 
-    if(!demo){
-        let updatedUser = await userService.updateWalletBalance({id: userId, credits: -required_game_credits})
+    if (!settings)
+        throw new Error('Game Configuration not Set')
 
+    let questionLimit = settings.questionPerQuiz
+
+    if (!questionLimit || questionLimit === 0)
+        throw new Error('Question Limit not set in configuration')
+
+    // if (queryLimit > 0)
+    //     questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
+    // else
+    questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: questionLimit } }]);
+
+    if (!demo) {
+        let updatedUser = await userService.updateWalletBalance({ id: userId, credits: -required_game_credits })
+        data.in_matchday = true
     }
-    
+
     data.error = false;
     data.questions = questions;
+    data.questionLimit = questionLimit;
 
     return data;
 }
@@ -97,16 +117,16 @@ const getQuestionById = (Question) => async (id) => {
 }
 
 
-module.exports = (Question, userService) => {
+module.exports = (Question, userService, gameCategoryService, gameSettingService) => {
     return {
 
-        addQuestion: addQuestion(Question),
+        addQuestion: addQuestion(Question, gameCategoryService),
         deleteQuestion: deleteQuestion(Question),
         updateQuestion: updateQuestion(Question),
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
         getQuestionsByCategory: getQuestionsByCategory(Question),
-        getQuestionsForGame: getQuestionsForGame(Question, userService)
+        getQuestionsForGame: getQuestionsForGame(Question, userService, gameSettingService)
 
     }
 }

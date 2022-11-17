@@ -9,7 +9,43 @@ const UserService = require('../../user/user.service');
 
 const userService = UserService(User);
 
-const questionService = QuestionService(Question, userService);
+const getCategoryByName = jest.fn();
+when(getCategoryByName).calledWith('General').mockReturnValue({
+    category: 'General'
+})
+when(getCategoryByName).calledWith('Italy').mockReturnValue({
+    category: 'Italy'
+})
+when(getCategoryByName).calledWith('invalid').mockReturnValue(null)
+
+
+let gameCategoryService = {
+    getCategoryByName: getCategoryByName
+}
+
+
+const getSettings = jest.fn();
+when(getSettings).calledWith().mockReturnValue({
+   
+    creditBuyList: [
+        10, 20, 50, 100
+    ],
+    currentGameWeek: 3,
+    costPerCredit: 30,
+    creditsPerGame: 10,
+    minPointsForReward: 12,
+    questionTimeLimit: 12,
+    questionPerQuiz: 15
+})
+// when(getCategoryByName).calledWith().mockReturnValue(null)
+
+
+let gameSettingService = {
+    getSettings: getSettings
+}
+
+
+const questionService = QuestionService(Question, userService, gameCategoryService, gameSettingService);
 
 
 beforeAll(async () => await connect())
@@ -41,6 +77,11 @@ describe('Question Service - getQuestionsForGame', () => {
                     "optionNumber": 3,
                     "answerText": "2",
                     "isCorrect": false
+                },
+                {
+                    "optionNumber": 3,
+                    "answerText": "2",
+                    "isCorrect": false
                 }
             ]
         }
@@ -67,6 +108,11 @@ describe('Question Service - getQuestionsForGame', () => {
                     "optionNumber": 3,
                     "answerText": "2",
                     "isCorrect": false
+                },
+                {
+                    "optionNumber": 3,
+                    "answerText": "2",
+                    "isCorrect": false
                 }
             ]
         }
@@ -87,6 +133,11 @@ describe('Question Service - getQuestionsForGame', () => {
                     "optionNumber": 2,
                     "answerText": "7",
                     "isCorrect": true
+                },
+                {
+                    "optionNumber": 3,
+                    "answerText": "2",
+                    "isCorrect": false
                 },
                 {
                     "optionNumber": 3,

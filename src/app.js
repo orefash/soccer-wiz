@@ -10,8 +10,19 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
 
-const { GoogleAuthController, UserController, LocalAuthController, FacebookAuthController } = require("./user");
+const { 
+    GoogleAuthController, 
+    UserController, 
+    LocalAuthController, 
+    FacebookAuthController
+} = require("./user");
 const { QuestionController } = require("./question");
+const { GameCategoryController } = require('./gameCategory')
+const { GameSettingController } = require('./gameSettings')
+const { ScoreController } = require('./score')
+const { GameController } = require('./game')
+const { WalletController } = require('./walletTransaction')
+const { RewardController } = require('./reward')
 
 app.use(passport.initialize());
 // app.use(passport.session());
@@ -69,5 +80,11 @@ app.use("/auth", LocalAuthController);
 app.use("/auth", FacebookAuthController);
 app.use("/api/questions", QuestionController);
 app.use("/api/users", UserController);
+app.use("/api/categories", GameCategoryController);
+app.use("/api/settings", GameSettingController);
+app.use("/api/scores", ScoreController);
+app.use("/api/games", GameController);
+app.use("/api/wallet/transactions", WalletController);
+app.use("/api/rewards", RewardController);
 
 module.exports = app;

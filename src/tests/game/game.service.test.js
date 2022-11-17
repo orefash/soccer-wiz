@@ -23,7 +23,13 @@ let userService = {
     updateGameRecords: updateGameRecords
 }
 
-const gameService = GameService(Game, userService);
+const saveScore = jest.fn();
+
+let scoreService = {
+    saveScore: saveScore
+}
+
+const gameService = GameService(Game, userService, scoreService);
 
 
 beforeAll(async () => await connect())
@@ -183,6 +189,9 @@ describe('Game Service', () => {
             }
 
             let gameResponse = await gameService.submitGame(newGame);
+
+            // console.log("Game response: ", gameResponse)
+            // console.log("Game response: ", JSON.stringify(gameResponse, null, 4));
 
             expect(gameResponse.gameScore.totalScore).toBe(4.9)
         })

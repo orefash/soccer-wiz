@@ -6,8 +6,8 @@ const saveOrUpdateSettings = (GameSetting) => async (data) => {
 
     // console.log("in create: ", existing)
 
-    if (existing.length>0) {
-        let setting = existing[existing.length-1];
+    if (existing.length > 0) {
+        let setting = existing[existing.length - 1];
         // console.log("Setting last: ", setting);
 
         return await updateSetting(GameSetting)(setting._id, data)
@@ -42,10 +42,68 @@ const updateSetting = (GameSetting) => async (id, data) => {
 const getSettings = (GameSetting) => async () => {
     const settings = await GameSetting.find();
 
-    return settings;
+    if(settings.length > 0) return settings[0]
+
+    return null;
+}
+
+const getBuyList = (GameSetting) => async () => {
+    const settings = await GameSetting.find();
+
+    if(settings.length > 0){
+        let setting = settings[0];
+        let cost = setting.costPerCredit
+        let bList = setting.creditBuyList;
+
+        if(!cost || !bList || bList.length == 0) throw new Error('Invalid Credit Purchase Settings')
+
+        let creditsList = []
+
+        bList.forEach(element => {
+            creditsList.push({
+                credit: element,
+                cost: element * cost
+            })
+        });
+
+        return creditsList
+
+    } 
+    
+
+    return null;
 }
 
 
+const getGameSettings = (GameSetting, gameCategoryService) => async () => {
+
+    try {
+
+        const settings = await GameSetting.find();
+
+        let setData = (settings.length > 0) ? settings[0] : nulls
+
+        const categories = await gameCategoryService.getCategories(0);
+
+        return { settings: setData, categories };
+
+    } catch (err) {
+        throw new Error('Error in fetching game settings')
+    }
+
+}
+
+// const getActiveCategories = (GameSetting) => async () => {
+//     const categories = await GameSetting.find({
+//         "categories": { isActive: true }
+//     })
+
+//     //  const categories = await GameSetting.find({
+//     //     "categories.isActive": true
+//     //  })  
+
+//     return categories;
+// }
 
 // const getQuestionById = (Question) => async (id) => {
 
@@ -55,12 +113,14 @@ const getSettings = (GameSetting) => async () => {
 // }
 
 
-module.exports = (GameSetting) => {
+module.exports = (GameSetting, gameCategoryService) => {
     return {
 
         saveOrUpdateSettings: saveOrUpdateSettings(GameSetting),
-        // updateSetting: updateSetting(GameSetting),
-        getSettings: getSettings(GameSetting)
+        getBuyList: getBuyList(GameSetting),
+        getSettings: getSettings(GameSetting),
+        getGameSettings: getGameSettings(GameSetting, gameCategoryService)
+        // getActiveCategories: getActiveCategories(GameSetting)
 
     }
 }

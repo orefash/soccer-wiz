@@ -10,32 +10,46 @@ const saveGame = (Game) => async ({ player, category, gameWeek, score }) => {
 }
 
 
-const submitGame = (Game, userService) => async ({ gameWeek, category, playerId, answers, demo, today = new Date() }) => {
+const submitGame = (Game, userService, scoreService) => async ({ gameWeek, category, playerId, answers, demo, today = new Date() }) => {
 
     let user = await userService.getUserById(playerId);
     if (!user)
         throw new Error("User does not exist");
 
-    const gameScore = await calcGameScore(answers);
+    const gScore = await calcGameScore(answers);
 
-    let responseData = { gameScore, playerId, demo, gameId: null }
+    // console.log('out gscore: ', gScore)
 
-    if(!demo){
+    let responseData = { gameScore: gScore, playerId, demo, gameId: null }
+
+    if (!demo) {
         const inGameWeek = checkTodayWithinMatchday(today);
 
-        if(inGameWeek){
-            const updatedUser = await userService.updateGameRecords({ playerId, gameScore: gameScore.totalScore })
+        if (inGameWeek) {
+            // let score = gameScore.totalScore;
+            // console.log('in gscore: ', gScore)
 
-            const newGame = await saveGame(Game)({ player: playerId, category, gameWeek, score: gameScore.totalScore })
+
+            const updatedUser = await userService.updateGameRecords({ id: playerId, score: gScore.totalScore })
+
+            // console.log('updated user: game: ', updatedUser)
+
+            const newGame = await saveGame(Game)({ player: playerId, category, gameWeek, score: gScore.totalScore })
+
+            // console.log('updated user: game: ', newGame)
+
+            const gameScore = await scoreService.saveScore({ score: gScore.totalScore, category, gameWeek, date: today, userId: playerId, username: user.username })
+
+            // console.log('updated score: game: ', gameScore)
 
             responseData.gameId = newGame._id;
             responseData.submitLate = false
-        }else{
+        } else {
             responseData.submitLate = true
         }
-            
+
     }
-    
+
 
     return responseData
 }
@@ -63,9 +77,9 @@ const getGameByWeekday = (Game) => async (category, gameWeek) => {
 
 
 
-module.exports = (Game, userService) => {
+module.exports = (Game, userService, scoreService) => {
     return {
-        submitGame: submitGame(Game, userService),
+        submitGame: submitGame(Game, userService, scoreService),
         getGames: getGames(Game),
         getGameById: getGameById(Game),
         getGameByWeekday: getGameByWeekday(Game),

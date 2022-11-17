@@ -106,11 +106,11 @@ function questionRoutes(QuestionService) {
                 demo, category, userId, date: new Date()
             }
 
-            const data = await QuestionService.getQuestionsForGame(questionData, 2);
+            const data = await QuestionService.getQuestionsForGame(questionData);
 
             if (data) {
                 res.status(200).json({
-                    success: true,
+                    success: !data.error,
                     data: data
                 });
             } else {
@@ -152,7 +152,7 @@ function questionRoutes(QuestionService) {
             console.log("Error in questions: ", error)
             res.status(500).json({
                 success: false,
-                message: "Error in question add"
+                message: error.message
             });
         }
 

@@ -55,9 +55,9 @@ const calcGameScore = (answers) => {
         
     }, 0);
 
-    // console.log("in score calc: ", results)
+    // console.log("in score calc: ", totalScore)
 
-    return {totalScore, breakdown: results};
+    return {totalScore: Math.round(totalScore * 10) / 10, breakdown: results};
 }
 
 module.exports = {

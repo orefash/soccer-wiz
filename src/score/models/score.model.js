@@ -4,17 +4,17 @@ let Schema = mongoose.Schema;
 
 const scoreSchema = new Schema({
     score: Number,
-    lastUpdate: Date
-}, { _id : false });
+}, { _id : false, timestamps: true  });
 
 
 const highScoreSchema = new Schema({
-    userID: {type: mongoose.Types.ObjectId, ref: "user"},
+    userId: {type: mongoose.Types.ObjectId, ref: "user"},
     username: String,
     daily: scoreSchema,
     weekly: scoreSchema,
     monthly: scoreSchema
-});
+},
+{ timestamps: true });
 
 var highScoreModel = mongoose.model("highScore", highScoreSchema, "highScore");
 

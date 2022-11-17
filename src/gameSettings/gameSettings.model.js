@@ -21,16 +21,19 @@ const categorySchema = new Schema({
 
 
 const gameSettingSchema = new Schema({
-    categories: [categorySchema],
+    // categories: [categorySchema],
     creditBuyList: [{type: Number}],
     currentGameWeek: {
-        type: Number
+        type: Number, default: 1
     },
-    costPerCredit: {type: Number, default: 0},
-    creditsPerGame: {type: Number, default: 0},
+    costPerCredit: {type: Number, default: 0, required: true},
+    creditsPerGame: {type: Number, default: 10, required: true},
     minPointsForReward: {
-        type: Number
+        type: Number, required: true
     },
+    questionTimeLimit: {type: Number, default: 12, required: true},
+    questionPerQuiz: {type: Number, default: 15, required: true},
+    
 },
 {
     timestamps: true,

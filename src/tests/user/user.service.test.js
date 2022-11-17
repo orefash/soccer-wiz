@@ -34,8 +34,6 @@ describe('User Service', () => {
 
             const newUser = {
                 email: "orefash@gmail.com",
-                firstName: "Ore",
-                lastName: "Faseru",
                 profilePhoto: "url",
                 source: "google"
             }
@@ -43,8 +41,6 @@ describe('User Service', () => {
             const savedUser = await userService.addGoogleUser(newUser);
 
             expect(savedUser.email).toEqual(newUser.email)
-            expect(savedUser.firstName).toEqual(newUser.firstName)
-            expect(savedUser.lastName).toEqual(newUser.lastName)
             expect(savedUser.profilePhoto).toEqual(newUser.profilePhoto)
             expect(savedUser.source).toEqual("google")
 
@@ -203,6 +199,66 @@ describe('User Service', () => {
 
     })
 
+
+    describe('updateUsername', () => {
+        it('should be able to update username', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                country: "Nigeria"
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const updateData = {
+                username: "user2"
+            }
+
+            const updatedUser = await userService.updateUsername(createdUser._id, updateData);
+
+
+            const fetchedUser = await userService.getUserById(createdUser._id);
+
+
+            expect(updateData.username).toEqual(fetchedUser.username);
+
+        })
+
+
+        it('should be throw error if username already exists in db', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                country: "Nigeria"
+            }
+
+            const newUser2 = {
+                email: "orefash1@gmail.com",
+                source: "google",
+                country: "Nigeria",
+                username: "user2"
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const user1 = new User(newUser2)
+            const createdUser2 =  await user1.save()
+
+            const updateData = {
+                username: "user2"
+            }
+
+            await expect( userService.updateUsername(createdUser._id, updateData) ).rejects.toThrow()
+
+        })
+
+    })
+
+
     describe('updateGameRecords', () => {
         it('should be able to get update User game records - gamesplayed & scores', async () => {
 
@@ -226,13 +282,22 @@ describe('User Service', () => {
                 score: 23
             }
 
+            const updateData2 = {
+                id: createdUser._id,
+                score: 10
+            }
+
             const updatedUser = await userService.updateGameRecords(updateData);
+            const updatedUser1 = await userService.updateGameRecords(updateData2);
+
+            // console.log('uservice: - ', updatedUser)s
 
             const fetchedUser = await userService.getUserById(createdUser._id);
+            // console.log('uservice: - ', fetchedUser)
 
 
-            expect(fetchedUser.totalScore).toEqual(updateData.score);
-            expect(fetchedUser.gamesPlayed).toEqual(1);
+            expect(fetchedUser.totalScore).toEqual(33);
+            expect(fetchedUser.gamesPlayed).toEqual(2);
 
         })
 

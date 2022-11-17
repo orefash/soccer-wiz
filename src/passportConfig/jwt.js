@@ -5,8 +5,11 @@ const { User } = require('../user')
 
 
 // const isProduction = process.env.NODE_ENV === 'production';
+// const secretOrKey =  "secret";
 const secretOrKey =  process.env.JWT_SECRET;
+let jwtfetch = ExtractJwt.fromHeader('x-auth-token');
 
+// console.log("jwt fetch: ", jwtfetch)
 // JWT strategy
 const jwtLogin = new Strategy(
   {
@@ -15,9 +18,10 @@ const jwtLogin = new Strategy(
   },
   async (payload, done) => {
     try {
+      // console.log("payload: ", payload)
       const user = await User.findById(payload.id);
 
-      console.log("in jwt: ", user)
+      // console.log("in jwt: ", user)
       if (user) {
         done(null, user);
       } else {

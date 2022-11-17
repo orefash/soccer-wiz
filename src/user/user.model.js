@@ -33,8 +33,8 @@ const userSchema = new Schema({
   lastName: String,
   username: {
     type: String,
-    unique: true,
-    index: true
+    // unique: true,
+    // index: true
   },
   profilePhoto: String,
   phone: String,
@@ -68,17 +68,25 @@ const userSchema = new Schema({
 },
   { timestamps: true });
 
+// const secretOrKey = "secret";
 const secretOrKey = process.env.JWT_SECRET;
+const jwtExpiry = process.env.JWT_EXPIRY;
+
 
 userSchema.methods.generateJWT = function () {
   const token = jwt.sign(
     {
-      expiresIn: '12h',
+      
       id: this._id,
       source: this.source,
       email: this.email,
+      iat: Math.floor(Date.now() / 1000),
     },
     secretOrKey,
+    {
+      expiresIn: jwtExpiry,
+      // algorithm: "RS256",
+    }
   );
   return token;
 };

@@ -8,9 +8,12 @@ function authRoutes() {
     const router = express.Router();
 
     router.post('/login', requireLocalAuth, (req, res) => {
-        console.log("in local: ", req.user)
+        // console.log("in local login: ", req.user)
         const token = req.user.generateJWT();
-        // const me = req.user.toJSON();
+
+        const me = req.user.toJSON();
+
+        // console.log(`in login: ME: ${JSON.stringify(me)} \n Token: ${token}`)
         res.json({ token, user: req.user });
     });
 
@@ -53,8 +56,8 @@ function authRoutes() {
     router.get("/logout", (req, res) => {
 
         req.logout();
-        res.send(false);
-        // res.redirect(process.env.CLIENT_URL);
+        // res.send(false);
+        res.redirect(process.env.CLIENT_URL);
     });
 
     return router;

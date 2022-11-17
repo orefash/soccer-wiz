@@ -6,7 +6,8 @@ const requireJwtAuth = require('../middleware/requireJwtAuth');
 function userRoutes(UserService) {
     const router = express.Router();
 
-    router.get('/me', requireJwtAuth, (req, res) => {
+    router.get('/me', requireJwtAuth, async (req, res) => {
+        console.log("in me")
         let user = req.user.toJSON();
         res.json({
             success: true,
@@ -71,16 +72,47 @@ function userRoutes(UserService) {
 
     router.get("/", async (req, res) => {
         try {
-            const users = await UserService.getUsers();
-            res.status(200).json({
-                success: true,
-                users: users
-            });
+
+            let data = {}
+            let a =  null;
+            // try {
+            //     a = await UserService.getUsers();
+            // } catch (error) {
+            //     console.log('Error 1: ', error.message)
+            // }
+
+            // try {
+            //     data.users = a;
+            // } catch (error) {
+            //     console.log('Error 2: ', error.message)
+            // }
+
+            // try {
+            //     data.success = true;
+            // } catch (error) {
+            //     console.log('Error 3: ', error.message)
+            // }
+
+            a = await UserService.getUsers();
+            data.users = a;
+            data.success = true;
+            res.status(200).json(data);
+            // try {
+                
+            // } catch (error) {
+            //     console.log('Error 4: ', error.message)
+            // }
+            // let uList = 
+            // console.log("Users: ", JSON.stringify(uList))
+            
+            // console.log("in get users")
+            // res.send("done")
 
         } catch (error) {
+            console.log("error: ",error.message)
             res.status(500).json({
                 success: false,
-                message: error
+                message: error.message
             });
         }
 

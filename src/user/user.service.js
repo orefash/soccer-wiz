@@ -23,26 +23,26 @@ function generateUniqueUserName(User, email) {
 
 const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 
-    let generatedUsername = await generateUniqueUserName(User, email);
+    // let generatedUsername = await generateUniqueUserName(User, email);
 
     // console.log("Gen uname: ", generatedUsername)
 
 
     const user = new User({
-        googleId, email, profilePhoto, source: "google", username: generatedUsername
+        googleId, email, profilePhoto, source: "google",
     })
     return await user.save()
 }
 
 const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) => {
 
-    let generatedUsername = await generateUniqueUserName(User, email);
+    // let generatedUsername = await generateUniqueUserName(User, email);
 
     // console.log("Gen uname: ", generatedUsername)
 
 
     const user = new User({
-        facebookId, email, profilePhoto, source: "facebook", username: generatedUsername
+        facebookId, email, profilePhoto, source: "facebook",
     })
     return await user.save()
 }
@@ -51,17 +51,20 @@ const addLocalUser =  (User) => async ({ email, phone, password }) => {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    let generatedUsername = await generateUniqueUserName(User, email);
+    // let generatedUsername = await generateUniqueUserName(User, email);
 
 
     const user = new User({
-        email, password: hashedPassword, source: "local", username: generatedUsername
+        email, password: hashedPassword, source: "local"
     })
     return user.save()
 }
 
-const getUsers = (User) => () => {
-    return User.find({})
+const getUsers = (User) => async () => {
+    // console.log("in users service")
+    let users = await User.find({});
+    // console.log("in users service: users: - ", users)
+    return users
 }
 
 const getUserByEmail = (User) => async ( email ) => {
@@ -85,8 +88,24 @@ const updateUsernameAndCountry = (User) => async (id, { username, country }) => 
     return updatedUser
 }
 
+const updateUsername = (User) => async (id, { username }) => {
+
+    let user = await getUserByUsername(User)(username);
+
+    if(user) throw new Error('Username Already Exists!!')
+
+    const updatedUser = await User.findByIdAndUpdate(id, { username }, {
+        new: true,
+    });
+
+    return updatedUser
+}
+
 
 const updateGameRecords = (User) => async ({ id, score }) => {
+
+    // console.log('in update records: score: ', score)
+    
 
     const updatedUser = await User.findByIdAndUpdate(
         id,
@@ -128,6 +147,7 @@ module.exports = (User) => {
         getUserByEmail: getUserByEmail(User),
         getUserById: getUserById(User),
         updateUsernameAndCountry: updateUsernameAndCountry(User),
+        updateUsername: updateUsername(User),
         getUserByUsername: getUserByUsername(User),
         updateGameRecords: updateGameRecords(User),
         updateWalletBalance: updateWalletBalance(User)

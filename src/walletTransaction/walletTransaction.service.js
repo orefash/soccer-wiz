@@ -1,8 +1,8 @@
 
 
-const saveWalletTransaction = (WalletTransaction) => async ({ credits, userId, isInflow, amount, currency, status, paymentMethod }) => {
+const saveWalletTransaction = (WalletTransaction) => async ({ credits, userId, isInflow, value, description, currency, status, type }) => {
 
-    const newTransaction = new WalletTransaction({ credits, userId, isInflow, amount, currency, status, paymentMethod })
+    const newTransaction = new WalletTransaction({ credits, userId, isInflow, value, description, currency, status, type })
 
     return newTransaction.save()
 }
