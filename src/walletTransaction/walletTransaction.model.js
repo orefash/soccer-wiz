@@ -4,8 +4,8 @@ let Schema = mongoose.Schema;
 
 const walletTransactionSchema = Schema(
     {
-        amount: { type: Number, default: 0 },
         credits: { type: Number, default: 0 },
+        value: { type: Number, default: 0 },
 
         // Even though user can be implied from wallet, let us
         // double save it for security
@@ -17,12 +17,22 @@ const walletTransactionSchema = Schema(
 
         isInflow: { type: Boolean },
 
-        paymentMethod: { type: String, default: "flutterwave" },
+        type: { 
+            type: String, 
+            enum: ["credits", "airtime", "cash"], 
+        },
 
         currency: {
             type: String,
+            default: "NGN",
             required: [true, "currency is required"],
             enum: ["NGN", "USD", "EUR", "GBP"],
+        },
+
+        description: {
+            type: String,
+            required: true,
+            enum: ["Purchase of credits", "Withdrawal of rewards"],
         },
 
         status: {
