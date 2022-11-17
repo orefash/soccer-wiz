@@ -14,7 +14,7 @@ function authRoutes() {
         const me = req.user.toJSON();
 
         // console.log(`in login: ME: ${JSON.stringify(me)} \n Token: ${token}`)
-        res.json({ token, user: req.user });
+        res.json({ success: true, token, user: req.user });
     });
 
     router.post('/register', async (req, res, next) => {

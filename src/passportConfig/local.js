@@ -18,15 +18,15 @@ passport.use(new LocalStrategy({ // or whatever you want to use
       // const currentUser = await userService.getUserByEmail(email)
 
       if (!currentUser) {
-        return done(null, false, { message: `User with phone ${phone} does not exist` });
+        return done(null, false, { success: false, message: `User with phone ${phone} does not exist` });
       }
 
       if (currentUser.source != "local") {
-        return done(null, false, { message: `You have previously signed up with a different signin method` });
+        return done(null, false, { success: false,  message: `You have previously signed up with a different signin method` });
       }
 
       if (!bcrypt.compareSync(password, currentUser.password)) {
-        return done(null, false, { message: `Incorrect password provided` });
+        return done(null, false, { success: false,  message: `Incorrect password provided` });
       }
       return done(null, currentUser);
 
