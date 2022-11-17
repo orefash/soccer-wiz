@@ -139,6 +139,26 @@ describe('User Service', () => {
 
     })
 
+    describe('getUserByPhone', () => {
+        it('should be able to get User By Phone', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                phone: "08023238002",
+                source: "local",
+                country: "NG"
+            }
+
+            const createdUser = await userService.addLocalUser(newUser1);
+
+            const fetchedUser = await userService.getUserByPhone(createdUser.phone);
+
+            expect(createdUser.phone).toEqual(fetchedUser.phone);
+
+        })
+
+    })
+
 
     describe('getUserByUsername', () => {
         it('should be able to get User By Username', async () => {

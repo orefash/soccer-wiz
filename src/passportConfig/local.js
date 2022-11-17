@@ -5,19 +5,20 @@ const { userService } = require('../user')
 const bcrypt = require('bcrypt');
 
 passport.use(new LocalStrategy({ // or whatever you want to use
-  usernameField: 'email',    // define the parameter in req.body that passport can use as username and password
+  usernameField: 'phone',    // define the parameter in req.body that passport can use as username and password
   passwordField: 'password'
 },
 
-  async function (email, password, done) {
+  async function (phone, password, done) {
 
     console.log("in local")
     try {
 
-      const currentUser = await userService.getUserByEmail(email)
+      const currentUser = await userService.getUserByPhone(phone)
+      // const currentUser = await userService.getUserByEmail(email)
 
       if (!currentUser) {
-        return done(null, false, { message: `Admin with email ${email} does not exist` });
+        return done(null, false, { message: `User with phone ${phone} does not exist` });
       }
 
       if (currentUser.source != "local") {

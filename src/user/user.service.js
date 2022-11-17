@@ -49,13 +49,13 @@ const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) =>
 
 const addLocalUser =  (User) => async ({ email, phone, password, country }) => {
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // const hashedPassword = await bcrypt.hash(password, 10)
 
     // let generatedUsername = await generateUniqueUserName(User, email);
 
 
     const user = new User({
-        email, password: hashedPassword, source: "local", country
+        email, password, source: "local", country, phone
     })
     return user.save()
 }
@@ -69,6 +69,10 @@ const getUsers = (User) => async () => {
 
 const getUserByEmail = (User) => async ( email ) => {
     return await User.findOne({ email })
+}
+
+const getUserByPhone = (User) => async ( phone ) => {
+    return await User.findOne({ phone })
 }
 
 const getUserById = (User) => async (id) => {
@@ -150,6 +154,7 @@ module.exports = (User) => {
         updateUsername: updateUsername(User),
         getUserByUsername: getUserByUsername(User),
         updateGameRecords: updateGameRecords(User),
-        updateWalletBalance: updateWalletBalance(User)
+        updateWalletBalance: updateWalletBalance(User),
+        getUserByPhone: getUserByPhone(User)
     }
 }

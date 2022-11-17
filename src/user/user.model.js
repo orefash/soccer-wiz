@@ -26,7 +26,7 @@ const userSchema = new Schema({
     type: String,
     match: [/\S+@\S+\.\S+/, 'is invalid'],
     index: true,
-    required: [true, "email required"],
+    // required: [true, "email required"],
     unique: [true, "email already registered"],
   },
   firstName: String,
