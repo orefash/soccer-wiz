@@ -23,7 +23,7 @@ function userRoutes(UserService) {
                 username, country
             }
 
-            const updatedUser = await UserService.updateUsernameAndCountry(req.params.id, userData);
+            const updatedUser = await UserService.updateUsername(req.params.id, userData);
 
             res.status(200).json({
                 success: true,
@@ -31,10 +31,10 @@ function userRoutes(UserService) {
             });
 
         } catch (error) {
-            console.log("Error in Users: ", error)
+            // console.log("Error in Users: ", error)
             res.status(500).json({
                 success: false,
-                message: "Error in user update"
+                message: error.message
             });
         }
 
@@ -64,7 +64,7 @@ function userRoutes(UserService) {
             console.log("Error in Username check: ", error)
             res.status(500).json({
                 success: false,
-                message: "Error in username check"
+                message: error.message
             });
         }
 
@@ -139,7 +139,7 @@ function userRoutes(UserService) {
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: error
+                message: error.message
             });
         }
 

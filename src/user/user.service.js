@@ -102,6 +102,8 @@ const updateUsername = (User) => async (id, { username }) => {
         new: true,
     });
 
+    if(!updatedUser) throw new Error('Username is Invalid!!')
+
     return updatedUser
 }
 
