@@ -47,7 +47,7 @@ const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) =>
     return await user.save()
 }
 
-const addLocalUser =  (User) => async ({ email, phone, password }) => {
+const addLocalUser =  (User) => async ({ email, phone, password, country }) => {
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -55,7 +55,7 @@ const addLocalUser =  (User) => async ({ email, phone, password }) => {
 
 
     const user = new User({
-        email, password: hashedPassword, source: "local"
+        email, password: hashedPassword, source: "local", country
     })
     return user.save()
 }

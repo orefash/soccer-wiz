@@ -20,7 +20,7 @@ function authRoutes() {
     router.post('/register', async (req, res, next) => {
 
         try {
-            const { email, password, phone } = req.body;
+            const { email, password, phone, country } = req.body;
 
             const existingUser = await User.findOne({ email });
 
@@ -33,7 +33,8 @@ function authRoutes() {
                     source: 'local',
                     email,
                     password,
-                    phone
+                    phone,
+                    country
                 });
 
                 newUser.registerUser(newUser, (err, user) => {
