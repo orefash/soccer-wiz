@@ -25,6 +25,7 @@ function authRoutes() {
         (req, res) => {
           const token = req.user.generateJWT();
           res.cookie('x-auth-cookie', token);
+          console.log("Callback: ", clientUrl)
           res.redirect(clientUrl);
         },
 
