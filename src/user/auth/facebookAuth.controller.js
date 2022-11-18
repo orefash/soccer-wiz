@@ -22,7 +22,7 @@ function authRoutes() {
             session: false,
         }),
         (req, res) => {
-            console.log("in fb: ", req.user);
+            // console.log("in fb: ", req.user);
             const token = req.user.generateJWT();
             res.cookie('x-auth-cookie', token);
             res.redirect(clientUrl);

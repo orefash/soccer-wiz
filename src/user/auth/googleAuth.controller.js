@@ -31,36 +31,36 @@ function authRoutes() {
 
     );
 
-    router.get("/login/failed", (req, res) => {
-        res.status(401).json({
-            success: false,
-            message: "failure",
-        });
-    });
+    // router.get("/login/failed", (req, res) => {
+    //     res.status(401).json({
+    //         success: false,
+    //         message: "failure",
+    //     });
+    // });
 
 
-    router.get("/login/success", (req, res) => {
-        // console.log("In success login: ", req.sessionStore);
-        if (req.user) {
+    // router.get("/login/success", (req, res) => {
+    //     // console.log("In success login: ", req.sessionStore);
+    //     if (req.user) {
 
-            // console.log("In success login: yes: ", req.user);
-            let user = req.user
-            user.avgPoints = 0
-            if(user.gamesPlayed>0)
-                user.avgPoints = user.totalScore / user.gamesPlayed
-            res.status(200).json({
-                success: true,
-                message: "successfull",
-                user: user,
-            });
-        }
-        else {
-            res.status(404).json({
-                success: false,
-                message: "no login"
-            });
-        }
-    });
+    //         // console.log("In success login: yes: ", req.user);
+    //         let user = req.user
+    //         user.avgPoints = 0
+    //         if(user.gamesPlayed>0)
+    //             user.avgPoints = user.totalScore / user.gamesPlayed
+    //         res.status(200).json({
+    //             success: true,
+    //             message: "successfull",
+    //             user: user,
+    //         });
+    //     }
+    //     else {
+    //         res.status(404).json({
+    //             success: false,
+    //             message: "no login"
+    //         });
+    //     }
+    // });
 
     
 

@@ -33,7 +33,6 @@ const facebookLogin = new FacebookStrategy(
 
       const facebookId = profile.id;
             const email = profile.emails[0].value;
-            const firstName = profile.displayName;
             const profilePhoto = profile.photos[0].value;
 
 
@@ -46,9 +45,7 @@ const facebookLogin = new FacebookStrategy(
                 const newUser = await userService.addFacebookUser({
                     facebookId,
                     email,
-                    firstName,
                     // username: `user${profile.id}`,
-                    lastName,
                     profilePhoto,
                     
                 })
