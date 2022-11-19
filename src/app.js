@@ -37,9 +37,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+
+const sessionSecret = process.env.SESSION_KEY;
+
 app.use(
     session({
-        secret: "secr3t",
+        secret: sessionSecret,
         resave: false,
         saveUninitialized: true,
     })

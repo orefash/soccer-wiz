@@ -15,15 +15,21 @@ function userRoutes(UserService) {
         });
     });
 
-    router.patch("/details/:id", async (req, res) => {
+    router.patch("/:id/username", async (req, res) => {
         try {
-            const { username, country } = req.body;
+            const { username } = req.body;
+            const userId = req.params.id;
+
+
+            if(!username) throw new Error('Invalid username')
+
+            if(!userId) throw new Error('Invalid User ID')
 
             const userData = {
-                username, country
+                username
             }
 
-            const updatedUser = await UserService.updateUsername(req.params.id, userData);
+            const updatedUser = await UserService.updateUsername(userId, userData);
 
             res.status(200).json({
                 success: true,
@@ -39,6 +45,31 @@ function userRoutes(UserService) {
         }
 
     });
+
+    router.patch("/:id/toggleStatus", async (req, res) => {
+        try {
+            const userId = req.params.id;
+
+            if(!userId) throw new Error("User ID is invalid")
+
+            const updatedUser = await UserService.toggleUserStatus(userId);
+
+            res.status(200).json({
+                success: true,
+                user: updatedUser
+            });
+
+        } catch (error) {
+            // console.log("Error in Users: ", error)
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
+
+
 
     router.post("/check-username", async (req, res) => {
         try {

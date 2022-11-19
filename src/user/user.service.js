@@ -108,6 +108,28 @@ const updateUsername = (User) => async (id, { username }) => {
 }
 
 
+const toggleUserStatus = (User) => async (id) => {
+
+    let activeStatus = 'active', suspendedStatus = 'suspended';
+
+    let setStatus = activeStatus;
+
+    let user = await getUserById(User)(id);
+
+    if(!user) throw new Error('Username Does not Exist!!!')
+
+    if(user.status == activeStatus) setStatus = suspendedStatus
+
+    const updatedUser = await User.findByIdAndUpdate(id, { status: setStatus }, {
+        new: true,
+    });
+
+    if(!updatedUser) throw new Error('Username is Invalid!!')
+
+    return updatedUser
+}
+
+
 const updateGameRecords = (User) => async ({ id, score }) => {
 
     // console.log('in update records: score: ', score)
@@ -157,6 +179,7 @@ module.exports = (User) => {
         getUserByUsername: getUserByUsername(User),
         updateGameRecords: updateGameRecords(User),
         updateWalletBalance: updateWalletBalance(User),
-        getUserByPhone: getUserByPhone(User)
+        getUserByPhone: getUserByPhone(User),
+        toggleUserStatus: toggleUserStatus(User)
     }
 }

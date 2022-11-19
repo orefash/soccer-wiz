@@ -11,7 +11,7 @@ const accountSchema = new Schema({
 }, { _id: false });
 
 
-const statuses = ["active", "inactive", "suspended"]
+const statuses = ["active", "suspended"]
 
 const userSchema = new Schema({
   googleId: {
@@ -49,6 +49,7 @@ const userSchema = new Schema({
   status: {
     type: String,
     enum: statuses,
+    required: true,
     default: 'active',
   },
   reward_points: { type: Number, default: 0 },
@@ -130,6 +131,7 @@ userSchema.methods.toJSON = function () {
     avgPoints: avgPoints,
     totalScore: this.totalScore,
     gamesPlayed: this.gamesPlayed,
+    status: this.status,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };

@@ -11,8 +11,6 @@ require("dotenv").config();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-
-
 var port = process.env.PORT || process.env.PORT || 3000;
 
 const mongodbUri = isProduction ? process.env.MONGO_URI_PROD : process.env.MONGO_URI_DEV;

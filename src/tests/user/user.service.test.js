@@ -185,7 +185,7 @@ describe('User Service', () => {
     })
 
 
-    describe('updateUsernameAndCountry', () => {
+    describe('updateUser', () => {
         it('should be able to get update User country and username', async () => {
 
             const newUser1 = {
@@ -243,6 +243,86 @@ describe('User Service', () => {
 
 
             expect(updateData.username).toEqual(fetchedUser.username);
+
+        })
+
+
+        it('should be throw error if username already exists in db', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                country: "Nigeria"
+            }
+
+            const newUser2 = {
+                email: "orefash1@gmail.com",
+                source: "google",
+                country: "Nigeria",
+                username: "user2"
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const user1 = new User(newUser2)
+            const createdUser2 =  await user1.save()
+
+            const updateData = {
+                username: "user2"
+            }
+
+            await expect( userService.updateUsername(createdUser._id, updateData) ).rejects.toThrow()
+
+        })
+
+    })
+
+
+    describe('toggleUserStatus', () => {
+        it('should be able to toggle user status from suspended to active', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                country: "Nigeria",
+                status: 'suspended'
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const updatedUser = await userService.toggleUserStatus(createdUser._id);
+
+
+            const fetchedUser = await userService.getUserById(createdUser._id);
+
+
+            expect(createdUser.status).not.toEqual(fetchedUser.status);
+            expect(fetchedUser.status).toEqual('active');
+
+        })
+
+        it('should be able to toggle user status from active to suspended', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                country: "Nigeria",
+                status: 'active'
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const updatedUser = await userService.toggleUserStatus(createdUser._id);
+
+
+            const fetchedUser = await userService.getUserById(createdUser._id);
+
+
+            expect(createdUser.status).not.toEqual(fetchedUser.status);
+            expect(fetchedUser.status).toEqual('suspended');
 
         })
 
