@@ -89,7 +89,7 @@ userSchema.methods.generateJWT = function () {
       // algorithm: "RS256",
     }
   );
-  console.log(`token generated: date: ${Date.now()} - token: ${token} - expires: ${jwtExpiry}`)
+  // console.log(`token generated: date: ${Date.now()} - token: ${token} - expires: ${jwtExpiry}`)
   return token;
 };
 
