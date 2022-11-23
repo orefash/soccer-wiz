@@ -56,17 +56,21 @@ var corsOptions = {
         } else {
             callback(new Error('Not allowed by CORS'))
         }
-    }
+    },
+    credentials: true
 }
 
 // Then pass them to cors:
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 // app.use(cors());
-app.use(cors({
-    origin: "http://localhost:3001", // (Whatever your frontend url is) 
-    credentials: true, // <= Accept credentials (cookies) sent by the client
-}))
-
+// app.use(cors({
+//     origin: "http://localhost:3001", // (Whatever your frontend url is) 
+//     credentials: true, // <= Accept credentials (cookies) sent by the client
+// }))
+// app.use(cors({
+//     origin: "*", // (Whatever your frontend url is) 
+//     credentials: true, // <= Accept credentials (cookies) sent by the client
+// }))
 
 
 const isLoggedIn = (req, res, next) => {
