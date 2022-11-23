@@ -39,7 +39,7 @@ function authRoutes() {
 
                 newUser.registerUser(newUser, (err, user) => {
                     if (err) throw err;
-                    res.json({ success: true, message: 'Register success.' }); // just redirect to login
+                    res.json({ success: true, message: 'Register success.', user: user }); // just redirect to login
                 });
             } catch (err) {
                 // return next(err);
