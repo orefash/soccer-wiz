@@ -132,6 +132,7 @@ userSchema.methods.toJSON = function () {
     totalScore: this.totalScore,
     gamesPlayed: this.gamesPlayed,
     status: this.status,
+    wallet_balance: this.wallet_balance,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };
