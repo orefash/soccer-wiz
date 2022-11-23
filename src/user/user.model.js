@@ -73,7 +73,6 @@ const userSchema = new Schema({
 const secretOrKey = process.env.JWT_SECRET;
 const jwtExpiry = process.env.JWT_EXPIRY;
 
-
 userSchema.methods.generateJWT = function () {
   const token = jwt.sign(
     {
