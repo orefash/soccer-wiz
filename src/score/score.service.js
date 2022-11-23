@@ -165,12 +165,40 @@ const getMatchdayLeaderboard = (WeeklyScore) => async ({ userId, username }) => 
 }
 
 
+
+
+const deleteScores = (DailyScore, WeeklyScore, MonthlyScore) => async (period) => {
+
+    const periods = {
+        1: DailyScore,
+        2: WeeklyScore,
+        3: MonthlyScore
+    }
+
+    // console.log(' period: ', period)
+
+    // console.log(' periods: ', Object.keys(periods))
+
+    // Object.keys(periods)
+
+    if (!Object.keys(periods).includes(period)) throw new Error('Invalid Period')
+
+    let Model = periods[period];
+    // console.log('in leaderboard: - model ', Model)
+
+    const data = await Model.deleteMany({});
+
+    return data;
+}
+
+
 module.exports = (DailyScore, WeeklyScore, MonthlyScore, Score) => {
     return {
 
         saveScore: saveScore(DailyScore, WeeklyScore, MonthlyScore),
         getLeaderboardByCategory: getLeaderboardByCategory(DailyScore, WeeklyScore, MonthlyScore),
         getScores: getScores(DailyScore, WeeklyScore, MonthlyScore),
-        getMatchdayLeaderboard: getMatchdayLeaderboard(WeeklyScore)
+        getMatchdayLeaderboard: getMatchdayLeaderboard(WeeklyScore),
+        deleteScores: deleteScores(DailyScore, WeeklyScore, MonthlyScore)
     }
 }

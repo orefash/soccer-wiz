@@ -102,6 +102,30 @@ describe('Game Settings Service', () => {
         })
     })
 
+
+    describe('setCurrentGameWeek', () => {
+        it('should set game week value', async () => {
+
+            const savedSettings = await gameSettingService.saveOrUpdateSettings(gameSetting);
+
+            await gameSettingService.setCurrentGameWeek(2);
+
+            let setting1 = await gameSettingService.getSettings();
+
+            await gameSettingService.setCurrentGameWeek(1);
+
+            let setting2 = await gameSettingService.getSettings();
+
+            expect(setting1.currentGameWeek).toBe(2)
+
+            expect(setting2.currentGameWeek).toBe(1)
+
+
+        })
+    })
+
+
+
     describe('getSettings', () => {
         it('should return game settings', async () => {
 

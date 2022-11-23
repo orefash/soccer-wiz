@@ -21,17 +21,19 @@ const claimReward = (Reward, walletTransactionService) => async ({rewardId, user
         new: true,
     });
 
+    if(!updatedReward.claimed) throw new Error('Issue with Reward Claiming - DB Error')
+
     // console.log("Up Rewards; ", rewards)
 
-    if(updatedReward.claimed){
-        const newTransaction = await walletTransactionService.saveWalletTransaction({ userId: userId, isInflow: false, value: updatedReward.value, description: "Withdrawal of rewards", status: "successful", type: updatedReward.type })
-    }
+    // if(updatedReward.claimed){
+    //     const newTransaction = await walletTransactionService.saveWalletTransaction({ userId: userId, isInflow: false, value: updatedReward.value, description: "Withdrawal of rewards", status: "successful", type: updatedReward.type })
+    // }
 
     return updatedReward
 }
 
 
-const issueReward = (Reward) => async (id) => {
+const issueReward = (Reward, walletTransactionService) => async (id) => {
 
     const rewards = await Reward.findOne({ _id: id })
 
@@ -41,6 +43,11 @@ const issueReward = (Reward) => async (id) => {
     const updatedReward = await Reward.findByIdAndUpdate(id, { issued: true, issueDate: new Date() }, {
         new: true,
     });
+
+    if(!updatedReward.issued) throw new Error('Reward Issuance Error - DB Error')
+
+    const newTransaction = await walletTransactionService.saveWalletTransaction({ userId: userId, isInflow: false, value: updatedReward.value, description: "Withdrawal of rewards", status: "successful", type: updatedReward.type })
+    
 
     return updatedReward
 }
@@ -58,7 +65,7 @@ const getRewardsByUser = (Reward) => async (userId) => {
 
     const rewards = await Reward.find({ "userId": userId});
 
-    // console.log("Re: ", rewards)s
+    // console.log("Re: ", rewards)
 
     let data = {  };
     let available = [], claimed = [];
@@ -88,6 +95,6 @@ module.exports = (Reward, walletTransactionService) => {
         getRewards: getRewards(Reward),
         getRewardsByUser: getRewardsByUser(Reward),
         claimReward: claimReward(Reward, walletTransactionService),
-        issueReward: issueReward(Reward)
+        issueReward: issueReward(Reward, walletTransactionService)
     }
 }

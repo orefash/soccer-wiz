@@ -21,6 +21,28 @@ const saveOrUpdateSettings = (GameSetting) => async (data) => {
 
 }
 
+
+const setCurrentGameWeek = (GameSetting) => async (gameweek) => {
+
+    const existing = await GameSetting.find()
+
+    // console.log("in create: ", existing)
+
+    if (existing.length > 0) {
+        let setting = existing[existing.length - 1];
+        // console.log("Setting last: ", setting);
+
+        return await updateSetting(GameSetting)(setting._id, {currentGameWeek: gameweek})
+
+
+    } else {
+        const newSetting = new GameSetting({ currentGameWeek: gameweek })
+
+        return newSetting.save()
+    }
+
+}
+
 // const deleteQuestion = (Question) => async (id) => {
 //     const question = await Question.findByIdAndDelete(id)
 
@@ -93,25 +115,6 @@ const getGameSettings = (GameSetting, gameCategoryService) => async () => {
 
 }
 
-// const getActiveCategories = (GameSetting) => async () => {
-//     const categories = await GameSetting.find({
-//         "categories": { isActive: true }
-//     })
-
-//     //  const categories = await GameSetting.find({
-//     //     "categories.isActive": true
-//     //  })  
-
-//     return categories;
-// }
-
-// const getQuestionById = (Question) => async (id) => {
-
-//     const question = await Question.findById(id);
-
-//     return question;
-// }
-
 
 module.exports = (GameSetting, gameCategoryService) => {
     return {
@@ -119,6 +122,7 @@ module.exports = (GameSetting, gameCategoryService) => {
         saveOrUpdateSettings: saveOrUpdateSettings(GameSetting),
         getBuyList: getBuyList(GameSetting),
         getSettings: getSettings(GameSetting),
+        setCurrentGameWeek: setCurrentGameWeek(GameSetting),
         getGameSettings: getGameSettings(GameSetting, gameCategoryService)
         // getActiveCategories: getActiveCategories(GameSetting)
 

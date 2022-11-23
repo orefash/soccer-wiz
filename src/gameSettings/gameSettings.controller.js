@@ -33,6 +33,34 @@ function settingsRoutes(gameSettingService) {
 
 
 
+    router.post('/setGameWeek', async (req, res) => {
+
+        try {
+            const { gameWeek } = req.body;
+
+            if (!gameWeek) {
+                throw Error("Incomplete Request details")
+            }
+
+            // let data = req.body
+
+            const settingsData = await gameSettingService.setCurrentGameWeek(gameWeek);
+
+            res.status(200).json({
+                success: true,
+                settings: settingsData
+            });
+
+
+        } catch (err) {
+            // return next(err);
+            // console.log("reg erro: ", err)
+            res.json({ success: false, message: err.message });
+        }
+    });
+
+
+
     router.get('/', async (req, res) => {
 
         try {
