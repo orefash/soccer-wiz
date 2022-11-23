@@ -17,7 +17,6 @@ const addQuestion = (Question, gameCategoryService) => async (data) => {
     if (!category)
         throw new Error('Invalid Category')
 
-
     const newQuestion = new Question(data)
 
     return newQuestion.save()

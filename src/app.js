@@ -48,7 +48,7 @@ app.use(
     })
 );
 
-var whitelist = ['http://localhost:3001', 'http://localhost:3000']
+var whitelist = ['http://localhost:3001', 'http://localhost:3000', 'https://expensive-mite-housecoat.cyclic.app']
 var corsOptions = {
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {
@@ -61,22 +61,17 @@ var corsOptions = {
 }
 
 // Then pass them to cors:
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 // app.use(cors());
-// app.use(cors({
-//     origin: "http://localhost:3001", // (Whatever your frontend url is) 
-//     credentials: true, // <= Accept credentials (cookies) sent by the client
-// }))
+app.use(cors({
+    origin: whitelist, // (Whatever your frontend url is) 
+    credentials: true, // <= Accept credentials (cookies) sent by the client
+}))
 // app.use(cors({
 //     origin: "*", // (Whatever your frontend url is) 
 //     credentials: true, // <= Accept credentials (cookies) sent by the client
 // }))
 
-
-const isLoggedIn = (req, res, next) => {
-    // console.log("In login check: ", req.user)
-    req.user ? next() : res.sendStatus(401);
-};
 
 app.get("/api", (req, res) => {
     res.status(200).json({ alive: true });
