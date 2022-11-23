@@ -22,11 +22,11 @@ function authRoutes() {
         try {
             const { email, password, phone, country } = req.body;
 
+            if(!email || !phone || !password) throw new Error('Incomplete Request Details')
+
             const existingUser = await User.findOne({ email });
 
-            if (existingUser) {
-                return res.status(422).send({ message: 'Email is in use' });
-            }
+            if (existingUser) throw new Error('User with email already exists')
 
             try {
                 const newUser = await new User({
@@ -44,12 +44,12 @@ function authRoutes() {
             } catch (err) {
                 // return next(err);
                 // console.log("reg erro: ", err)
-                res.json({ success: false, message: 'Register Failure.' });
+                res.json({ success: false, message: 'Register Failure: '+err.message });
             }
         } catch (err) {
             // return next(err);
                 // console.log("reg erro: ", err)
-            res.json({ success: false, message: 'Register Failure.' });
+            res.json({ success: false, message: 'Register Failure: '+err.message });
         }
     });
 
