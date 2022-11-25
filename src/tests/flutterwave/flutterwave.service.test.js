@@ -113,7 +113,7 @@ describe('Flutterwave Service', () => {
             let txRef = "12345"
             
             let initGtran = await gatewayTransactionService.saveGatewayTransaction({
-                userId: user_id,
+                userId: user._id,
                 transactionId: txRef,
                 name: 'orefash',
                 email: "orefash@mail.com",
@@ -130,6 +130,7 @@ describe('Flutterwave Service', () => {
             }
 
             const savedUser = await userService.addLocalUser(newUser);
+            console.log("user: ", savedUser)
 
             const flutterwaveData = {
                 userId: savedUser._id,

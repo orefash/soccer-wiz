@@ -50,7 +50,7 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
         })
 
 
-        if (response.data && response.data.status === 'success') {
+        if (response.data && response.data.status === 'success' && response.data.link) {
             await gatewayTransactionService.saveGatewayTransaction({ userId, transactionId: transactionRef, name: user.username, email: user.email, amount, currency, paymentStatus: "pending", paymentGateway: "flutterwave" });
             return { success: true, tx_ref: transactionRef, data: response.data };
         } else {
@@ -59,12 +59,12 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
 
     } catch (err) {
         console.log('flutterwave link error: ', err.code);
-        console.log('flutterwave link error: ', err.response.body);
+        console.log('flutterwave link error: ', err.message);
 
         return {
             success: false,
             err_code: err.code,
-            message: err.response.body
+            message: err.message
 
         }
     }

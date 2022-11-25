@@ -128,10 +128,10 @@ userSchema.methods.toJSON = function () {
     role: this.role,
     phone: this.phone,
     avgPoints: avgPoints,
-    totalScore: this.totalScore,
+    totalGamePoints: this.totalScore,
     gamesPlayed: this.gamesPlayed,
     status: this.status,
-    wallet_balance: this.wallet_balance,
+    creditBalance: this.wallet_balance,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };
