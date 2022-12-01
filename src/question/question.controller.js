@@ -142,6 +142,7 @@ function questionRoutes(QuestionService) {
             const questionData = {
                 spreadsheetId, category
             }
+            
             const questions = await QuestionService.addBulkQuestions(questionData);
             res.status(200).json({
                 success: true,
