@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 
 function settingsRoutes(gameSettingService) {
     const router = express.Router();

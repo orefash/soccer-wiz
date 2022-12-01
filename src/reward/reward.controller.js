@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 
 function rewardRoutes(rewardService, userService) {
     const router = express.Router();

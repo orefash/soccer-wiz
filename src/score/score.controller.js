@@ -34,13 +34,13 @@ function scoreRoutes(ScoreService) {
 
         try {
             let period = req.query.period;
-            let username = req.query.username;
+            // let username = req.query.username;
             let userId = req.params.userId;
             let category = req.params.category;
 
-            if(!userId || !category || !username || !period ) throw new Error('Incomplete parameters')
+            if(!userId || !category || !period ) throw new Error('Incomplete parameters')
 
-            let data = { period, username, userId, category }
+            let data = { period, userId, category }
             // console.log('Data: ', data)
             const leaderboard = await ScoreService.getLeaderboardByCategory(data);
             res.status(200).json({

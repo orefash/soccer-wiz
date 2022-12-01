@@ -124,7 +124,7 @@ const getLeaderboardByCategory = (DailyScore, WeeklyScore, MonthlyScore) => asyn
     })
 
 
-    return { leaderboard: leaderboard, userId, username, rank: userRank, period: periods[period].period };
+    return { leaderboard: leaderboard, userId, rank: userRank, period: periods[period].period };
 }
 
 

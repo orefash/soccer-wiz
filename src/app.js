@@ -23,6 +23,7 @@ const { ScoreController } = require('./score')
 const { GameController } = require('./game')
 const { WalletController } = require('./walletTransaction')
 const { RewardController } = require('./reward')
+const { FlwController } = require('./flutterwave')
 
 app.use(passport.initialize());
 // app.use(passport.session());
@@ -88,5 +89,6 @@ app.use("/api/scores", ScoreController);
 app.use("/api/games", GameController);
 app.use("/api/wallet/transactions", WalletController);
 app.use("/api/rewards", RewardController);
+app.use("/api/payments", FlwController);
 
 module.exports = app;

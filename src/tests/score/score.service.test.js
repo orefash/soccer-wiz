@@ -186,7 +186,7 @@ describe('Score Service', () => {
 
             let category = 'PL'
 
-            let leaderboard = await scoreService.getLeaderboardByCategory({ period: '1', user2, username: 'user2', category })
+            let leaderboard = await scoreService.getLeaderboardByCategory({ period: '1', user2, category })
 
             // console.log('PL leaderboard: ', leaderboard);
 

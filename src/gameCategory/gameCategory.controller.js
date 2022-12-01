@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 
 function categoryRoutes(gameCategoryService) {
     const router = express.Router();
