@@ -131,6 +131,35 @@ function questionRoutes(QuestionService) {
 
 
 
+    router.post("/bulk", async (req, res) => {
+        try {
+            const { spreadsheetId, category } = req.body;
+
+            if (!spreadsheetId || !category ) {
+                throw Error("Incomplete Request details")
+            }
+
+            const questionData = {
+                spreadsheetId, category
+            }
+            const questions = await QuestionService.addBulkQuestions(questionData);
+            res.status(200).json({
+                success: true,
+                questions: questions
+            });
+
+        } catch (error) {
+            console.log("Error in questions: ", error)
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
+
+
+
     router.post("/", async (req, res) => {
         try {
             const { question, category, answers } = req.body;

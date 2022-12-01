@@ -250,6 +250,48 @@ describe('Question Service', () => {
         })
     })
 
+    describe('addBulkQuestions', () => {
+        it('should save multiple questions at a time - from google sheets', async () => {
+
+            let data = {
+                category: 'General',
+                spreadsheetId: '1UF0iskvv8mfenwV8_FOwF5JYB13O2fIAsJ9oU3xBLVQ',
+
+            }
+
+            const bulkQuestions = await questionService.addBulkQuestions(data);
+
+            const fetchedQuestions = await questionService.getQuestionsByCategory(data.category);
+
+            expect(fetchedQuestions.length).toEqual(30);
+
+            expect(bulkQuestions.length).toEqual(30)
+            // done();
+
+        })
+    })
+
+    describe('addBulkQuestions', () => {
+        it('should save multiple demo questions at a time - from google sheets', async () => {
+
+            let data = {
+                category: 'demo',
+                spreadsheetId: '1UF0iskvv8mfenwV8_FOwF5JYB13O2fIAsJ9oU3xBLVQ',
+
+            }
+
+            const bulkQuestions = await questionService.addBulkQuestions(data);
+
+            const fetchedQuestions = await questionService.getQuestionsByCategory(data.category);
+
+            expect(fetchedQuestions.length).toEqual(30);
+
+            expect(bulkQuestions.length).toEqual(30)
+            // done();
+
+        })
+    })
+
     describe('deleteQuestion', () => {
         it('should delete a question when given id', async () => {
 

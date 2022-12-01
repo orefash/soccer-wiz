@@ -25,6 +25,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "flutterwave-node-v3": "^1.0.11",
+    "googleapis": "^109.0.1",
     "got": "^12.5.2",
     "jsonwebtoken": "^8.5.1",
     "mongodb-memory-server": "^8.9.3",

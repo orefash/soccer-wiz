@@ -1,5 +1,7 @@
 const checkTodayWithinMatchday = require("../utils/timeValidations");
 
+const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require("../utils/loadQuestions");
+
 const addQuestion = (Question, gameCategoryService) => async (data) => {
 
     if (data.answers.length !== 4)
@@ -21,6 +23,48 @@ const addQuestion = (Question, gameCategoryService) => async (data) => {
 
     return newQuestion.save()
 }
+
+const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
+
+    // if (data.answers.length !== 4)
+    //     throw new Error('Question requires 4 options')
+    if(!data.category || !data.spreadsheetId) throw new Error('Incomplete parameters')
+    let dataRange = "Sheet1!A:F";
+
+    const category = await gameCategoryService.getCategoryByName(data.category)
+
+    // console.log("dat: ", data.category)
+    // console.log("cat: ", category)
+
+    if (!category && data.category !== 'demo')
+        throw new Error('Invalid Category')
+
+    try{
+
+        let rawData = await loadQuestionsFromGoogleSheets(data.spreadsheetId, dataRange);
+
+        // console.log("Fetched Q: ", rawData)
+
+        let formattedData = await formatDataForQuestionService(rawData, data.category)
+
+        // console.log("format Q: ", JSON.stringify(formattedData))
+
+        let insertedData = await Question.insertMany(formattedData);
+
+        // console.log("insert Q: ", insertedData)
+
+        return insertedData
+
+    }catch(error){
+        console.log("Error in data load: ", error.message)
+        throw new Error(error.message)
+    }
+
+    
+
+
+}
+
 
 const deleteQuestion = (Question) => async (id) => {
     const question = await Question.findByIdAndDelete(id)
@@ -120,6 +164,7 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
     return {
 
         addQuestion: addQuestion(Question, gameCategoryService),
+        addBulkQuestions: addBulkQuestions(Question, gameCategoryService),
         deleteQuestion: deleteQuestion(Question),
         updateQuestion: updateQuestion(Question),
         getQuestionById: getQuestionById(Question),
