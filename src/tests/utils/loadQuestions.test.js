@@ -1,5 +1,5 @@
 const { when } = require('jest-when')
-
+require("dotenv").config();
 
 const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require('../../utils/loadQuestions');
 
