@@ -114,6 +114,10 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
         throw Error("Demo field not set")
     }
 
+    if (!demo && category === 'demo' ) {
+        throw Error("Invalid category for Live game")
+    }
+
     const questionCategory = await gameCategoryService.getCategoryByName(category)
     
     if (!questionCategory && category !== 'demo')
