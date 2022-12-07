@@ -113,6 +113,7 @@ describe('Reward Service', () => {
 
             const rewards = await rewardService.claimReward(data)
 
+            const issuedReward = await rewardService.issueReward(rewardId1)
             // console.log("rew; ", rewards)
 
             // expect(savedReward1.gameWeek).toBe(2)
@@ -120,6 +121,7 @@ describe('Reward Service', () => {
             // expect(savedReward2.gameWeek).toBe(3)
 
             expect(rewards.claimed).toBe(true)
+            expect(issuedReward.issued).toBe(true)
             // expect(rewards.available.length).toBe(2)
 
         })

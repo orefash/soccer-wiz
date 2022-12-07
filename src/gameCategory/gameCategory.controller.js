@@ -50,6 +50,41 @@ function categoryRoutes(gameCategoryService) {
         }
     });
 
+    router.delete('/', async (req, res) => {
+
+        try {
+            const categories = await gameCategoryService.deleteAllCategories();
+            res.status(200).json({
+                success: true,
+                categories: categories
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    });
+
+    router.delete('/:id', async (req, res) => {
+
+        try {
+            let categoryId = req.params.id;
+            const categories = await gameCategoryService.deleteCategory(categoryId);
+            res.status(200).json({
+                success: true,
+                categories: categories
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    });
+
     router.get('/active', async (req, res) => {
 
         try {

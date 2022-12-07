@@ -21,6 +21,12 @@ const deleteCategory = (GameCategory) => async (id) => {
 }
 
 
+const deleteAllCategories = (GameCategory) => async (id) => {
+    const data = await GameCategory.deleteMany({});
+
+    return data;
+}
+
 // const updateSetting = (GameSetting) => async (id, data) => {
 
 //     const updatedSetting = await GameSetting.findByIdAndUpdate(id, data, {
@@ -70,7 +76,8 @@ module.exports = (GameCategory) => {
         saveCategory: saveCategory(GameCategory),
         getCategories: getCategories(GameCategory),
         deleteCategory: deleteCategory(GameCategory),
-        getCategoryByName: getCategoryByName(GameCategory)
+        getCategoryByName: getCategoryByName(GameCategory),
+        deleteAllCategories: deleteAllCategories(GameCategory)
         // updateSetting: updateSetting(GameSetting),
         // getSettings: getSettings(GameSetting),
         // getActiveCategories: getActiveCategories(GameSetting)

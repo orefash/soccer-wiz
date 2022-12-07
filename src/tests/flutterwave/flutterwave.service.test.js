@@ -28,9 +28,9 @@ afterAll(async () => await closeDatabase())
 
 
 
-describe('Flutterwave Service', () => {
+describe('Flutterwave Service (Must be online to test)', () => {
 
-    describe('getFlutterwaveLink - live', () => {
+    describe('getFlutterwaveLink - live ', () => {
         it('should return a flutterwave payment link if user exists, amount >= 300, ', async () => {
 
             const newUser = {

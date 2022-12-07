@@ -96,6 +96,11 @@ const getScores = (DailyScore, WeeklyScore, MonthlyScore) => async (period) => {
 
 const getLeaderboardByCategory = (DailyScore, WeeklyScore, MonthlyScore) => async ({ period, userId, username, category }) => {
 
+    // console.log('userid: ', userId)
+
+    if(!userId)
+        throw new Error('No UserId!!')
+
     const periods = {
         1: {model: DailyScore, period: 'daily'},
         2: {model: WeeklyScore, period: 'weekly'},
@@ -109,11 +114,11 @@ const getLeaderboardByCategory = (DailyScore, WeeklyScore, MonthlyScore) => asyn
     let Model = periods[period].model;
     // console.log('in leaderboard: - model ', Model)
 
-    const leaderboard = await Model.find({ category }, { createdAt: 0, updatedAt: 0, _id: 0, __v: 0}).sort({ score: -1 });
+    const leaderboard = await Model.find({ category }, { category: 0, createdAt: 0, updatedAt: 0, _id: 0, __v: 0}).sort({ score: -1 });
 
     let userRank = null;
     let docCount = 0;
-    if (leaderboard.length === 0) return { leaderboard: [], userId: userId, rank: null }
+    if (leaderboard.length === 0) return { category, leaderboard: [], userId: userId, rank: null, top3: null }
 
     leaderboard.forEach(function (doc) {
         docCount++;
@@ -123,8 +128,13 @@ const getLeaderboardByCategory = (DailyScore, WeeklyScore, MonthlyScore) => asyn
         }
     })
 
+    let top3 = {}
+    top3.first = leaderboard[0];
+    top3.second = leaderboard.length > 1 ? leaderboard[1] : null;
+    top3.third = leaderboard.length > 2 ? leaderboard[2] : null;
 
-    return { leaderboard: leaderboard, userId, rank: userRank, period: periods[period].period };
+
+    return { category, leaderboard: leaderboard, userId, rank: userRank, period: periods[period].period, top3 };
 }
 
 

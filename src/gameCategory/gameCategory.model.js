@@ -8,6 +8,10 @@ const gameCategorySchema = new Schema({
         trim: true,
         unique: true
     },
+    description: {
+        type: String, 
+        trim: true,
+    },
     isActive: {
         type: Boolean,
         default: true,

@@ -102,6 +102,10 @@ function questionRoutes(QuestionService) {
                 throw Error("Incomplete Request details")
             }
 
+            if (demo && category !== 'demo' ) {
+                throw Error("Demo field not set")
+            }
+
             const questionData = {
                 demo, category, userId, date: new Date()
             }

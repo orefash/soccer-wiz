@@ -16,7 +16,7 @@ const addQuestion = (Question, gameCategoryService) => async (data) => {
 
     const category = await gameCategoryService.getCategoryByName(data.category)
 
-    if (!category)
+    if (!category && data.category !== 'demo')
         throw new Error('Invalid Category')
 
     const newQuestion = new Question(data)
@@ -89,8 +89,14 @@ const getQuestions = (Question) => async () => {
     return questions;
 }
 
-const getQuestionsByCategory = (Question) => async (category, queryLimit = 0) => {
+const getQuestionsByCategory = (Question, gameCategoryService) => async (category, queryLimit = 0) => {
     let questions = null;
+
+    const questionCategory = await gameCategoryService.getCategoryByName(category)
+
+    
+    if (!questionCategory && category !== 'demo')
+        throw new Error('Invalid Category')
 
     if (queryLimit > 0)
         questions = await Question.find({ category: category }).limit(queryLimit);
@@ -100,9 +106,18 @@ const getQuestionsByCategory = (Question) => async (category, queryLimit = 0) =>
     return questions;
 }
 
-const getQuestionsForGame = (Question, userService, gameSettingService) => async ({ userId, category, demo, date }) => {
+const getQuestionsForGame = (Question, gameCategoryService, userService, gameSettingService) => async ({ userId, category, demo, date }) => {
 
     let required_game_credits = 10;
+
+    if (demo && category !== 'demo' ) {
+        throw Error("Demo field not set")
+    }
+
+    const questionCategory = await gameCategoryService.getCategoryByName(category)
+    
+    if (!questionCategory && category !== 'demo')
+        throw new Error('Invalid Category')
 
     let data = {
         user: userId, sufficient_balance: true, demo: demo, in_matchday: false, error: true
@@ -169,8 +184,8 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
         updateQuestion: updateQuestion(Question),
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
-        getQuestionsByCategory: getQuestionsByCategory(Question),
-        getQuestionsForGame: getQuestionsForGame(Question, userService, gameSettingService)
+        getQuestionsByCategory: getQuestionsByCategory(Question, gameCategoryService),
+        getQuestionsForGame: getQuestionsForGame(Question, gameCategoryService, userService, gameSettingService)
 
     }
 }

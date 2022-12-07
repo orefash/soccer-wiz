@@ -207,6 +207,37 @@ const q4 = {
 }
 
 
+const q5 = {
+
+    "active": true,
+    "points": 1,
+    "question": "How many Ballon'Dor does Messi havee 3?",
+    "category": "demo",
+    "answers": [
+        {
+            "optionNumber": 1,
+            "answerText": "5",
+            "isCorrect": false
+        },
+        {
+            "optionNumber": 2,
+            "answerText": "7",
+            "isCorrect": true
+        },
+        {
+            "optionNumber": 3,
+            "answerText": "2",
+            "isCorrect": false
+        },
+        {
+            "optionNumber": 3,
+            "answerText": "2",
+            "isCorrect": false
+        }
+    ]
+}
+
+
 describe('Question Service', () => {
 
     describe('addQuestion', () => {
@@ -269,9 +300,6 @@ describe('Question Service', () => {
             // done();
 
         })
-    })
-
-    describe('addBulkQuestions', () => {
         it('should save multiple demo questions at a time - from google sheets', async () => {
 
             let data = {
@@ -290,7 +318,25 @@ describe('Question Service', () => {
             // done();
 
         })
+
+        it('should throw error when invalid catgeory is set', async () => {
+
+            let data = {
+                category: 'invalid',
+                spreadsheetId: '1UF0iskvv8mfenwV8_FOwF5JYB13O2fIAsJ9oU3xBLVQ',
+
+            }
+
+            // const bulkQuestions = await questionService.addBulkQuestions(data);
+
+            await expect(questionService.addBulkQuestions(data)).rejects.toThrow()
+
+            // done();
+
+        })
     })
+
+   
 
     describe('deleteQuestion', () => {
         it('should delete a question when given id', async () => {
@@ -397,6 +443,54 @@ describe('Question Service', () => {
 
         })
 
+        it('should be able to get Question By demo Category', async () => {
+
+            
+
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q3);
+            await questionService.addQuestion(q5);
+
+            const category = "demo";
+
+            const fetchedQuestions = await questionService.getQuestionsByCategory(category);
+
+            expect(fetchedQuestions.length).toEqual(1);
+
+            expect(fetchedQuestions[0].category).toEqual(category);
+
+
+        })
+
+        it('should throw error when categroy is invalid', async () => {
+            
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q3);
+            await questionService.addQuestion(q5);
+
+            const category = "invalid";
+
+
+            await expect(questionService.getQuestionsByCategory(category)).rejects.toThrow();
+
+
+        })
+
+        it('should throw error when categroy is invalid', async () => {
+            
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q3);
+            await questionService.addQuestion(q5);
+
+            const category = "";
+
+            await expect(questionService.getQuestionsByCategory(category)).rejects.toThrow();
+
+        })
+
         it('should be able to get n number of Questions By Category', async () => {
 
             
@@ -446,10 +540,11 @@ describe('Question Service', () => {
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
+            await questionService.addQuestion(q5);
 
             const userId = 'good_bal';
             const data = {
-                category: 'General',
+                category: 'demo',
                 demo: true,
                 userId: userId
             }
@@ -457,17 +552,39 @@ describe('Question Service', () => {
             const fetchedGame = await questionService.getQuestionsForGame(data);
             // console.log("in game: ", fetchedGame)
 
-            expect(fetchedGame.questions.length).toEqual(2);
+            expect(fetchedGame.questions.length).toEqual(1);
             expect(fetchedGame.user).toEqual(userId);
             expect(fetchedGame.error).toEqual(false);
 
 
         })
 
-        
-        it('invalid user should not be able to get Questions for Game', async () => {
+        it('should throw error with invlaid category', async () => {
 
             
+
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q3);
+            await questionService.addQuestion(q5);
+
+            const userId = 'good_bal';
+            const data = {
+                category: '',
+                demo: true,
+                userId: userId
+            }
+
+            // const fetchedGame = await questionService.getQuestionsForGame(data);
+            // console.log("in game: ", fetchedGame)
+
+            await expect(questionService.getQuestionsForGame(data)).rejects.toThrow();
+
+
+        })
+
+        
+        it('invalid user should not be able to get Questions for Game', async () => {
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
@@ -486,9 +603,7 @@ describe('Question Service', () => {
 
         })
 
-        it('user with insufficient balance should not be able to get Questions for live Game', async () => {
-
-            
+        it('user with insufficient balance should not be able to get Questions for live Game', async () => { 
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);

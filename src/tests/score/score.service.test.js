@@ -11,7 +11,7 @@ beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
 afterAll(async () => await closeDatabase())
 
-let user1 = '636b0910df08da51e672f882', user2 = '636b091adf08da51e672f888', user3 = '636d5bebb89af4cd04c6db80';
+let user1 = '636b0910df08da51e672f882', user2 = '636b091adf08da51e672f888', user3 = '636d5bebb89af4cd04c6db80', user4 = '636d7bebb89af4cd04c6db80';;
 
 const score1 = {
     userId: user1,
@@ -81,6 +81,14 @@ const score9 = {
     userId: user1,
     username: 'user1',
     category: 'EFL',
+    date: Date.now(),
+    score: 18
+}
+
+const score10 = {
+    userId: user4,
+    username: 'user4',
+    category: 'PL',
     date: Date.now(),
     score: 18
 }
@@ -183,14 +191,15 @@ describe('Score Service', () => {
             let s6 = await scoreService.saveScore(score6)
 
             let s7 = await scoreService.saveScore(score7)
+            let s8 = await scoreService.saveScore(score10)
 
             let category = 'PL'
 
-            let leaderboard = await scoreService.getLeaderboardByCategory({ period: '1', user2, category })
+            let leaderboard = await scoreService.getLeaderboardByCategory({ period: '1', userId: user2, category })
 
             // console.log('PL leaderboard: ', leaderboard);
 
-            expect(leaderboard.leaderboard.length).toBe(3)
+            expect(leaderboard.leaderboard.length).toBe(4)
 
         });
 
@@ -210,7 +219,27 @@ describe('Score Service', () => {
 
             let category = 'PL'
 
-            await expect( scoreService.getLeaderboardByCategory({ period: '5', user2, username: 'user2', category })).rejects.toThrow()
+            await expect( scoreService.getLeaderboardByCategory({ period: '5', userId: user2, username: 'user2', category })).rejects.toThrow()
+
+        });
+
+        it('should throw error when no userID is passed', async () => {
+
+            let s1 = await scoreService.saveScore(score1)
+
+            let s2 = await scoreService.saveScore(score2)
+            let s3 = await scoreService.saveScore(score3)
+            let s4 = await scoreService.saveScore(score4)
+
+            let s5 = await scoreService.saveScore(score5)
+
+            let s6 = await scoreService.saveScore(score6)
+
+            let s7 = await scoreService.saveScore(score7)
+
+            let category = 'PL'
+
+            await expect( scoreService.getLeaderboardByCategory({ period: '5', username: 'user2', category })).rejects.toThrow()
 
         });
     })
