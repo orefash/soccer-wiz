@@ -4,7 +4,7 @@ const saveCategory = (GameCategory) => async (data) => {
 
     const existing = await GameCategory.findOne({ category: data.category })
 
-    // console.log("in create: ", existing)
+    // console.log("in create: ", data)
 
     if (existing)
         throw new Error("Categroy already exists")

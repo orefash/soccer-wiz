@@ -6,14 +6,14 @@ function categoryRoutes(gameCategoryService) {
     router.post('/', async (req, res, next) => {
 
         try {
-            const { category, isActive } = req.body;
+            const { category, isActive, description } = req.body;
 
-            if (!category) {
+            if (!category || !description) {
                 throw Error("Incomplete Request details")
             }
 
             let data = {
-                category, isActive
+                category, isActive, description
             }
 
             const categoryData = await gameCategoryService.saveCategory(data);

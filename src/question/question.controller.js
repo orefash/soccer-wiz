@@ -67,6 +67,26 @@ function questionRoutes(QuestionService) {
     });
 
 
+
+    router.delete("/", async (req, res) => {
+        try {
+            const question = await QuestionService.deleteAllQuestions();
+
+            res.status(200).json({
+                success: true,
+                question: question
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error
+            });
+        }
+
+    });
+
+
     router.get("/category/:category", async (req, res) => {
         try {
             // console.log("Category param: ", req.params.category)

@@ -356,6 +356,25 @@ describe('Question Service', () => {
         })
     })
 
+    describe('deleteAllQuestions', () => {
+        it('should delete all questions', async () => {
+
+            
+
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q3);
+
+            const fetchedQuestions = await questionService.getQuestions();
+            await questionService.deleteAllQuestions();
+            const fetchedQuestions2 = await questionService.getQuestions();
+
+            expect(fetchedQuestions.length).toEqual(3);
+            expect(fetchedQuestions2.length).toEqual(0);
+
+        })
+    })
+
 
     describe('updateQuestion', () => {
         it('should update a question and return the updated question', async () => {

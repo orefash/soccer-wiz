@@ -73,6 +73,13 @@ const deleteQuestion = (Question) => async (id) => {
 }
 
 
+const deleteAllQuestions = (Question) => async () => {
+    const question = await Question.deleteMany({});
+
+    return question;
+}
+
+
 const updateQuestion = (Question) => async (id, { question, active, answers }) => {
 
     const updatedQuestion = await Question.findByIdAndUpdate(id, { question, active, answers }, {
@@ -185,6 +192,7 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
         addQuestion: addQuestion(Question, gameCategoryService),
         addBulkQuestions: addBulkQuestions(Question, gameCategoryService),
         deleteQuestion: deleteQuestion(Question),
+        deleteAllQuestions: deleteAllQuestions(Question),
         updateQuestion: updateQuestion(Question),
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
