@@ -11,7 +11,7 @@ passport.use('admin', new LocalStrategy({ // or whatever you want to use
 
   async function (email, password, done) {
 
-    console.log("in admin login")
+    // console.log("in admin login")
     try {
 
       // const currentUser = await userService.getUserByPhone(phone)

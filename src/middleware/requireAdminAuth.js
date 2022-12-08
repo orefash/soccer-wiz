@@ -1,7 +1,7 @@
 const passport = require('passport');
 
 const requireAdminAuth = (req, res, next) => {
-  console.log("in require admin")
+  // console.log("in require admin")
   passport.authenticate('admin', (err, user, info) => {
     if (err) {
       console.log("Errin ")

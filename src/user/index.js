@@ -4,6 +4,7 @@ const GoogleAuthController = require('./auth/googleAuth.controller')
 const LocalAuthController = require('./auth/localAuth.controller')
 const FacebookAuthController = require('./auth/facebookAuth.controller')
 const UserController = require('./user.controller')
+const AdminController = require('./admin.controller')
 
 const userService = UserService(User);
 
@@ -13,5 +14,6 @@ module.exports = {
     LocalAuthController: LocalAuthController.authRoutes(),
     GoogleAuthController: GoogleAuthController.authRoutes(),
     FacebookAuthController: FacebookAuthController.authRoutes(),
-    UserController: UserController.userRoutes(userService)
+    UserController: UserController.userRoutes(userService),
+    AdminController: AdminController.adminRoutes(userService)
 }

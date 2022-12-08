@@ -7,7 +7,6 @@ const { User } = require('../user')
 // const isProduction = process.env.NODE_ENV === 'production';
 // const secretOrKey =  "secret";
 const secretOrKey =  process.env.JWT_SECRET;
-let jwtfetch = ExtractJwt.fromHeader('x-auth-token');
 
 // console.log("jwt fetch: ", jwtfetch)
 // JWT strategy
@@ -22,7 +21,7 @@ const jwtLogin = new Strategy(
       const user = await User.findById(payload.id);
 
       // console.log("in jwt: ", user)
-      if (user) {
+      if (user && user.role === 'ADMIN') {
         done(null, user);
       } else {
         done(null, false);
@@ -33,4 +32,4 @@ const jwtLogin = new Strategy(
   },
 );
 
-passport.use(jwtLogin);
+passport.use('admin-jwt', jwtLogin);

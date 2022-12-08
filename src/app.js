@@ -14,7 +14,8 @@ const {
     GoogleAuthController, 
     UserController, 
     LocalAuthController, 
-    FacebookAuthController
+    FacebookAuthController,
+    AdminController
 } = require("./user");
 const { QuestionController } = require("./question");
 const { GameCategoryController } = require('./gameCategory')
@@ -29,7 +30,8 @@ app.use(passport.initialize());
 require("./passportConfig/local");
 require("./passportConfig/admin");
 require("./passportConfig/google");
-require("./passportConfig/jwt");
+require("./passportConfig/userJwt");
+require("./passportConfig/adminJwt");
 require("./passportConfig/facebook");
 
 
@@ -82,6 +84,7 @@ app.use("/auth", LocalAuthController);
 app.use("/auth", FacebookAuthController);
 app.use("/api/questions", QuestionController);
 app.use("/api/users", UserController);
+app.use("/api/admins", AdminController);
 app.use("/api/categories", GameCategoryController);
 app.use("/api/settings", GameSettingController);
 app.use("/api/scores", ScoreController);

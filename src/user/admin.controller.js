@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const requireJwtAuth = require('../middleware/requireUserJwtAuth');
+const requireAdminJwtAuth = require('../middleware/requireAdminJwtAuth');
 
-function userRoutes(UserService) {
+function adminRoutes(UserService) {
     const router = express.Router();
 
-    router.get('/me', requireJwtAuth, async (req, res) => {
-        console.log("in me")
-        let user = req.user.toJSON();
+    router.get('/me', requireAdminJwtAuth, async (req, res) => {
+        console.log("in admin me")
+        let user = req.user.toAdminJSON();
         res.json({
             success: true,
             user: user
@@ -154,4 +154,4 @@ function userRoutes(UserService) {
 
 }
 
-module.exports.userRoutes = userRoutes
+module.exports.adminRoutes = adminRoutes

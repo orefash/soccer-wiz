@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const requireJwtAuth = require('../middleware/requireJwtAuth');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function walletRoutes(WalletTransactionService, UserService) {
     const router = express.Router();
