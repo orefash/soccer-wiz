@@ -1,10 +1,11 @@
 const express = require('express');
 const requireJwtAuth = require('../middleware/requireUserJwtAuth');
+const requireAdminJwtAuth = require('../middleware/requireAdminJwtAuth');
 
 function questionRoutes(QuestionService) {
     const router = express.Router();
 
-    router.get("/", async (req, res) => {
+    router.get("/",requireAdminJwtAuth, async (req, res) => {
         try {
             const questions = await QuestionService.getQuestions();
             res.status(200).json({
@@ -156,7 +157,7 @@ function questionRoutes(QuestionService) {
 
 
 
-    router.post("/bulk", async (req, res) => {
+    router.post("/bulk",requireAdminJwtAuth, async (req, res) => {
         try {
             const { spreadsheetId, category } = req.body;
 
@@ -186,7 +187,7 @@ function questionRoutes(QuestionService) {
 
 
 
-    router.post("/", async (req, res) => {
+    router.post("/",requireAdminJwtAuth, async (req, res) => {
         try {
             const { question, category, answers } = req.body;
 
