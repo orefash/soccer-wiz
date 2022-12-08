@@ -55,6 +55,14 @@ const addLocalUser =  (User) => async ({ email, phone, password, country, role }
     return user.save()
 }
 
+const addAdminUser =  (User) => async ({ email, password }) => {
+
+    const user = new User({
+        email, password, source: "local", role: "ADMIN"
+    })
+    return user.save()
+}
+
 const getUsers = (User) => async () => {
     // console.log("in users service")
     let users = await User.find({});
@@ -166,6 +174,7 @@ module.exports = (User) => {
         addGoogleUser: addGoogleUser(User),
         addFacebookUser: addFacebookUser(User),
         addLocalUser: addLocalUser(User),
+        addAdminUser: addAdminUser(User),
         getUsers: getUsers(User),
         getUserByEmail: getUserByEmail(User),
         getUserById: getUserById(User),

@@ -26,7 +26,7 @@ const userSchema = new Schema({
     type: String,
     match: [/\S+@\S+\.\S+/, 'is invalid'],
     index: true,
-    // required: [true, "email required"],
+    required: [true, "email required"],
     unique: [true, "email already registered"],
   },
   firstName: String,
@@ -94,7 +94,7 @@ userSchema.methods.generateJWT = function () {
 
 userSchema.methods.registerUser = (newUser, callback) => {
   bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (errh, hash) => {
+    bcrypt.hash(newUser.password, salt, (err, hash) => {
       if (err) {
         console.log(err);
       }
@@ -113,8 +113,6 @@ userSchema.methods.comparePassword = function (candidatePassword, callback) {
 };
 
 userSchema.methods.toJSON = function () {
-
-
   const avgPoints = 0
   if (this.role === 'USER') {
     if (this.gamesPlayed > 0)
@@ -136,6 +134,22 @@ userSchema.methods.toJSON = function () {
     updatedAt: this.updatedAt,
   };
 };
+
+
+userSchema.methods.toAdminJSON = function () {
+  const avgPoints = 0
+  
+  return {
+    id: this._id,
+    source: this.source,
+    email: this.email,
+    role: this.role,
+    status: this.status,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  };
+};
+
 
 var userModel = mongoose.model("user", userSchema, "user");
 

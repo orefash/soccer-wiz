@@ -26,9 +26,8 @@ const { RewardController } = require('./reward')
 const { FlwController } = require('./flutterwave')
 
 app.use(passport.initialize());
-// app.use(passport.session());
-// require("./passportConfig/passport");
 require("./passportConfig/local");
+require("./passportConfig/admin");
 require("./passportConfig/google");
 require("./passportConfig/jwt");
 require("./passportConfig/facebook");

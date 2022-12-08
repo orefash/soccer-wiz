@@ -106,38 +106,11 @@ function userRoutes(UserService) {
 
             let data = {}
             let a =  null;
-            // try {
-            //     a = await UserService.getUsers();
-            // } catch (error) {
-            //     console.log('Error 1: ', error.message)
-            // }
-
-            // try {
-            //     data.users = a;
-            // } catch (error) {
-            //     console.log('Error 2: ', error.message)
-            // }
-
-            // try {
-            //     data.success = true;
-            // } catch (error) {
-            //     console.log('Error 3: ', error.message)
-            // }
-
+           
             a = await UserService.getUsers();
             data.users = a;
             data.success = true;
             res.status(200).json(data);
-            // try {
-                
-            // } catch (error) {
-            //     console.log('Error 4: ', error.message)
-            // }
-            // let uList = 
-            // console.log("Users: ", JSON.stringify(uList))
-            
-            // console.log("in get users")
-            // res.send("done")
 
         } catch (error) {
             console.log("error: ",error.message)
