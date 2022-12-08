@@ -1,4 +1,5 @@
 const express = require('express');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function settingsRoutes(gameSettingService) {
     const router = express.Router();
@@ -77,7 +78,7 @@ function settingsRoutes(gameSettingService) {
         }
     });
 
-    router.get('/buyList', async (req, res) => {
+    router.get('/buyList',requireJwtAuth, async (req, res) => {
 
         try {
             const data = await gameSettingService.getBuyList();
@@ -95,7 +96,7 @@ function settingsRoutes(gameSettingService) {
     });
 
 
-    router.get('/game', async (req, res) => {
+    router.get('/game',requireJwtAuth, async (req, res) => {
 
         try {
             const settings = await gameSettingService.getGameSettings();

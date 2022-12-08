@@ -6,20 +6,20 @@ const { generateUsernameFromEmail } = require("../utils/usernameGenerator");
 function generateUniqueUserName(User, email) {
     let proposedName = generateUsernameFromEmail(email, 2);
     return User
-      .findOne({username: proposedName})
-      .then(function(account) {
-        if (account) {
-        //   console.log('no can do try again: ' + proposedName);
-          return generateUniqueUserName(User, email); 
-        }
-        // console.log('proposed name is unique' + proposedName);
-        return proposedName;
-      })
-      .catch(function(err) {
-        console.error(err);
-        throw err;
-      });
-  }
+        .findOne({ username: proposedName })
+        .then(function (account) {
+            if (account) {
+                //   console.log('no can do try again: ' + proposedName);
+                return generateUniqueUserName(User, email);
+            }
+            // console.log('proposed name is unique' + proposedName);
+            return proposedName;
+        })
+        .catch(function (err) {
+            console.error(err);
+            throw err;
+        });
+}
 
 const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 
@@ -47,7 +47,7 @@ const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) =>
     return await user.save()
 }
 
-const addLocalUser =  (User) => async ({ email, phone, password, country, role }) => {
+const addLocalUser = (User) => async ({ email, phone, password, country, role }) => {
 
     const user = new User({
         email, password, source: "local", country, phone, role
@@ -55,7 +55,7 @@ const addLocalUser =  (User) => async ({ email, phone, password, country, role }
     return user.save()
 }
 
-const addAdminUser =  (User) => async ({ email, password }) => {
+const addAdminUser = (User) => async ({ email, password }) => {
 
     const user = new User({
         email, password, source: "local", role: "ADMIN"
@@ -70,11 +70,11 @@ const getUsers = (User) => async () => {
     return users
 }
 
-const getUserByEmail = (User) => async ( email ) => {
+const getUserByEmail = (User) => async (email) => {
     return await User.findOne({ email })
 }
 
-const getUserByPhone = (User) => async ( phone ) => {
+const getUserByPhone = (User) => async (phone) => {
     return await User.findOne({ phone })
 }
 
@@ -97,17 +97,27 @@ const updateUsernameAndCountry = (User) => async (id, { username, country }) => 
 
 const updateUsername = (User) => async (id, { username }) => {
 
-    let user = await getUserByUsername(User)(username);
+    try {
+        let user = await getUserByUsername(User)(username);
 
-    if(user) throw new Error('Username Already Exists!!')
+        if (user) throw new Error('Username Already Exists!!')
 
-    const updatedUser = await User.findByIdAndUpdate(id, { username }, {
-        new: true,
-    });
+        let updatedUser = await User.findByIdAndUpdate(id, { username }, {
+            new: true,
+        });
 
-    if(!updatedUser) throw new Error('Username is Invalid!!')
+        // console.log('Updated user: ', updatedUser)
 
-    return updatedUser
+        if (!updatedUser) throw new Error('Username is Invalid!!')
+
+        return updatedUser
+
+    } catch (err) {
+        // console.log("in upd: ", err.message)
+        throw new Error(err.message)
+    }
+
+
 }
 
 
@@ -119,15 +129,15 @@ const toggleUserStatus = (User) => async (id) => {
 
     let user = await getUserById(User)(id);
 
-    if(!user) throw new Error('Username Does not Exist!!!')
+    if (!user) throw new Error('Username Does not Exist!!!')
 
-    if(user.status == activeStatus) setStatus = suspendedStatus
+    if (user.status == activeStatus) setStatus = suspendedStatus
 
     const updatedUser = await User.findByIdAndUpdate(id, { status: setStatus }, {
         new: true,
     });
 
-    if(!updatedUser) throw new Error('Username is Invalid!!')
+    if (!updatedUser) throw new Error('Username is Invalid!!')
 
     return updatedUser
 }
@@ -136,12 +146,12 @@ const toggleUserStatus = (User) => async (id) => {
 const updateGameRecords = (User) => async ({ id, score }) => {
 
     // console.log('in update records: score: ', score)
-    
+
 
     const updatedUser = await User.findByIdAndUpdate(
         id,
         {
-            $inc: { 'totalScore': score, 'gamesPlayed': 1  } 
+            $inc: { 'totalScore': score, 'gamesPlayed': 1 }
         },
         {
             new: true,
@@ -156,7 +166,7 @@ const updateWalletBalance = (User) => async ({ id, credits }) => {
     const updatedUser = await User.findByIdAndUpdate(
         id,
         {
-            $inc: { 'wallet_balance': credits } 
+            $inc: { 'wallet_balance': credits }
         },
         {
             new: true,

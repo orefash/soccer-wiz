@@ -23,7 +23,7 @@ function walletRoutes(WalletTransactionService, UserService) {
         }
     });
 
-    router.get('/user/:userId', async (req, res) => {
+    router.get('/user/:userId',requireJwtAuth, async (req, res) => {
 
         try {
             let userId = req.params.userId;

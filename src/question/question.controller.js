@@ -1,4 +1,5 @@
 const express = require('express');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function questionRoutes(QuestionService) {
     const router = express.Router();
@@ -114,7 +115,7 @@ function questionRoutes(QuestionService) {
     });
 
 
-    router.post("/game", async (req, res) => {
+    router.post("/game",requireJwtAuth, async (req, res) => {
         try {
             const { demo, category, userId } = req.body;
 

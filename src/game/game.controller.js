@@ -1,23 +1,22 @@
 const express = require('express');
-const router = express.Router();
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function gameRoutes(gameService) {
     const router = express.Router();
 
 
-    router.post('/submit', async (req, res) => {
+    router.post('/submit',requireJwtAuth, async (req, res) => {
 
         try {
             const { 
                 gameWeek,
                 category,
                 playerId,
-                username,
                 answers,
                 demo
             } = req.body;
 
-            if (!category || !gameWeek || !playerId || !username || !answers ) {
+            if (!category || !gameWeek || !playerId || !answers ) {
                 throw Error("Incomplete Request details")
             }
 

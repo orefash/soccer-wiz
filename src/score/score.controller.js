@@ -1,4 +1,5 @@
 const express = require('express');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function scoreRoutes(ScoreService) {
     const router = express.Router();
@@ -30,7 +31,7 @@ function scoreRoutes(ScoreService) {
     });
 
 
-    router.get('/leaderboard/user/:userId/category/:category', async (req, res) => {
+    router.get('/leaderboard/user/:userId/category/:category',requireJwtAuth, async (req, res) => {
 
         try {
             let period = req.query.period;

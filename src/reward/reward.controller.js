@@ -1,4 +1,5 @@
 const express = require('express');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function rewardRoutes(rewardService, userService) {
     const router = express.Router();
@@ -23,7 +24,7 @@ function rewardRoutes(rewardService, userService) {
 
     });
 
-    router.get('/user/:userId', async (req, res) => {
+    router.get('/user/:userId',requireJwtAuth, async (req, res) => {
 
         try {
             let uid = req.params.userId;
@@ -80,7 +81,7 @@ function rewardRoutes(rewardService, userService) {
     });
 
 
-    router.post("/claim", async (req, res) => {
+    router.post("/claim",requireJwtAuth, async (req, res) => {
         try {
             const { rewardId, userId } = req.body;
 
@@ -104,7 +105,7 @@ function rewardRoutes(rewardService, userService) {
             });
 
         } catch (error) {
-            console.log("Error in rewards: ", error.message)
+            // console.log("Error in rewards: ", error.message)
             res.status(500).json({
                 success: false,
                 message: error.message

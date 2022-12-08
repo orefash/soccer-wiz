@@ -1,4 +1,5 @@
 const express = require('express');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function categoryRoutes(gameCategoryService) {
     const router = express.Router();
@@ -85,7 +86,7 @@ function categoryRoutes(gameCategoryService) {
         }
     });
 
-    router.get('/active', async (req, res) => {
+    router.get('/active',requireJwtAuth, async (req, res) => {
 
         try {
             const categories = await gameCategoryService.getCategories(0);

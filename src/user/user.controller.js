@@ -1,5 +1,4 @@
 const express = require('express');
-const router = express.Router();
 
 const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
@@ -15,26 +14,29 @@ function userRoutes(UserService) {
         });
     });
 
-    router.patch("/:id/username", async (req, res) => {
+    router.patch("/:id/username",requireJwtAuth, async (req, res) => {
         try {
-            const { username } = req.body;
-            const userId = req.params.id;
-
+            let { username } = req.body;
+            let userId = req.params.id;
 
             if(!username) throw new Error('Invalid username')
 
             if(!userId) throw new Error('Invalid User ID')
 
-            const userData = {
+            let userData = {
                 username
             }
 
-            const updatedUser = await UserService.updateUsername(userId, userData);
+            let updatedUser = await UserService.updateUsername(userId, userData);
 
-            res.status(200).json({
-                success: true,
-                user: updatedUser
-            });
+            // console.log('in updated: ', updatedUser)
+
+            let rdata = {}
+            rdata.success = true
+            rdata.message = 'Username updated successfully'
+
+            res.statusCode = 200
+            res.json(rdata)
 
         } catch (error) {
             // console.log("Error in Users: ", error)

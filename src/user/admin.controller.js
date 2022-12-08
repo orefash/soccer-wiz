@@ -7,7 +7,7 @@ function adminRoutes(UserService) {
     const router = express.Router();
 
     router.get('/me', requireAdminJwtAuth, async (req, res) => {
-        console.log("in admin me")
+        // console.log("in admin me")
         let user = req.user.toAdminJSON();
         res.json({
             success: true,
