@@ -98,13 +98,13 @@ const getLeaderboardByCategory = (DailyScore, WeeklyScore, MonthlyScore) => asyn
 
     // console.log('userid: ', userId)
 
-    if(!userId)
+    if (!userId)
         throw new Error('No UserId!!')
 
     const periods = {
-        1: {model: DailyScore, period: 'daily'},
-        2: {model: WeeklyScore, period: 'weekly'},
-        3: {model: MonthlyScore, period: 'monthly'}
+        1: { model: DailyScore, period: 'daily' },
+        2: { model: WeeklyScore, period: 'weekly' },
+        3: { model: MonthlyScore, period: 'monthly' }
     }
 
     // console.log(' period: ', Object.keys(periods))
@@ -114,7 +114,7 @@ const getLeaderboardByCategory = (DailyScore, WeeklyScore, MonthlyScore) => asyn
     let Model = periods[period].model;
     // console.log('in leaderboard: - model ', Model)
 
-    const leaderboard = await Model.find({ category }, { category: 0, createdAt: 0, updatedAt: 0, _id: 0, __v: 0}).sort({ score: -1 });
+    const leaderboard = await Model.find({ category }, { category: 0, createdAt: 0, updatedAt: 0, _id: 0, __v: 0 }).sort({ score: -1 });
 
     let userRank = null;
     let docCount = 0;
@@ -201,6 +201,20 @@ const deleteScores = (DailyScore, WeeklyScore, MonthlyScore) => async (period) =
     return data;
 }
 
+const deleteAllScores = (DailyScore, WeeklyScore, MonthlyScore) => async () => {
+
+    try {
+        await DailyScore.deleteMany({});
+        await WeeklyScore.deleteMany({});
+        await MonthlyScore.deleteMany({});
+
+    } catch (error) {
+        throw new Error('Deletion error')
+    }
+
+    return { deleted: true };
+}
+
 
 module.exports = (DailyScore, WeeklyScore, MonthlyScore, Score) => {
     return {
@@ -209,6 +223,7 @@ module.exports = (DailyScore, WeeklyScore, MonthlyScore, Score) => {
         getLeaderboardByCategory: getLeaderboardByCategory(DailyScore, WeeklyScore, MonthlyScore),
         getScores: getScores(DailyScore, WeeklyScore, MonthlyScore),
         getMatchdayLeaderboard: getMatchdayLeaderboard(WeeklyScore),
-        deleteScores: deleteScores(DailyScore, WeeklyScore, MonthlyScore)
+        deleteScores: deleteScores(DailyScore, WeeklyScore, MonthlyScore),
+        deleteAllScores: deleteAllScores(DailyScore, WeeklyScore, MonthlyScore)
     }
 }

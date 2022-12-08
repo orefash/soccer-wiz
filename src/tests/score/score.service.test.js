@@ -176,6 +176,46 @@ describe('Score Service', () => {
 
     })
 
+    describe('deleteAllScores', () => {
+        it('should delete all score records - daily/weekly/monthly', async () => {
+            let s1 = await scoreService.saveScore(score1)
+
+            let s2 = await scoreService.saveScore(score2)
+
+            let s5 = await scoreService.saveScore(score5)
+
+            let s7 = await scoreService.saveScore(score7)
+
+
+            let daily = await DailyScore.find()
+            let weekly = await WeeklyScore.find()
+            let monthly = await MonthlyScore.find()
+
+            // console.log("End Daily list: ", daily)
+            // console.log("End Weekly list: ", weekly)
+            // console.log("End Monthly list: ", monthly)
+
+            await scoreService.deleteAllScores();
+
+            let postDeleteDaily = await DailyScore.find()
+            let postWeekly = await WeeklyScore.find()
+            let postMonthly = await MonthlyScore.find()
+
+            // console.log("Deleted Daily list: ", deletedDaily)
+
+            expect(daily.length).toBe(2);
+            expect(weekly.length).toBe(2);
+            expect(monthly.length).toBe(2);
+            expect(postDeleteDaily.length).toBe(0);
+            expect(postWeekly.length).toBe(0);
+            expect(postMonthly.length).toBe(0);
+
+        })
+
+
+
+    })
+
 
     describe('getLeaderboardByCategory', () => {
         it('should return daily leaderboard by Category ', async () => {

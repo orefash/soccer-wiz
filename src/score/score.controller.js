@@ -38,7 +38,7 @@ function scoreRoutes(ScoreService) {
             let userId = req.params.userId;
             let category = req.params.category;
 
-            if(!userId || !category || !period ) throw new Error('Incomplete parameters')
+            if (!userId || !category || !period) throw new Error('Incomplete parameters')
 
             let data = { period, userId, category }
             // console.log('Data: ', data)
@@ -64,7 +64,7 @@ function scoreRoutes(ScoreService) {
             let username = req.query.username;
             let userId = req.params.userId;
 
-            if(!userId  || !username) throw new Error('Incomplete Parameters!!')
+            if (!userId || !username) throw new Error('Incomplete Parameters!!')
 
             let data = { username, userId }
             // console.log('Data: ', data)
@@ -80,15 +80,15 @@ function scoreRoutes(ScoreService) {
                 message: error.message
             });
         }
-        
+
     });
 
 
     router.get('/', async (req, res) => {
 
         try {
-           let period = req.query.period;
-           if(!period) throw new Error('Period param missing!!')
+            let period = req.query.period;
+            if (!period) throw new Error('Period param missing!!')
             // console.log('Data: ', data)
             const scores = await ScoreService.getScores(period);
             res.status(200).json({
@@ -104,6 +104,35 @@ function scoreRoutes(ScoreService) {
         }
     });
 
+    router.delete('/:period', async (req, res) => {
+
+        try {
+            let period = req.params.period;
+            let data = null;
+            if (!period) throw new Error('Period param missing!!')
+            // console.log('period: ', period)
+            if(period === '4'){
+                // console.log('in 4')
+                data = await ScoreService.deleteAllScores();
+            }else{
+                // console.log('in else')
+                data = await ScoreService.deleteScores(period);
+            }
+                
+            res.status(200).json({
+                success: true,
+                data: data
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    });
+
+   
 
 
     return router;
