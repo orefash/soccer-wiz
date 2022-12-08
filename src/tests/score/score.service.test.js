@@ -4,8 +4,17 @@ const { when } = require('jest-when')
 const { connect, clearDatabase, closeDatabase } = require('../db')
 
 
-const { scoreService, DailyScore, WeeklyScore, MonthlyScore } = require('../../score')
+const { ScoreService, DailyScore, WeeklyScore, MonthlyScore, Score } = require('../../score')
 
+const getCategoryByName = jest.fn();
+when(getCategoryByName).calledWith('EFL').mockReturnValue(true)
+when(getCategoryByName).calledWith('PL').mockReturnValue(true)
+
+let gameCategoryService = {
+    getCategoryByName: getCategoryByName
+}
+
+const scoreService = ScoreService(DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService);
 
 beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())

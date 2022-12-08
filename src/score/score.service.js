@@ -1,8 +1,12 @@
 
 
-const saveScore = (DailyScore, WeeklyScore, MonthlyScore) => async ({ score, category, gameWeek, date = Date.now(), userId, username }) => {
+const saveScore = (DailyScore, WeeklyScore, MonthlyScore, gameCategoryService) => async ({ score, category, gameWeek, date = Date.now(), userId, username }) => {
 
-    // const existing = await GameCategory.findOne({ category: data.category })
+    const existing = await gameCategoryService.getCategoryByName(category);
+    if(!existing)
+        throw new Error('Invalid Category')
+
+
     let data = { daily: false, weekly: false, monthly: false }
 
     const daily = await scoreCheck(DailyScore, { category, username });
@@ -216,10 +220,10 @@ const deleteAllScores = (DailyScore, WeeklyScore, MonthlyScore) => async () => {
 }
 
 
-module.exports = (DailyScore, WeeklyScore, MonthlyScore, Score) => {
+module.exports = (DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService) => {
     return {
 
-        saveScore: saveScore(DailyScore, WeeklyScore, MonthlyScore),
+        saveScore: saveScore(DailyScore, WeeklyScore, MonthlyScore, gameCategoryService),
         getLeaderboardByCategory: getLeaderboardByCategory(DailyScore, WeeklyScore, MonthlyScore),
         getScores: getScores(DailyScore, WeeklyScore, MonthlyScore),
         getMatchdayLeaderboard: getMatchdayLeaderboard(WeeklyScore),

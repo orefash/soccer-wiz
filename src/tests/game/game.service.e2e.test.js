@@ -4,37 +4,22 @@ const { connect, clearDatabase, closeDatabase } = require('../db')
 
 
 const { Game, gameService } = require('../../game')
+const { gameCategoryService } = require('../../gameCategory')
 // const GameService = require('../../game/game.service');
 
 const { User, userService } = require('../../user');
 
-const { scoreService } = require('../../score')
+// const { ScoreService, DailyScore, WeeklyScore, MonthlyScore, Score } = require('../../score')
 
+// const getCategoryByName = jest.fn();
+// when(getCategoryByName).calledWith('EFL').mockReturnValue(true)
+// when(getCategoryByName).calledWith('PL').mockReturnValue(true)
 
-// const getUserById = jest.fn();
-// when(getUserById).calledWith('low_bal_id').mockReturnValue({
-//     wallet_balance: 0
-// })
-// when(getUserById).calledWith('invalid_id').mockReturnValue(null)
-// when(getUserById).calledWith('5a1154523a6bcc1d245e143d').mockReturnValue({
-//     _id: '5a1154523a6bcc1d245e143d'
-// })//for valid user
-
-// const updateGameRecords = jest.fn();
-
-// let userService = {
-//     getUserById: getUserById,
-//     updateGameRecords: updateGameRecords
+// let gameCategoryService = {
+//     getCategoryByName: getCategoryByName
 // }
 
-// const saveScore = jest.fn();
-
-// let scoreService = {
-//     saveScore: saveScore
-// }
-
-// const gameService = GameService(Game, userService, scoreService);
-
+// const scoreService = ScoreService(DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService);
 
 beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
@@ -97,9 +82,9 @@ const gameAnswers2 = [
 
 describe('Game Service Full', () => {
 
-    
 
-    
+
+
     describe('submitGame', () => {
         it('should return total points for all questions answered by user in live game', async () => {
 
@@ -114,9 +99,14 @@ describe('Game Service Full', () => {
             // console.log('Saved User: ', savedUser)
 
 
+            const gameCategory1 = { category: 'PL', description: 'PL game questions' }
+
+            await gameCategoryService.saveCategory(gameCategory1)
+
+
             const newGame = {
                 gameWeek: 1,
-                category: 'General',
+                category: 'PL',
                 playerId: savedUser._id,
                 username: 'john',
                 answers: gameAnswers1,
@@ -126,7 +116,7 @@ describe('Game Service Full', () => {
 
             const newGame1 = {
                 gameWeek: 1,
-                category: 'General',
+                category: 'PL',
                 playerId: savedUser._id,
                 username: 'john',
                 answers: gameAnswers2,
@@ -152,80 +142,23 @@ describe('Game Service Full', () => {
 
 
             expect(game.score).toBe(4.9)
-            expect(game.category).toBe('General')
+            expect(game.category).toBe('PL')
 
             expect(gameResponse.gameScore.totalScore).toBe(4.9)
 
             expect(gameResponse.submitLate).toBe(false)
 
 
-            
+
             expect(gameResponse1.gameScore.totalScore).toBe(4.7)
             expect(Math.round(mUser1.totalScore * 10) / 10).toBe(9.6)
             expect(mUser1.gamesPlayed).toBe(2)
             expect(game1.score).toBe(4.7)
-            expect(game1.category).toBe('General')
+            expect(game1.category).toBe('PL')
 
             // expect(savedGame.score).toBe(gameResponse.gameScore.totalScore)
         })
 
     })
 
-
-
-
-
-    // describe('submitGame', () => {
-    //     it('should return score for live game played; save game details if within match day ', async () => {
-
-    //         const newGame = {
-    //             gameWeek: 1,
-    //             category: 'General',
-    //             playerId: '5a1154523a6bcc1d245e143d',
-    //             username: 'john',
-    //             answers: gameAnswers1,
-    //             demo: false,
-    //             today: new Date('02/11/2022')
-    //         }
-
-    //         let gameResponse = await gameService.submitGame(newGame);
-
-    //         let savedGame = await gameService.getGameById(gameResponse.gameId)
-
-            
-    //         expect(gameResponse.gameScore.totalScore).toBe(4.9)
-    //         expect(gameResponse.submitLate).toBe(false)
-    //         expect(savedGame.score).toBe(gameResponse.gameScore.totalScore)
-
-    //     })
-
-    // })
-
-
-    // describe('submitGame', () => {
-    //     it('should return score for live game played; indicate late submission in response if outside matchday', async () => {
-
-    //         const newGame = {
-    //             gameWeek: 1,
-    //             category: 'General',
-    //             playerId: '5a1154523a6bcc1d245e143d',
-    //             username: 'john',
-    //             answers: gameAnswers1,
-    //             demo: false,
-    //             today: new Date('30/10/2022')
-    //         }
-
-    //         let gameResponse = await gameService.submitGame(newGame);
-
-    //         // let savedGame = await gameService.getGameById(gameResponse.gameId)
-
-            
-    //         expect(gameResponse.gameScore.totalScore).toBe(4.9)
-    //         expect(gameResponse.submitLate).toBe(true)
-    //         expect(gameResponse.gameId).toBe(null)
-
-    //     })
-
-    // })
-    
 })
