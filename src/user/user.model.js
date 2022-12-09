@@ -113,7 +113,7 @@ userSchema.methods.comparePassword = function (candidatePassword, callback) {
 };
 
 userSchema.methods.toJSON = function () {
-  const avgPoints = 0
+  let avgPoints = 0
   if (this.role === 'USER') {
     if (this.gamesPlayed > 0)
        avgPoints = this.totalScore / this.gamesPlayed

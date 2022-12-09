@@ -116,13 +116,69 @@ function questionRoutes(QuestionService) {
     });
 
 
-    router.post("/game",requireJwtAuth, async (req, res) => {
-        try {
-            const { demo, category, userId } = req.body;
+    // router.post("/game",requireJwtAuth, async (req, res) => {
+    //     try {
+    //         const { demo, category, userId } = req.body;
 
-            if (demo == null || !category || !userId) {
-                throw Error("Incomplete Request details")
+    //         if (demo == null || !category || !userId) {
+    //             throw Error("Incomplete Request details")
+    //         }
+
+    //         if (demo && category !== 'demo' ) {
+    //             throw Error("Demo field not set")
+    //         }
+
+    //         const questionData = {
+    //             demo, category, userId, date: new Date()
+    //         }
+
+    //         const data = await QuestionService.getQuestionsForGame(questionData);
+
+    //         if (data) {
+    //             res.status(200).json({
+    //                 success: !data.error,
+    //                 data: data
+    //             });
+    //         } else {
+    //             res.status(400).json({
+    //                 success: false,
+    //                 message: "Questions not found"
+    //             });
+    //         }
+
+    //     } catch (error) {
+    //         res.status(500).json({
+    //             success: false,
+    //             message: error.message
+    //         });
+    //     }
+
+    // });
+
+
+
+    router.get("/game/user/:userId",requireJwtAuth, async (req, res) => {
+        try {
+
+            let userId = req.params.userId;
+            let category = req.query.category;
+            let demo = req.query.demo;
+
+            // console.log(`u: ${userId} :  c:  ${category}  :  d:  ${demo}`)
+
+            // const { demo, category, userId } = req.body;
+
+            if ( !demo || !category || !userId ){ //demo.toLocaleLowerCase() !== 'true' || demo.toLocaleLowerCase() !== 'false' ) {
+                throw new Error("Incomplete Request details")
             }
+
+            if(demo.toLocaleLowerCase() !== 'true' && demo.toLocaleLowerCase() !== 'false' ) {
+                throw new Error("Demo field invalid")
+            }
+
+            demo = demo === 'true'? true : false;
+
+            // console.log('DemoL : ', demo)
 
             if (demo && category !== 'demo' ) {
                 throw Error("Demo field not set")
@@ -154,7 +210,6 @@ function questionRoutes(QuestionService) {
         }
 
     });
-
 
 
     router.post("/bulk",requireAdminJwtAuth, async (req, res) => {

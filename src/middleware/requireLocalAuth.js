@@ -1,10 +1,10 @@
 const passport = require('passport');
 
 const requireLocalAuth = (req, res, next) => {
-  console.log("in require local")
+  // console.log("in require local")
   passport.authenticate('local', (err, user, info) => {
     if (err) {
-      console.log("Errin ")
+      // console.log("Errin ")
       return next(err);
     }
     if (!user) {

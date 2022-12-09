@@ -11,7 +11,7 @@ passport.use(new LocalStrategy({ // or whatever you want to use
 
   async function (phone, password, done) {
 
-    console.log("in local")
+    // console.log("in local")
     try {
 
       const currentUser = await userService.getUserByPhone(phone)
@@ -31,6 +31,7 @@ passport.use(new LocalStrategy({ // or whatever you want to use
       return done(null, currentUser);
 
     } catch (err) {
+      // console.log('error in login')
       return done(err);
     }
 

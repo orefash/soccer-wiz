@@ -9,10 +9,10 @@ function authRoutes() {
     const router = express.Router();
 
     router.post('/login', requireLocalAuth, (req, res) => {
-        // console.log("in local login: ", req.user)
+        // console.log("in local login: ")
         const token = req.user.generateJWT();
 
-        const me = req.user.toJSON();
+        let me = req.user.toJSON();
 
         // console.log(`in login: ME: ${JSON.stringify(me)} \n Token: ${token}`)
         res.json({ success: true, token, user: req.user });
