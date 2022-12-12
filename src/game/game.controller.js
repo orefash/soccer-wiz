@@ -5,7 +5,8 @@ function gameRoutes(gameService) {
     const router = express.Router();
 
 
-    router.post('/submit',requireJwtAuth, async (req, res) => {
+    // router.post('/submit',requireJwtAuth, async (req, res) => {
+    router.post('/submit', async (req, res) => {
 
         try {
             const { 

@@ -37,10 +37,8 @@ mongoose.connect(
         };
 
         const server = https.createServer(httpsOptions, app).listen(port, () => {
-            console.log('https server running at ' + port);
-            // console.log(all_routes(app));
+            console.log('https server running at : ' + port);
         });
-        // app.listen(port, console.log("Server started on port - ", port));
     }
 
 }).catch((err) => {

@@ -168,7 +168,7 @@ function questionRoutes(QuestionService) {
 
             // const { demo, category, userId } = req.body;
 
-            if ( !demo || !category || !userId ){ //demo.toLocaleLowerCase() !== 'true' || demo.toLocaleLowerCase() !== 'false' ) {
+            if ( !demo || !category || !userId ){ 
                 throw new Error("Incomplete Request details")
             }
 
