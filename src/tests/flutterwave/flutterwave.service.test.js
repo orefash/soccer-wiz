@@ -50,6 +50,8 @@ describe('Flutterwave Service (Must be online to test)', () => {
 
             const flwLinkData = await flutterwaveService.getFlutterwaveLink(flutterwaveData);
 
+            // console.log("flw data: ", flwLinkData)
+
             const gatewayTransaction = await gatewayTransactionService.getGatewayTransactionByRef(flwLinkData.tx_ref)
 
             // console.log(flwLinkData)
@@ -59,24 +61,6 @@ describe('Flutterwave Service (Must be online to test)', () => {
             expect(gatewayTransaction).toBeTruthy();
         })
 
-    })
-
-
-    describe('getFlutterwaveLink', () => {
-        it('should throw error if user does not exists, ', async () => {
-
-            const flutterwaveData = {
-                userId: 'savedUser._id',
-                currency: "NGN",
-                amount: 600
-            }
-
-            await expect(flutterwaveService.getFlutterwaveLink(flutterwaveData)).rejects.toThrow()
-        })
-
-    })
-
-    describe('getFlutterwaveLink', () => {
         it('should throw error if amount <  300 ', async () => {
 
             const newUser = {
@@ -98,11 +82,25 @@ describe('Flutterwave Service (Must be online to test)', () => {
 
         })
 
+        it('should throw error if user does not exists, ', async () => {
+
+            const flutterwaveData = {
+                userId: 'savedUser._id',
+                currency: "NGN",
+                amount: 600
+            }
+
+            await expect(flutterwaveService.getFlutterwaveLink(flutterwaveData)).rejects.toThrow()
+        })
+
     })
 
 
+
+
+
     describe('fundWalletWithFlutterwave', () => {
-        it('should increase user wallet value with credits if FLw payment is successful', async () => {
+        it('should throw error if amount is insufficient', async () => {
 
             let user = await userService.addLocalUser({
                 email: "orefash@gmail.com",
@@ -129,13 +127,54 @@ describe('Flutterwave Service (Must be online to test)', () => {
                 source: "local"
             }
 
-            const savedUser = await userService.addLocalUser(newUser);
-            console.log("user: ", savedUser)
+            // const savedUser = await userService.addLocalUser(newUser);
+            // console.log("user: ", user)
 
             const flutterwaveData = {
-                userId: savedUser._id,
+                userId: 'invalid',
                 currency: "NGN",
                 amount: 200
+            }
+
+
+            await expect(flutterwaveService.getFlutterwaveLink(flutterwaveData)).rejects.toThrow()
+
+        })
+
+        it('should throw error if user is invalid', async () => {
+
+            let user = await userService.addLocalUser({
+                email: "orefash@gmail.com",
+                password: "password",
+                source: "local"
+            })
+
+            let txRef = "12345"
+            
+            let initGtran = await gatewayTransactionService.saveGatewayTransaction({
+                userId: user._id,
+                transactionId: txRef,
+                name: 'orefash',
+                email: "orefash@mail.com",
+                amount: 300,
+                currency: "NGN",
+                paymentStatus: "pending",
+                paymentGateway: "flutterwave"
+            })
+
+            const data = {
+                status: "successful",
+                tx_ref: txRef,
+                source: "local"
+            }
+
+            // const savedUser = await userService.addLocalUser(newUser);
+            // console.log("user: ", user)
+
+            const flutterwaveData = {
+                userId: 'invalid',
+                currency: "NGN",
+                amount: 400
             }
 
 

@@ -12,6 +12,8 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
 
     let user = await userService.getUserById(userId);
 
+    console.log(`User: ${user} - userid: ${userId}`)
+
     if (!user)
         throw new Error("User does not exist");
 
@@ -49,8 +51,10 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
             }
         })
 
+        // console.log('FLw call link: ', response.data)
 
-        if (response.data && response.data.status === 'success' && response.data.link) {
+
+        if (response.data && response.data.status === 'success' && response.data.data.link) {
             await gatewayTransactionService.saveGatewayTransaction({ userId, transactionId: transactionRef, name: user.username, email: user.email, amount, currency, paymentStatus: "pending", paymentGateway: "flutterwave" });
             return { success: true, tx_ref: transactionRef, data: response.data };
         } else {
