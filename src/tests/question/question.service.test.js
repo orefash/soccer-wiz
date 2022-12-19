@@ -250,23 +250,15 @@ describe('Question Service', () => {
             // done();
 
         })
-
         it('should not create a question if it exists already', async () => {
-
-           
+       
             const createdQuestion = await questionService.addQuestion(q1);
-
             await expect(questionService.addQuestion(q1)).rejects.toThrow()
             // done();
-
         })
 
         it('should throw error when answers are not 4', async () => {
-
-
             await expect(questionService.addQuestion(q0)).rejects.toThrow()
-            // done();
-
         })
 
 

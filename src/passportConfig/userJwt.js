@@ -17,7 +17,8 @@ const jwtLogin = new Strategy(
   },
   async (payload, done) => {
     try {
-      console.log("payload: ", payload)
+      // console.log('key: ', jwtFromRequest)
+      // console.log("payload: ", payload)
       const user = await User.findById(payload.id);
 
       // console.log("in jwt: ", user)

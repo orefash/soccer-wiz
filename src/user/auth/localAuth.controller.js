@@ -5,6 +5,8 @@ const User = require('../user.model')
 const requireLocalAuth = require('../../middleware/requireLocalAuth');
 const requireAdminAuth = require('../../middleware/requireAdminAuth');
 
+const logoutRedis = require('../../middleware/logoutRedis');
+
 function authRoutes() {
     const router = express.Router();
 
@@ -101,7 +103,7 @@ function authRoutes() {
     });
 
 
-    router.post("/logout", (req, res) => {
+    router.post("/logout",logoutRedis, (req, res) => {
 
         console.log('Logout')
         req.logout();
