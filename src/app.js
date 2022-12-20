@@ -50,7 +50,7 @@ app.use(
     })
 );
 
-var whitelist = ['http://localhost:3001', 'http://localhost:3000', 'https://expensive-mite-housecoat.cyclic.app', 'https://soccerwiz.netlify.app/']
+var whitelist = ['http://localhost:3001', 'http://localhost:3000', 'https://expensive-mite-housecoat.cyclic.app', 'https://soccerwiz.netlify.app']
 var corsOptions = {
     origin: function (origin, callback) {
         if (whitelist.indexOf(origin) !== -1) {
