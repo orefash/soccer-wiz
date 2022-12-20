@@ -14,7 +14,8 @@ function userRoutes(UserService) {
         });
     });
 
-    router.patch("/:id/username",requireJwtAuth, async (req, res) => {
+    // router.patch("/:id/username",requireJwtAuth, async (req, res) => {
+    router.patch("/:id/username", async (req, res) => {
         try {
             let { username } = req.body;
             let userId = req.params.id;
