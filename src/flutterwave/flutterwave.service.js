@@ -12,7 +12,7 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
 
     let user = await userService.getUserById(userId);
 
-    console.log(`User: ${user} - userid: ${userId}`)
+    // console.log(`User: ${user} - userid: ${userId}`)
 
     if (!user)
         throw new Error("User does not exist");

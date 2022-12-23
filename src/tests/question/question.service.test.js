@@ -333,8 +333,6 @@ describe('Question Service', () => {
     describe('deleteQuestion', () => {
         it('should delete a question when given id', async () => {
 
-            
-
             const createdQuestion = await questionService.addQuestion(q1);
 
             await questionService.deleteQuestion(createdQuestion._id)
@@ -343,15 +341,12 @@ describe('Question Service', () => {
 
 
             expect(checkQuestion).toBeNull()
-            // done();
 
         })
     })
 
     describe('deleteAllQuestions', () => {
         it('should delete all questions', async () => {
-
-            
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);

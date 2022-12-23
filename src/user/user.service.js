@@ -1,32 +1,27 @@
 // const uuid = require("uuid");
 const bcrypt = require("bcrypt");
 
-const { generateUsernameFromEmail } = require("../utils/usernameGenerator");
+// const { generateUsernameFromEmail } = require("../utils/usernameGenerator");
 
-function generateUniqueUserName(User, email) {
-    let proposedName = generateUsernameFromEmail(email, 2);
-    return User
-        .findOne({ username: proposedName })
-        .then(function (account) {
-            if (account) {
-                //   console.log('no can do try again: ' + proposedName);
-                return generateUniqueUserName(User, email);
-            }
-            // console.log('proposed name is unique' + proposedName);
-            return proposedName;
-        })
-        .catch(function (err) {
-            console.error(err);
-            throw err;
-        });
-}
+// function generateUniqueUserName(User, email) {
+//     let proposedName = generateUsernameFromEmail(email, 2);
+//     return User
+//         .findOne({ username: proposedName })
+//         .then(function (account) {
+//             if (account) {
+//                 //   console.log('no can do try again: ' + proposedName);
+//                 return generateUniqueUserName(User, email);
+//             }
+//             // console.log('proposed name is unique' + proposedName);
+//             return proposedName;
+//         })
+//         .catch(function (err) {
+//             console.error(err);
+//             throw err;
+//         });
+// }
 
 const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
-
-    // let generatedUsername = await generateUniqueUserName(User, email);
-
-    // console.log("Gen uname: ", generatedUsername)
-
 
     const user = new User({
         googleId, email, profilePhoto, source: "google",
@@ -35,11 +30,6 @@ const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 }
 
 const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) => {
-
-    // let generatedUsername = await generateUniqueUserName(User, email);
-
-    // console.log("Gen uname: ", generatedUsername)
-
 
     const user = new User({
         facebookId, email, profilePhoto, source: "facebook",
@@ -95,6 +85,35 @@ const updateUsernameAndCountry = (User) => async (id, { username, country }) => 
     return updatedUser
 }
 
+
+const updateWithdrawalSettings = (User) => async (id, { phone, network, account_number, bank }) => {
+
+    let account = {
+        number: account_number,
+        bank
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, { phone, network, account }, {
+        new: true,
+    });
+
+    if (!updatedUser) throw new Error('Invalid User!!')
+
+    return updatedUser
+}
+
+
+const updateProfileDetails = (User) => async (id, { email, fullName }) => {
+
+    const updatedUser = await User.findByIdAndUpdate(id, { email, fullName }, {
+        new: true,
+    });
+
+    if (!updatedUser) throw new Error('Invalid User!!')
+
+    return updatedUser
+}
+
 const updateUsername = (User) => async (id, { username }) => {
 
     try {
@@ -145,9 +164,6 @@ const toggleUserStatus = (User) => async (id) => {
 
 const updateGameRecords = (User) => async ({ id, score }) => {
 
-    // console.log('in update records: score: ', score)
-
-
     const updatedUser = await User.findByIdAndUpdate(
         id,
         {
@@ -193,6 +209,8 @@ module.exports = (User) => {
         getUserByUsername: getUserByUsername(User),
         updateGameRecords: updateGameRecords(User),
         updateWalletBalance: updateWalletBalance(User),
+        updateWithdrawalSettings: updateWithdrawalSettings(User),
+        updateProfileDetails: updateProfileDetails(User),
         getUserByPhone: getUserByPhone(User),
         toggleUserStatus: toggleUserStatus(User)
     }

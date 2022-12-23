@@ -29,8 +29,7 @@ const userSchema = new Schema({
     required: [true, "email required"],
     unique: [true, "email already registered"],
   },
-  firstName: String,
-  lastName: String,
+  fullName: String,
   username: {
     type: String,
     // unique: true,
@@ -38,6 +37,7 @@ const userSchema = new Schema({
   },
   profilePhoto: String,
   phone: String,
+  network: String,
   role: {
     type: String,
     default: "USER",

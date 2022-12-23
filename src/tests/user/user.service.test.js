@@ -47,6 +47,41 @@ describe('User Service', () => {
         })
     })
 
+    describe('addFacebookUser', () => {
+        it('should save details of user logged in with Facebook and return details', async () => {
+
+            const newUser = {
+                email: "orefash@gmail.com",
+                profilePhoto: "url",
+                source: "facebook"
+            }
+
+            const savedUser = await userService.addFacebookUser(newUser);
+
+            expect(savedUser.email).toEqual(newUser.email)
+            expect(savedUser.profilePhoto).toEqual(newUser.profilePhoto)
+            expect(savedUser.source).toEqual("facebook")
+
+        })
+    })
+
+    describe('addAdminUser', () => {
+        it('should save details of admin user and return details', async () => {
+
+            const newUser = {
+                email: "orefash@gmail.com",
+                password: "password"
+            }
+
+            const savedUser = await userService.addAdminUser(newUser);
+
+            expect(savedUser.email).toEqual(newUser.email)
+            expect(savedUser.role).toEqual("ADMIN")
+            expect(savedUser.source).toEqual("local")
+
+        })
+    })
+
 
     describe('addLocalUser', () => {
         it('should save details of user logged in with username and password and return details', async () => {
@@ -71,17 +106,11 @@ describe('User Service', () => {
 
             const newUser1 = {
                 email: "orefash1@gmail.com",
-                firstName: "Ore",
-                lastName: "Fash",
-                profilePhoto: "url",
                 source: "google"
             }
 
             const newUser2 = {
                 email: "orefash@gmail.com",
-                firstName: "Ore",
-                lastName: "Faseru",
-                profilePhoto: "url",
                 source: "google"
             }
 
@@ -101,9 +130,6 @@ describe('User Service', () => {
 
             const newUser1 = {
                 email: "orefash@gmail.com",
-                firstName: "Ore",
-                lastName: "Faseru",
-                profilePhoto: "url",
                 source: "google"
             }
 
@@ -123,9 +149,6 @@ describe('User Service', () => {
 
             const newUser1 = {
                 email: "orefash@gmail.com",
-                firstName: "Ore",
-                lastName: "Faseru",
-                profilePhoto: "url",
                 source: "google"
             }
 
@@ -214,6 +237,73 @@ describe('User Service', () => {
 
             expect(updateData.username).toEqual(fetchedUser.username);
             expect(updateData.country).toEqual(fetchedUser.country);
+
+        })
+
+    })
+
+
+    describe('updateWithdrawalSettings', () => {
+        it('should be able to get update User reward settings (phone, network, bank, bank account', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                username: "user1"
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const updateData = {
+                phone: "08023238002",
+                network: "MTN",
+                bank: "GTB",
+                account_number: '0012345678'
+            }
+
+            const updatedUser = await userService.updateWithdrawalSettings(createdUser._id, updateData);
+
+
+            const fetchedUser = await userService.getUserById(createdUser._id);
+
+
+            expect(updateData.phone).toEqual(fetchedUser.phone);
+            expect(updateData.network).toEqual(fetchedUser.network);
+            expect(updateData.bank).toEqual(fetchedUser.account.bank);
+            expect(updateData.account_number).toEqual(fetchedUser.account.number);
+
+        })
+
+    })
+
+    describe('updateProfileDetails', () => {
+        it('should be able to get update User profile settings (email, fullName)', async () => {
+
+            const newUser1 = {
+                email: "orefash@gmail.com",
+                source: "google",
+                username: "user1"
+            }
+
+            const user = new User(newUser1)
+            const createdUser =  await user.save()
+
+            const updateData = {
+                email: "o@mail.com",
+                fullName: "John doe",
+            }
+
+            const updatedUser = await userService.updateProfileDetails(createdUser._id, updateData);
+
+
+            const fetchedUser = await userService.getUserById(createdUser._id);
+
+            console.log('fetched: ', updatedUser)
+
+
+            expect(updateData.email).toEqual(fetchedUser.email);
+            expect(updateData.fullName).toEqual(fetchedUser.fullName);
 
         })
 

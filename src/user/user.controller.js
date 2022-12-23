@@ -20,9 +20,9 @@ function userRoutes(UserService) {
             let { username } = req.body;
             let userId = req.params.id;
 
-            if(!username) throw new Error('Invalid username')
+            if (!username) throw new Error('Invalid username')
 
-            if(!userId) throw new Error('Invalid User ID')
+            if (!userId) throw new Error('Invalid User ID')
 
             let userData = {
                 username
@@ -49,11 +49,85 @@ function userRoutes(UserService) {
 
     });
 
+
+    router.patch("/:id/withdraw-settings", requireJwtAuth, async (req, res) => {
+        try {
+            let { phone, network, account_number, bank } = req.body;
+            let userId = req.params.id;
+
+            if (!phone || !network || !account_number || !bank) throw new Error('Invalid parameters')
+
+            if (!userId) throw new Error('Invalid User ID')
+
+            let userData = {
+                phone, network, account_number, bank
+            }
+
+            let updatedUser = await UserService.updateWithdrawalSettings(userId, userData);
+
+            // console.log('in updated: ', updatedUser)
+
+            let rdata = {}
+            rdata.success = true
+            rdata.message = 'Settings updated successfully'
+            rdata.user = updatedUser
+
+            res.statusCode = 200
+            res.json(rdata)
+
+        } catch (error) {
+            // console.log("Error in Users: ", error)
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
+
+
+    // router.patch("/:id/profile", requireJwtAuth, async (req, res) => {
+    router.patch("/:id/profile", async (req, res) => {
+        try {
+            let { email, fullName } = req.body;
+            let userId = req.params.id;
+
+            if (!email || !fullName) throw new Error('Invalid parameters')
+
+            if (!userId) throw new Error('Invalid User ID')
+
+            let userData = {
+                email, fullName
+            }
+
+            let updatedUser = await UserService.updateProfileDetails(userId, userData);
+
+            // console.log('in updated: ', updatedUser)
+
+            let rdata = {}
+            rdata.success = true
+            rdata.message = 'Profile updated successfully'
+            rdata.user = userData
+            rdata.userId = userId
+
+            res.statusCode = 200
+            res.json(rdata)
+
+        } catch (error) {
+            // console.log("Error in Users: ", error)
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
+
     router.patch("/:id/toggleStatus", async (req, res) => {
         try {
             const userId = req.params.id;
 
-            if(!userId) throw new Error("User ID is invalid")
+            if (!userId) throw new Error("User ID is invalid")
 
             const updatedUser = await UserService.toggleUserStatus(userId);
 
@@ -108,15 +182,15 @@ function userRoutes(UserService) {
         try {
 
             let data = {}
-            let a =  null;
-           
+            let a = null;
+
             a = await UserService.getUsers();
             data.users = a;
             data.success = true;
             res.status(200).json(data);
 
         } catch (error) {
-            console.log("error: ",error.message)
+            console.log("error: ", error.message)
             res.status(500).json({
                 success: false,
                 message: error.message
