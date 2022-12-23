@@ -86,8 +86,7 @@ function userRoutes(UserService) {
     });
 
 
-    // router.patch("/:id/profile", requireJwtAuth, async (req, res) => {
-    router.patch("/:id/profile", async (req, res) => {
+    router.patch("/:id/profile", requireJwtAuth, async (req, res) => {
         try {
             let { email, fullName } = req.body;
             let userId = req.params.id;
