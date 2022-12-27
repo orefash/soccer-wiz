@@ -5,7 +5,7 @@ const Flutterwave = require('flutterwave-node-v3');
 
 const { generateId } = require("../utils/transactionIdGenerator");
 
-const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY_TEST, process.env.FLW_SECRET_KEY_TEST);
+const conn = require('../db')
 
 
 const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ currency, amount, userId }) => {
@@ -22,11 +22,23 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
 
     const transactionRef = generateId();
 
+    let server_url = null;
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction)
+        server_url = process.env.SERVER_URL_PROD
+    else
+        server_url = process.env.SERVER_URL_DEV
+
+    let redirect_url = server_url + '/api/payments/flw/validate';
+
+    // console.log('Red URL: ', redirect_url)
+
     const reqBody = {
         tx_ref: transactionRef,
         amount: amount,
         currency: currency,
-        redirect_url: "https://webhook.site/9d0b00ba-9a69-44fa-a43d-a82c33c36fdc",
+        redirect_url: redirect_url,
         meta: {
             consumer_id: userId,
         },
@@ -81,7 +93,12 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
 
     if (status === 'successful') {
 
+
+        const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY_TEST, process.env.FLW_SECRET_KEY_TEST);
+
         const transactionDetails = await gatewayTransactionService.getGatewayTransactionByRef(tx_ref);
+
+        // console.log('tran details: ', transactionDetails)
         if (!transactionDetails)
             throw new Error('Invalid Transaction Reference')
 
@@ -89,22 +106,41 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
         if (
             response.data.status === "successful"
             && response.data.amount === transactionDetails.amount
-            && response.data.currency === transactionDetails.currency) {
+            && response.data.currency === transactionDetails.currency
+        ) {
             // Success! Confirm the customer's payment
 
             //convert amount to credits
             let noOfCredits = transactionDetails.amount / 300 * 10
 
-            userService.updateWalletBalance({ id: transactionDetails.userId, credits: noOfCredits })
+            const session = await conn.startSession();
 
-            await walletTransactionService.saveWalletTransaction({ credits: noOfCredits, userId: transactionDetails.userId, isInflow: true, amount: transactionDetails.amount, currency: transactionDetails.currency, status: "successful", paymentMethod: "flutterwave" });
+            try {
 
-            await gatewayTransactionService.updateGatewayTransactions({ id: transactionDetails._id, paymentStatus: "successful" })
+                session.startTransaction();
 
-            return {
-                success: true,
-                amount: transactionDetails.amount
+                userService.updateWalletBalance({ id: transactionDetails.userId, credits: noOfCredits }, session)
+
+                await walletTransactionService.saveWalletTransaction({ credits: noOfCredits, userId: transactionDetails.userId, isInflow: true, amount: transactionDetails.amount, currency: transactionDetails.currency, description: "Purchase of credits", status: "successful", paymentMethod: "flutterwave" }, session);
+
+                await gatewayTransactionService.updateGatewayTransactions({ id: transactionDetails._id, paymentStatus: "successful" }, session)
+
+
+                await session.commitTransaction();
+
+                session.endSession();
+
+                return {
+                    success: true,
+                    amount: transactionDetails.amount
+                }
+
+            } catch (error) {
+                console.log('Transaction error flw: ', error.message)
+                await session.abortTransaction();
+                throw new Error('Flw transaction: ', error.message)
             }
+
 
         }
         else {

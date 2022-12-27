@@ -299,7 +299,7 @@ describe('User Service', () => {
 
             const fetchedUser = await userService.getUserById(createdUser._id);
 
-            console.log('fetched: ', updatedUser)
+            // console.log('fetched: ', updatedUser)
 
 
             expect(updateData.email).toEqual(fetchedUser.email);

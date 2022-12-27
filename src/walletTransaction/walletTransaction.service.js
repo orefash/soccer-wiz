@@ -1,10 +1,12 @@
 
 
-const saveWalletTransaction = (WalletTransaction) => async ({ credits, userId, isInflow, value, description, currency, status, type }) => {
+const saveWalletTransaction = (WalletTransaction) => async ({ credits, userId, isInflow, value, description, currency, status, type }, session = null) => {
 
     const newTransaction = new WalletTransaction({ credits, userId, isInflow, value, description, currency, status, type })
 
-    return newTransaction.save()
+    let opts = {}
+    if(session) opts.session = session
+    return newTransaction.save(opts)
 }
 
 

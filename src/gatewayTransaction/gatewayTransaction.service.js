@@ -8,11 +8,15 @@ const saveGatewayTransaction = (GatewayTransaction) => async ({ userId, transact
 }
 
 
-const updateGatewayTransactions = (GatewayTransaction) => async ({ id, paymentStatus }) => {
+const updateGatewayTransactions = (GatewayTransaction) => async ({ id, paymentStatus }, session = null) => {
 
-    const updatedTransaction = await GatewayTransaction.findByIdAndUpdate(id, { paymentStatus }, {
-        new: true,
-    });
+    let opts = {
+        new: true
+    }
+
+    if(session) opts.session = session
+
+    const updatedTransaction = await GatewayTransaction.findByIdAndUpdate(id, { paymentStatus }, opts);
 
     return updatedTransaction
 }

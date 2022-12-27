@@ -10,10 +10,10 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
 
-const { 
-    GoogleAuthController, 
-    UserController, 
-    LocalAuthController, 
+const {
+    GoogleAuthController,
+    UserController,
+    LocalAuthController,
     FacebookAuthController,
     AdminController
 } = require("./user");
@@ -51,32 +51,24 @@ app.use(
 );
 
 var whitelist = ['http://localhost:3001', 'http://localhost:3000', 'https://expensive-mite-housecoat.cyclic.app', 'https://soccerwiz.netlify.app']
-var corsOptions = {
-    origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'))
-        }
-    },
-    credentials: true
-}
 
-// Then pass them to cors:
-// app.use(cors(corsOptions));
-// app.use(cors());
 app.use(cors({
     origin: whitelist, // (Whatever your frontend url is) 
     credentials: true, // <= Accept credentials (cookies) sent by the client
 }))
-// app.use(cors({
-//     origin: "*", // (Whatever your frontend url is) 
-//     credentials: true, // <= Accept credentials (cookies) sent by the client
-// }))
 
+const mongoose = require('mongoose');
+const serverStatus = () => {
+    return {
+        state: 'up',
+        dbState: mongoose.STATES[mongoose.connection.readyState]
+    }
+};
 
-app.get("/api", (req, res) => {
-    res.status(200).json({ alive: true });
+app.get("/api/uptime", (req, res) => {
+    res.status(200).json(
+        serverStatus()
+    );
 });
 
 app.use("/auth", GoogleAuthController);

@@ -177,16 +177,20 @@ const updateGameRecords = (User) => async ({ id, score }) => {
     return updatedUser
 }
 
-const updateWalletBalance = (User) => async ({ id, credits }) => {
+const updateWalletBalance = (User) => async ({ id, credits }, session = null) => {
+
+    let opts = {
+        new: true
+    }
+
+    if(session) opts.session = session
 
     const updatedUser = await User.findByIdAndUpdate(
         id,
         {
             $inc: { 'wallet_balance': credits }
         },
-        {
-            new: true,
-        }
+        opts
     );
 
     return updatedUser

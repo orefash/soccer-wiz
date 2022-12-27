@@ -8,6 +8,8 @@ function flwRoutes(flwService) {
         try {
             const { tx_ref, transaction_id, status } = req.query;
 
+           
+
             if (!tx_ref || !transaction_id || !status) {
                 throw Error("Incomplete Request details")
             }
@@ -16,11 +18,11 @@ function flwRoutes(flwService) {
                 tx_ref, status, transaction_id
             }
 
-            // const flwData = await gameCategoryService.saveCategory(data);
+            const flwData = await flwService.fundWalletWithFlutterwave(data);
 
             res.status(200).json({
                 success: true,
-                flwData: data
+                flwData: flwData
             });
 
 
@@ -32,7 +34,39 @@ function flwRoutes(flwService) {
     });
 
 
+
+    router.get('/flw/pay-link/user/:userId', async (req, res, next) => {
+
+        try {
+            const { currency, amount } = req.query;
+            let userId = req.params.userId;
+
+            if (!currency || !amount || !userId) {
+                throw Error("Incomplete Request details")
+            }
+
+            let data = {
+                currency, amount, userId
+            }
+
+            const flwData = await flwService.getFlutterwaveLink(data);
+
+            res.status(200).json({
+                success: true,
+                flwData: flwData
+            });
+
+
+        } catch (err) {
+            // return next(err);
+            // console.log("reg erro: ", err)
+            res.json({ success: false, message: err.message });
+        }
+    });
+
     return router;
 }
+
+
 
 module.exports.flwRoutes = flwRoutes;
