@@ -5,7 +5,6 @@ const Flutterwave = require('flutterwave-node-v3');
 
 const { generateId } = require("../utils/transactionIdGenerator");
 
-const conn = require('../db')
 
 
 const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ currency, amount, userId }) => {
@@ -88,7 +87,7 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
 }
 
 
-const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewayTransactionService) => async ({ status, tx_ref, transaction_id }) => {
+const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewayTransactionService, conn) => async ({ status, tx_ref, transaction_id }) => {
 
 
     if (status === 'successful') {
@@ -159,9 +158,9 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
 
 
 
-module.exports = (walletTransactionService, userService, gatewayTransactionService, got) => {
+module.exports = (walletTransactionService, userService, gatewayTransactionService, conn) => {
     return {
-        fundWalletWithFlutterwave: fundWalletWithFlutterwave(walletTransactionService, userService, gatewayTransactionService),
-        getFlutterwaveLink: getFlutterwaveLink(userService, gatewayTransactionService, got)
+        fundWalletWithFlutterwave: fundWalletWithFlutterwave(walletTransactionService, userService, gatewayTransactionService, conn),
+        getFlutterwaveLink: getFlutterwaveLink(userService, gatewayTransactionService)
     }
 }

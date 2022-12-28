@@ -1,3 +1,5 @@
+require("dotenv").config()
+
 const { when } = require('jest-when')
 
 const { connect, clearDatabase, closeDatabase } = require('../db')

@@ -1,28 +1,26 @@
-
-const { when } = require('jest-when')
 require("dotenv").config();
 
-const { connect, clearDatabase, closeDatabase } = require('../db')
+const { when } = require('jest-when')
 
+const { connect, clearDatabase, closeDatabase, getConnection } = require('../db')
 
 const { GatewayTransaction, gatewayTransactionService } = require('../../gatewayTransaction')
-// const GatewayTransactionService = require('../../gatewayTransaction/gatewayTransaction.service');
-
-// const gatewayTransactionService = GatewayTransactionService(GatewayTransaction)
-
 
 const { WalletTransaction, walletTransactionService } = require('../../walletTransaction')
-// const WalletTransactionService = require('./walletTransaction.service')
-
-// const walletTransactionService = WalletTransactionService(WalletTransaction);
 
 const { User, userService } = require('../../user')
 
 
-const { flutterwaveService } = require('../../flutterwave')
+const { FlutterwaveService } = require('../../flutterwave')
+
+let flutterwaveService = null;
 
 
-beforeAll(async () => await connect())
+beforeAll(async () => {
+    await connect();
+    // const conn = await getConnection();
+    flutterwaveService = FlutterwaveService(walletTransactionService, userService, gatewayTransactionService, conn)
+})
 afterEach(async () => await clearDatabase())
 afterAll(async () => await closeDatabase())
 

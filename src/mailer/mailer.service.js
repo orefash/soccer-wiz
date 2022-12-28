@@ -1,16 +1,21 @@
 const AWS = require('aws-sdk');
 
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEYID,
-    secretAccessKey: process.env.AWS_ACCESS_KEY,
-    region: process.env.AWS_REGION
-});
 
-const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
 const sendMail = () => async ({ to, subject, message, from }) => {
 
+    const cred = {
+        accessKeyId: process.env.AWS_ACCESS_KEYID,
+        secretAccessKey: process.env.AWS_ACCESS_KEY,
+        region: process.env.AWS_REGION
+    }
+
+    // console.log('Cred: ', cred)
+
+    AWS.config.update(cred);
+
     try{
+        const ses = new AWS.SES({ apiVersion: '2010-12-01' });
 
         const params = {
             Destination: {
@@ -38,13 +43,20 @@ const sendMail = () => async ({ to, subject, message, from }) => {
             Source: from,
         };
 
-        ses.sendEmail(params, (err, data) => {
-            if (err) {
-                return console.log(err, err.stack);
-            } else {
-                console.log("Email sent.", data);
-            }
-        });
+        // await ses.sendEmail(params, (err, data) => {
+        //     if (err) {
+        //         return console.log(err, err.stack);
+        //     } else {
+        //         console.log("Email sent.", data);
+        //         return data;
+        //     }
+        // });
+
+        let data = await ses.sendEmail(params).promise();
+
+        // console.log("data: ", data)
+
+        return data;
 
     }catch(error){
         console.log('Send mail: ', error.message)

@@ -1,9 +1,9 @@
-const mongoose = require('mongoose') ;
+const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const mongod = MongoMemoryServer.create();
 
- const connect = async () => {
+const connect = async () => {
     const uri = await (await mongod).getUri();
     const mongooseOpts = {
         useNewUrlParser: true,
@@ -12,12 +12,12 @@ const mongod = MongoMemoryServer.create();
     };
     await mongoose.connect(uri, mongooseOpts);
 }
- const closeDatabase = async () => {
+const closeDatabase = async () => {
     await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
     // await mongod.stop();
 }
- const clearDatabase = async () => {
+const clearDatabase = async () => {
     const collections = mongoose.connection.collections;
     for (const key in collections) {
         const collection = collections[key];
@@ -25,8 +25,13 @@ const mongod = MongoMemoryServer.create();
     }
 }
 
+const getConnection = async () => {
+    return mongoose.connection
+}
+
 module.exports = {
     clearDatabase: clearDatabase,
     closeDatabase: closeDatabase,
-    connect: connect
+    connect: connect,
+    getConnection: getConnection
 }
