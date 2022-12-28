@@ -8,8 +8,6 @@ function flwRoutes(flwService) {
         try {
             const { tx_ref, transaction_id, status } = req.query;
 
-           
-
             if (!tx_ref || !transaction_id || !status) {
                 throw Error("Incomplete Request details")
             }
