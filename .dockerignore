@@ -1,0 +1,22 @@
+# Environment variables
+.env
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules
+coverage
+jspm_packages
+package-lock.json
+# Optional npm cache directory
+.npm
+
+/.vscode
+/security/cert.key
+/security/cert.pem
+
+.DS_Store
+
+Dockerfile
+.dockerignore
