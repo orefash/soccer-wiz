@@ -16,9 +16,12 @@ const questionSchema = new Schema({
         trim: true,
 		minlength: 1,
     },
-    category: { type: String, index: true,
+    category: { 
+        type: String, 
+        index: true,
         required: 'Please enter category',
-        trim: true, },
+        trim: true, 
+    },
     active: {
         type: Boolean,
         default: true
@@ -31,7 +34,11 @@ const questionSchema = new Schema({
         type: Number,
         required: 'Please specify gameweek',
     },
-    answers: [answerSchema]
+    answers: {
+        type: [answerSchema],
+        // validate: v => Array.isArray(v) && v.length  == 4,
+        validate: [(val) => val.length === 4, 'Must have 4 options']
+    }
 },
 { timestamps: true });
 

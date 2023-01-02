@@ -61,6 +61,33 @@ beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
 afterAll(async () => await closeDatabase())
 
+const q11 = {
+
+    "question": "How many Ballon'Dor does Messi have?",
+    "answers": [
+        {
+            "optionNumber": 1,
+            "answerText": "5",
+            "isCorrect": false
+        },
+        {
+            "optionNumber": 2,
+            "answerText": "7",
+            "isCorrect": true
+        },
+        {
+            "optionNumber": 3,
+            "answerText": "2",
+            "isCorrect": false
+        },
+        {
+            "optionNumber": 4,
+            "answerText": "3",
+            "isCorrect": false
+        },
+    ]
+}
+
 
 const q0 = {
 
@@ -279,6 +306,28 @@ describe('Question Service', () => {
             // done();
 
         })
+    })
+
+    describe('addMultipleQuestions', () => {
+
+        const data = {
+            category: 'General',
+            gameWeek: 3,
+            questions: [
+                q11, q11, q11
+            ]
+        }
+
+        it('should save multiple questions', async () => {
+
+            const createdQuestion = await questionService.addMultipleQuestions(data);
+
+            expect(createdQuestion.saved).toBeTruthy();
+            expect(createdQuestion.questions.length).toEqual(data.questions.length)
+            // done();
+
+        })
+       
     })
 
     describe('addBulkQuestions', () => {

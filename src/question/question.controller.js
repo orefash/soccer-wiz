@@ -109,52 +109,11 @@ function questionRoutes(QuestionService) {
         } catch (error) {
             res.status(500).json({
                 success: false,
-                message: error
+                message: error.message
             });
         }
 
     });
-
-
-    // router.post("/game",requireJwtAuth, async (req, res) => {
-    //     try {
-    //         const { demo, category, userId } = req.body;
-
-    //         if (demo == null || !category || !userId) {
-    //             throw Error("Incomplete Request details")
-    //         }
-
-    //         if (demo && category !== 'demo' ) {
-    //             throw Error("Demo field not set")
-    //         }
-
-    //         const questionData = {
-    //             demo, category, userId, date: new Date()
-    //         }
-
-    //         const data = await QuestionService.getQuestionsForGame(questionData);
-
-    //         if (data) {
-    //             res.status(200).json({
-    //                 success: !data.error,
-    //                 data: data
-    //             });
-    //         } else {
-    //             res.status(400).json({
-    //                 success: false,
-    //                 message: "Questions not found"
-    //             });
-    //         }
-
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             success: false,
-    //             message: error.message
-    //         });
-    //     }
-
-    // });
-
 
 
     router.get("/game/user/:userId",requireJwtAuth, async (req, res) => {
@@ -270,6 +229,60 @@ function questionRoutes(QuestionService) {
     });
 
 
+
+    router.post("/save",requireAdminJwtAuth, async (req, res) => {
+        try {
+            const { category, gameWeek, questions } = req.body;
+
+            if (!gameWeek || !category || !questions ) {
+                throw Error("Incomplete Request details")
+            }
+
+            const questionData = {
+                gameWeek, category, questions
+            }
+            const result = await QuestionService.addMultipleQuestions(questionData);
+            res.status(200).json({
+                success: true,
+                questions: result
+            });
+
+        } catch (error) {
+            console.log("Error in questions save: ", error)
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
+
+    router.post("/demo",requireAdminJwtAuth, async (req, res) => {
+        try {
+            const { question, answers } = req.body;
+
+            if (!question || !answers) {
+                throw Error("Incomplete Request details")
+            }
+
+            const questionData = {
+                question, category: 'demo', gameWeek: 0, answers
+            }
+            const questions = await QuestionService.addQuestion(questionData);
+            res.status(200).json({
+                success: true,
+                questions: questions
+            });
+
+        } catch (error) {
+            console.log("Error in questions: ", error)
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
 
     router.patch("/:id", async (req, res) => {
         try {

@@ -25,7 +25,7 @@ const requireAdminJwtAuth = async (req, res, next) => {
         return next(err);
       }
       if (!user) {
-        return res.status(422).send(info);
+        return res.status(401).send({ success: false });
       }
       req.user = user;
       next();

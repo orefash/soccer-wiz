@@ -158,7 +158,7 @@ function userRoutes(UserService) {
     });
 
 
-    router.get("/", requireAdminJwtAuth,async (req, res) => {
+    router.get("/", requireAdminJwtAuth, async (req, res) => {
         try {
 
             let filter = {};

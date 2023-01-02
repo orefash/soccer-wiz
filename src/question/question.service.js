@@ -24,11 +24,35 @@ const addQuestion = (Question, gameCategoryService) => async (data) => {
     return newQuestion.save()
 }
 
+const addMultipleQuestions = (Question, gameCategoryService) => async (data) => {
+
+    if(!data.gameWeek) 
+        throw new Error('Invalid game week')
+
+    const category = await gameCategoryService.getCategoryByName(data.category)
+
+    if (!category && data.category !== 'demo')
+        throw new Error('Invalid Category')
+
+    try {
+        (data.questions).map(a => {
+            a.category = data.category
+            a.gameWeek = data.gameWeek
+        })
+        let insertedData = await Question.insertMany(data.questions);
+
+        return { saved: true, questions: insertedData }
+    } catch (error) {
+        console.log("Error in data load: ", error.message)
+        throw new Error(error.message)
+    }
+}
+
 const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
 
     // if (data.answers.length !== 4)
     //     throw new Error('Question requires 4 options')
-    if(!data.category || !data.spreadsheetId) throw new Error('Incomplete parameters')
+    if (!data.category || !data.spreadsheetId) throw new Error('Incomplete parameters')
     let dataRange = "Sheet1!A:G";
 
     const category = await gameCategoryService.getCategoryByName(data.category)
@@ -39,7 +63,7 @@ const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
     if (!category && data.category !== 'demo')
         throw new Error('Invalid Category')
 
-    try{
+    try {
 
         let rawData = await loadQuestionsFromGoogleSheets(data.spreadsheetId, dataRange);
 
@@ -55,14 +79,10 @@ const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
 
         return insertedData
 
-    }catch(error){
+    } catch (error) {
         console.log("Error in data load: ", error.message)
         throw new Error(error.message)
     }
-
-    
-
-
 }
 
 
@@ -101,7 +121,7 @@ const getQuestionsByCategory = (Question, gameCategoryService) => async (categor
 
     const questionCategory = await gameCategoryService.getCategoryByName(category)
 
-    
+
     if (!questionCategory && category !== 'demo')
         throw new Error('Invalid Category')
 
@@ -117,16 +137,16 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
 
     let required_game_credits = 10;
 
-    if (demo && category !== 'demo' ) {
+    if (demo && category !== 'demo') {
         throw Error("Demo field not set")
     }
 
-    if (!demo && category === 'demo' ) {
+    if (!demo && category === 'demo') {
         throw Error("Invalid category for Live game")
     }
 
     const questionCategory = await gameCategoryService.getCategoryByName(category)
-    
+
     if (!questionCategory && category !== 'demo')
         throw new Error('Invalid Category')
 
@@ -190,6 +210,7 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
     return {
 
         addQuestion: addQuestion(Question, gameCategoryService),
+        addMultipleQuestions: addMultipleQuestions(Question, gameCategoryService),
         addBulkQuestions: addBulkQuestions(Question, gameCategoryService),
         deleteQuestion: deleteQuestion(Question),
         deleteAllQuestions: deleteAllQuestions(Question),
