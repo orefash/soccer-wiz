@@ -8,7 +8,7 @@ function flwRoutes(flwService) {
         try {
             const { tx_ref, transaction_id, status } = req.query;
 
-            if (!tx_ref || !transaction_id || !status) {
+            if (!tx_ref && !status) {
                 throw Error("Incomplete Request details")
             }
 
@@ -19,8 +19,7 @@ function flwRoutes(flwService) {
             const flwData = await flwService.fundWalletWithFlutterwave(data);
 
             res.status(200).json({
-                success: true,
-                flwData: flwData
+                flwData
             });
 
 

@@ -1,6 +1,36 @@
 require("dotenv").config()
+const AWS = require('aws-sdk');
 
 const { mailerService } = require('../../mailer')
+
+jest.mock("aws-sdk", () => {
+    return {
+      config: {
+        update() {
+          return {};
+        },
+      },
+    //   SecretsManager: jest.fn(() => {
+    //     return {
+    //       getSecretValue: jest.fn(({ SecretId }) => {
+    //         return {
+    //           promise: () => mockgetSecretValue(SecretId),
+    //         };
+    //       }),
+    //     };
+    //   }),
+
+      SES: jest.fn(() => {
+        return {
+            sendEmail: jest.fn((data) => {
+            return {
+              promise: () => { resp: "done"},
+            };
+          }),
+        };
+      }),
+    };
+  });
 
 describe('Mailer Service', () => {
 

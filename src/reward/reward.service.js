@@ -37,6 +37,8 @@ const issueReward = (Reward, walletTransactionService) => async (id) => {
 
     const rewards = await Reward.findOne({ _id: id })
 
+    console.log('Rewards: ', rewards)
+
     // if(rewards.userId !== uid) throw new Error('Invalid User')
     if(rewards.claimed !== true) throw new Error('Reward not claimed by user')
 

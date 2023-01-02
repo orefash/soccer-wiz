@@ -1,4 +1,4 @@
-const { when } = require('jest-when')
+
 require("dotenv").config();
 
 const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require('../../utils/loadQuestions');
@@ -40,7 +40,8 @@ describe('Load Questions from sources ', () => {
                   'Option B',
                   'Option C',
                   'Option D',
-                  'Correct'
+                  'Correct',
+                  'gameweek'
                 ],
                 [
                   'How many goals did Karim Benzema score against PSG in the 2021-22 champions league round of 16 second leg?',
@@ -48,7 +49,8 @@ describe('Load Questions from sources ', () => {
                   '3',
                   '0',
                   '1',
-                  'A'
+                  'A',
+                  '2'
                 ],
                 [
                   'Who replaced Nuno Espiranto Santo as Tottenham coach in the 2021-22 premier league season?',
@@ -56,7 +58,8 @@ describe('Load Questions from sources ', () => {
                   'Mikel Arteta',
                   'Eddie Howe',
                   'Thomas Tuchel',
-                  'A'
+                  'A',
+                  '2'
                 ],
                 [
                   'Which club did Alexandre Lacazette play for in the 2021-22 season?',
@@ -64,7 +67,8 @@ describe('Load Questions from sources ', () => {
                   'Brighton',
                   'Southampton',
                   'Arsenal',
-                  'D'
+                  'D',
+                  '2'
                 ],
                 [
                   'Which of these players scored the first goal for Liverpool in the 2021-22 premier league season?',
@@ -72,7 +76,8 @@ describe('Load Questions from sources ', () => {
                   'Jordan Henderson',
                   'Diogo Jota',
                   'Joel Matip',
-                  'C'
+                  'C',
+                  '2'
                 ]
             ]
 

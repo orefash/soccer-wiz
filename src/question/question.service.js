@@ -29,7 +29,7 @@ const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
     // if (data.answers.length !== 4)
     //     throw new Error('Question requires 4 options')
     if(!data.category || !data.spreadsheetId) throw new Error('Incomplete parameters')
-    let dataRange = "Sheet1!A:F";
+    let dataRange = "Sheet1!A:G";
 
     const category = await gameCategoryService.getCategoryByName(data.category)
 

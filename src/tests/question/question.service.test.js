@@ -66,6 +66,7 @@ const q0 = {
 
     "active": true,
     "points": 1,
+    gameWeek: 3,
     "question": "How many Ballon'Dor does Messi have?",
     "category": "General",
     "answers": [
@@ -91,6 +92,7 @@ const q1 = {
 
     "active": true,
     "points": 1,
+    gameWeek: 3,
     "question": "How many Ballon'Dor does Messi have?",
     "category": "General",
     "answers": [
@@ -122,6 +124,7 @@ const q2 = {
 
     "active": true,
     "points": 1,
+    gameWeek: 3,
     "question": "How many Ballon'Dor does Messi have 2?",
     "category": "Italy",
     "answers": [
@@ -152,6 +155,7 @@ const q3 = {
 
     "active": true,
     "points": 1,
+    gameWeek: 3,
     "question": "How many Ballon'Dor does Messi have 3?",
     "category": "General",
     "answers": [
@@ -182,6 +186,7 @@ const q4 = {
 
     "active": true,
     "points": 1,
+    gameWeek: 3,
     "question": "How many Ballon'Dor does Messi have 3?",
     "category": "invalid",
     "answers": [
@@ -213,6 +218,7 @@ const q5 = {
 
     "active": true,
     "points": 1,
+    gameWeek: 3,
     "question": "How many Ballon'Dor does Messi havee 3?",
     "category": "demo",
     "answers": [

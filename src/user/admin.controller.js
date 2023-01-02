@@ -101,26 +101,7 @@ function adminRoutes(UserService) {
 
     });
 
-    router.get("/", async (req, res) => {
-        try {
-
-            let data = {}
-            let a =  null;
-           
-            a = await UserService.getUsers();
-            data.users = a;
-            data.success = true;
-            res.status(200).json(data);
-
-        } catch (error) {
-            console.log("error: ",error.message)
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
-        }
-
-    });
+    
 
 
     router.get("/:id", async (req, res) => {

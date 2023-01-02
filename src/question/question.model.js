@@ -17,6 +17,7 @@ const questionSchema = new Schema({
 		minlength: 1,
     },
     category: { type: String, index: true,
+        required: 'Please enter category',
         trim: true, },
     active: {
         type: Boolean,
@@ -25,6 +26,10 @@ const questionSchema = new Schema({
     points: {
         type: Number,
         default: 1
+    },
+    gameWeek: {
+        type: Number,
+        required: 'Please specify gameweek',
     },
     answers: [answerSchema]
 },

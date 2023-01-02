@@ -61,7 +61,7 @@ const formatDataForQuestionService = async (data, category) => {
 
     data.forEach((question) => {
         let q = {}
-        if (question && question.length == 6) {
+        if (question && question.length == 7) {
 
             let answers = []
             q.category = category;
@@ -77,6 +77,7 @@ const formatDataForQuestionService = async (data, category) => {
                 answers.push(a)
             }
             q.answers = answers
+            q.gameWeek = question[6]
             questions.push(q)
         }
         

@@ -5,8 +5,9 @@
   "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
-    "dev": "nodemon ./src/server.js",
-    "test": "jest --watchAll --detectOpenHandles --coverage --runInBand",
+    "start:dev": "nodemon ./src/server.js",
+    "test": "jest  --coverage --runInBand",
+    "test:watch": "jest --watchAll --detectOpenHandles --coverage --runInBand",
     "test:coverage": "jest --coverage"
   },
   "keywords": [],

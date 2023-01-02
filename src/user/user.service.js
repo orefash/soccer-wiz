@@ -53,9 +53,10 @@ const addAdminUser = (User) => async ({ email, password }) => {
     return user.save()
 }
 
-const getUsers = (User) => async () => {
+const getUsers = (User) => async (filter = {}) => {
     // console.log("in users service")
-    let users = await User.find({});
+
+    let users = await User.find(filter);
     // console.log("in users service: users: - ", users)
     return users
 }

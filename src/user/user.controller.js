@@ -2,6 +2,8 @@ const express = require('express');
 
 const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
+const requireAdminJwtAuth = require('../middleware/requireAdminJwtAuth');
+
 function userRoutes(UserService) {
     const router = express.Router();
 
@@ -122,29 +124,7 @@ function userRoutes(UserService) {
 
     });
 
-    router.patch("/:id/toggleStatus", async (req, res) => {
-        try {
-            const userId = req.params.id;
-
-            if (!userId) throw new Error("User ID is invalid")
-
-            const updatedUser = await UserService.toggleUserStatus(userId);
-
-            res.status(200).json({
-                success: true,
-                user: updatedUser
-            });
-
-        } catch (error) {
-            // console.log("Error in Users: ", error)
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
-        }
-
-    });
-
+    
 
 
     router.post("/check-username", async (req, res) => {
@@ -177,19 +157,23 @@ function userRoutes(UserService) {
 
     });
 
-    router.get("/", async (req, res) => {
+
+    router.get("/", requireAdminJwtAuth,async (req, res) => {
         try {
 
-            let data = {}
-            let a = null;
-
-            a = await UserService.getUsers();
+            let filter = {};
+            let role = req.query.role;
+            if(role) filter.role = role;
+            let data = {};
+            let a =  null;
+           
+            a = await UserService.getUsers(filter);
             data.users = a;
             data.success = true;
             res.status(200).json(data);
 
         } catch (error) {
-            console.log("error: ", error.message)
+            console.log("error: ",error.message)
             res.status(500).json({
                 success: false,
                 message: error.message
@@ -198,33 +182,7 @@ function userRoutes(UserService) {
 
     });
 
-
-    router.get("/:id", async (req, res) => {
-        try {
-            const user = await UserService.getUserById(req.params.id);
-
-            if (user) {
-                res.status(200).json({
-                    success: true,
-                    user: user
-                });
-            } else {
-                res.status(400).json({
-                    success: false,
-                    message: "User not found"
-                });
-            }
-
-
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
-        }
-
-    });
-
+    
 
     return router;
 

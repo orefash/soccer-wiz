@@ -60,6 +60,7 @@ describe('Question Service - getQuestionsForGame', () => {
 
             "active": true,
             "points": 1,
+            gameWeek: 1,
             "question": "How many Ballon'Dor does Messi have1?",
             "category": "General",
             "answers": [
@@ -91,6 +92,7 @@ describe('Question Service - getQuestionsForGame', () => {
 
             "active": true,
             "points": 1,
+            gameWeek: 1,
             "question": "How many Ballon'Dor does Messi have2?",
             "category": "Italy",
             "answers": [
@@ -121,6 +123,7 @@ describe('Question Service - getQuestionsForGame', () => {
 
             "active": true,
             "points": 1,
+            gameWeek: 1,
             "question": "How many Ballon'Dor does Messi have3?",
             "category": "General",
             "answers": [

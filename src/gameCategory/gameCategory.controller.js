@@ -1,10 +1,12 @@
 const express = require('express');
 const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
+const requireAdminJwtAuth = require('../middleware/requireAdminJwtAuth');
+
 function categoryRoutes(gameCategoryService) {
     const router = express.Router();
 
-    router.post('/', async (req, res, next) => {
+    router.post('/', requireAdminJwtAuth, async (req, res, next) => {
 
         try {
             const { category, isActive, description } = req.body;
