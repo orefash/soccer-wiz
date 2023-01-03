@@ -25,6 +25,7 @@ const { GameController } = require('./game')
 const { WalletController } = require('./walletTransaction')
 const { RewardController } = require('./reward')
 const { FlwController } = require('./flutterwave')
+const { GameWeekController } = require('./gameWeek')
 
 app.use(passport.initialize());
 require("./passportConfig/local");
@@ -84,5 +85,6 @@ app.use("/api/games", GameController);
 app.use("/api/wallet/transactions", WalletController);
 app.use("/api/rewards", RewardController);
 app.use("/api/payments", FlwController);
+app.use("/api/gameWeeks", GameWeekController);
 
 module.exports = app;
