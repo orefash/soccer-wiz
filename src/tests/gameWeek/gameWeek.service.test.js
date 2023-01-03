@@ -2,7 +2,7 @@ const { connect, clearDatabase, closeDatabase } = require('../db')
 
 const { GameWeek, gameWeekService } = require('../../gameWeek')
 
-const gameWeekStub = require('./gameWeek.stub')
+const gameWeekStub = require('../stubs/gameWeek.stub')
 
 beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())

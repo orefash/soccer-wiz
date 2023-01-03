@@ -6,6 +6,12 @@ const { connect, clearDatabase, closeDatabase } = require('../db')
 const { Question } = require('../../question')
 const QuestionService = require('../../question/question.service');
 
+
+const { gameWeekService } = require('../../gameWeek')
+
+const gameWeekStub = require('../stubs/gameWeek.stub')
+
+
 const getUserById = jest.fn();
 when(getUserById).calledWith('low_bal_id').mockReturnValue({
     wallet_balance: 0
@@ -35,7 +41,7 @@ let gameCategoryService = {
 
 const getSettings = jest.fn();
 when(getSettings).calledWith().mockReturnValue({
-   
+
     creditBuyList: [
         10, 20, 50, 100
     ],
@@ -93,7 +99,7 @@ const q0 = {
 
     "active": true,
     "points": 1,
-    gameWeek: 3,
+    gameWeek: 1,
     "question": "How many Ballon'Dor does Messi have?",
     "category": "General",
     "answers": [
@@ -119,7 +125,7 @@ const q1 = {
 
     "active": true,
     "points": 1,
-    gameWeek: 3,
+    gameWeek: 1,
     "question": "How many Ballon'Dor does Messi have?",
     "category": "General",
     "answers": [
@@ -151,7 +157,7 @@ const q2 = {
 
     "active": true,
     "points": 1,
-    gameWeek: 3,
+    gameWeek: 1,
     "question": "How many Ballon'Dor does Messi have 2?",
     "category": "Italy",
     "answers": [
@@ -182,7 +188,7 @@ const q3 = {
 
     "active": true,
     "points": 1,
-    gameWeek: 3,
+    gameWeek: 1,
     "question": "How many Ballon'Dor does Messi have 3?",
     "category": "General",
     "answers": [
@@ -213,7 +219,7 @@ const q4 = {
 
     "active": true,
     "points": 1,
-    gameWeek: 3,
+    gameWeek: 1,
     "question": "How many Ballon'Dor does Messi have 3?",
     "category": "invalid",
     "answers": [
@@ -245,7 +251,7 @@ const q5 = {
 
     "active": true,
     "points": 1,
-    gameWeek: 3,
+    gameWeek: 1,
     "question": "How many Ballon'Dor does Messi havee 3?",
     "category": "demo",
     "answers": [
@@ -285,12 +291,12 @@ describe('Question Service', () => {
             // done();
 
         })
-        it('should not create a question if it exists already', async () => {
-       
-            const createdQuestion = await questionService.addQuestion(q1);
-            await expect(questionService.addQuestion(q1)).rejects.toThrow()
-            // done();
-        })
+        // it('should not create a question if it exists already', async () => {
+
+        //     const createdQuestion = await questionService.addQuestion(q1);
+        //     await expect(questionService.addQuestion(q1)).rejects.toThrow()
+        //     // done();
+        // })
 
         it('should throw error when answers are not 4', async () => {
             await expect(questionService.addQuestion(q0)).rejects.toThrow()
@@ -299,7 +305,7 @@ describe('Question Service', () => {
 
         it('should throw an error if category is invalid', async () => {
 
-           
+
             // const createdQuestion = await questionService.addQuestion(q4);
 
             await expect(questionService.addQuestion(q4)).rejects.toThrow()
@@ -327,7 +333,7 @@ describe('Question Service', () => {
             // done();
 
         })
-       
+
     })
 
     describe('addBulkQuestions', () => {
@@ -385,7 +391,7 @@ describe('Question Service', () => {
         })
     })
 
-   
+
 
     describe('deleteQuestion', () => {
         it('should delete a question when given id', async () => {
@@ -423,7 +429,7 @@ describe('Question Service', () => {
     describe('updateQuestion', () => {
         it('should update a question and return the updated question', async () => {
 
-            
+
 
             const createdQuestion = await questionService.addQuestion(q2);
 
@@ -464,7 +470,7 @@ describe('Question Service', () => {
     describe('getQuestionById', () => {
         it('should be able to get Question By Id', async () => {
 
-            
+
 
             const createdQuestion = await questionService.addQuestion(q3);
 
@@ -486,10 +492,41 @@ describe('Question Service', () => {
         })
     })
 
+
+
+    describe('getGameWeekQuestionData', () => {
+        it('should be able to get Question By Id', async () => {
+
+            await gameWeekService.addGameWeek(gameWeekStub.valid)
+            await gameWeekService.addGameWeek(gameWeekStub.valid2)
+
+            await questionService.addQuestion(q3);
+            await questionService.addQuestion(q3);
+            await questionService.addQuestion(q3);
+            let t1 = q3;
+            t1.gameWeek = 2
+            await questionService.addQuestion(t1);
+            await questionService.addQuestion(t1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q2);
+
+            let data2 = await questionService.getGameWeekQuestionData(t1.category)
+
+            expect(data2.length).toEqual(2);
+            expect(data2[0].count).toEqual(3);
+
+
+
+        })
+
+
+    })
+
+
     describe('getQuestionsByCategory', () => {
         it('should be able to get Question By Category', async () => {
 
-            
+
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
@@ -508,7 +545,7 @@ describe('Question Service', () => {
 
         it('should be able to get Question By demo Category', async () => {
 
-            
+
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
@@ -527,7 +564,7 @@ describe('Question Service', () => {
         })
 
         it('should throw error when categroy is invalid', async () => {
-            
+
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
@@ -542,7 +579,7 @@ describe('Question Service', () => {
         })
 
         it('should throw error when categroy is invalid', async () => {
-            
+
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
@@ -556,7 +593,7 @@ describe('Question Service', () => {
 
         it('should be able to get n number of Questions By Category', async () => {
 
-            
+
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
@@ -579,7 +616,7 @@ describe('Question Service', () => {
     describe('getAllQuestions', () => {
         it('should be able to get All Saved Questions', async () => {
 
-            
+
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
@@ -591,14 +628,47 @@ describe('Question Service', () => {
 
         })
 
-        
+        it('should be able to get questions by category', async () => {
+
+
+
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+            await questionService.addQuestion(q3);
+
+            let filter = {}
+            filter.category = q1.category;
+
+            const fetchedQuestions = await questionService.getQuestions(filter);
+
+            expect(fetchedQuestions.length).toEqual(2);
+
+        })
+
+        it('should be able to get questions by gameWeek', async () => {
+
+
+
+            await questionService.addQuestion(q1);
+            await questionService.addQuestion(q2);
+
+            let filter = {}
+            filter.gameWeek = q1.gameWeek;
+
+            const fetchedQuestions = await questionService.getQuestions(filter);
+
+            expect(fetchedQuestions.length).toEqual(2);
+
+        })
+
+
     })
 
 
     describe('getQuestionsForGame', () => {
         it('valid user should be able to get Questions for demo Game', async () => {
 
-            
+
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
@@ -624,7 +694,7 @@ describe('Question Service', () => {
 
         it('should throw error with invlaid category', async () => {
 
-            
+
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
@@ -646,7 +716,7 @@ describe('Question Service', () => {
 
         })
 
-        
+
         it('invalid user should not be able to get Questions for Game', async () => {
 
             await questionService.addQuestion(q1);
@@ -654,26 +724,26 @@ describe('Question Service', () => {
             await questionService.addQuestion(q3);
 
             const userId = 'invalid_id';
-            
+
             const data = {
                 category: 'General',
                 demo: true,
                 userId: userId
             }
 
-            await expect( questionService.getQuestionsForGame(data)).rejects.toThrow();
+            await expect(questionService.getQuestionsForGame(data)).rejects.toThrow();
 
 
         })
 
-        it('user with insufficient balance should not be able to get Questions for live Game', async () => { 
+        it('user with insufficient balance should not be able to get Questions for live Game', async () => {
 
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
 
             const userId = 'good_bal';
-            
+
             const data = {
                 category: 'General',
                 demo: false,
@@ -683,7 +753,7 @@ describe('Question Service', () => {
 
 
             const fetchedGame = await questionService.getQuestionsForGame(data);
-            
+
             expect(fetchedGame.user).toEqual(userId);
             expect(fetchedGame.error).toEqual(true);
             expect(fetchedGame.in_matchday).toEqual(false);

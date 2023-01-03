@@ -7,7 +7,14 @@ function questionRoutes(QuestionService) {
 
     router.get("/",requireAdminJwtAuth, async (req, res) => {
         try {
-            const questions = await QuestionService.getQuestions();
+            let category = req.query.category;
+            let gameWeek = req.query.gameWeek;
+            let filters = {}
+
+            if(gameWeek) filters.gameWeek = gameWeek;
+            if(category) filters.category = category;
+
+            const questions = await QuestionService.getQuestions(filters);
             res.status(200).json({
                 success: true,
                 questions: questions
@@ -89,20 +96,24 @@ function questionRoutes(QuestionService) {
     });
 
 
-    router.get("/category/:category", async (req, res) => {
-        try {
-            // console.log("Category param: ", req.params.category)
-            const questions = await QuestionService.getQuestionsByCategory(req.params.category);
 
-            if (questions) {
+    router.get("/games/category/:category", async (req, res) => {
+        try {
+            let category = req.params.category;
+
+            if(!category) throw new Error('No Category Input');
+
+            const data = await QuestionService.getGameWeekQuestionData(category);
+
+            if (data) {
                 res.status(200).json({
                     success: true,
-                    question: questions
+                    data: data
                 });
             } else {
                 res.status(400).json({
                     success: false,
-                    message: "Questions not found"
+                    message: "Invalid Details"
                 });
             }
 

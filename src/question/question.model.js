@@ -6,7 +6,7 @@ const answerSchema = new Schema({
     optionNumber: Number,
     answerText: String,
     isCorrect: Boolean
-}, { _id : false });
+}, { _id: false });
 
 
 const questionSchema = new Schema({
@@ -14,23 +14,24 @@ const questionSchema = new Schema({
         type: String,
         required: 'Please enter your question',
         trim: true,
-		minlength: 1,
+        minlength: 1,
     },
-    category: { 
-        type: String, 
+    category: {
+        type: String,
         index: true,
         required: 'Please enter category',
-        trim: true, 
+        trim: true,
     },
     active: {
         type: Boolean,
         default: true
-    }, 
+    },
     points: {
         type: Number,
         default: 1
     },
     gameWeek: {
+        index: true,
         type: Number,
         required: 'Please specify gameweek',
     },
@@ -40,7 +41,17 @@ const questionSchema = new Schema({
         validate: [(val) => val.length === 4, 'Must have 4 options']
     }
 },
-{ timestamps: true });
+    { timestamps: true });
+
+questionSchema.virtual('gameWeeks', {
+    ref: 'gameWeek',
+    localField: 'gameWeek',
+    foreignField: 'gameWeek',
+    justOne: true
+})
+
+questionSchema.set('toObject', { virtuals: true });
+questionSchema.set('toJSON', { virtuals: true });
 
 var questionModel = mongoose.model("question", questionSchema, "question");
 

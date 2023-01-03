@@ -1,18 +1,19 @@
 const checkTodayWithinMatchday = require("../utils/timeValidations");
 
 const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require("../utils/loadQuestions");
+const { Question } = require(".");
 
 const addQuestion = (Question, gameCategoryService) => async (data) => {
 
     if (data.answers.length !== 4)
         throw new Error('Question requires 4 options')
 
-    const existing = await Question.findOne({ question: data.question })
+    // const existing = await Question.findOne({ question: data.question })
 
-    // console.log("in create: ", existing)
+    // // console.log("in create: ", existing)
 
-    if (existing)
-        throw new Error('Question already Exists')
+    // if (existing)
+    //     throw new Error('Question already Exists')
 
     const category = await gameCategoryService.getCategoryByName(data.category)
 
@@ -110,8 +111,8 @@ const updateQuestion = (Question) => async (id, { question, active, answers }) =
 }
 
 
-const getQuestions = (Question) => async () => {
-    const questions = await Question.find();
+const getQuestions = (Question) => async (filterQuery = {}) => {
+    const questions = await Question.find(filterQuery);
 
     return questions;
 }
@@ -131,6 +132,40 @@ const getQuestionsByCategory = (Question, gameCategoryService) => async (categor
         questions = await Question.find({ category: category });
 
     return questions;
+}
+
+const getGameWeekQuestionData = (Question, gameCategoryService) => async (category) => {
+    const questionCategory = await gameCategoryService.getCategoryByName(category)
+
+    if (!questionCategory)
+        throw new Error('Invalid Category')
+
+    let data = await Question.aggregate([
+        { $match: { category: category }},
+        { $sortByCount: '$gameWeek' },
+        {
+            $lookup: {
+                from: 'gameWeek',
+                localField: '_id',
+                foreignField: 'gameWeek',
+                as: 'games'
+            }
+        },
+        {
+            $project: { game: { $first: "$games" }, "count": 1 }
+        },
+        {
+            "$project": {
+                "gameWeek": "$_id",
+                "count": 1,
+                "_id": 0,
+                "status": "$game.status",
+                "startDate": "$game.startDate",
+            }
+        }
+    ]);
+
+    return data;
 }
 
 const getQuestionsForGame = (Question, gameCategoryService, userService, gameSettingService) => async ({ userId, category, demo, date }) => {
@@ -218,6 +253,7 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
         getQuestionsByCategory: getQuestionsByCategory(Question, gameCategoryService),
+        getGameWeekQuestionData: getGameWeekQuestionData(Question, gameCategoryService),
         getQuestionsForGame: getQuestionsForGame(Question, gameCategoryService, userService, gameSettingService)
 
     }
