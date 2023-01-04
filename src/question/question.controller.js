@@ -161,6 +161,7 @@ function questionRoutes(QuestionService) {
             const data = await QuestionService.getQuestionsForGame(questionData);
 
             if (data) {
+                data.timeLimit = 12
                 res.status(200).json({
                     success: !data.error,
                     data: data

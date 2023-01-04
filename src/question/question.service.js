@@ -1,7 +1,6 @@
 const checkTodayWithinMatchday = require("../utils/timeValidations");
 
 const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require("../utils/loadQuestions");
-const { Question } = require(".");
 
 const addQuestion = (Question, gameCategoryService) => async (data) => {
 

@@ -7,8 +7,10 @@ const logoutRedis = async (req, res, next) => {
 
     console.log('token: ', token);
 
-    if(!token) 
-      return res.status(401);
+    if(!token) {
+      console.log('in no token')
+      return res.status(401).send('Invalid token');
+    }
 
     await redis.sadd("token-blacklist", token)
 

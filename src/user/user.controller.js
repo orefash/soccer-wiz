@@ -8,7 +8,7 @@ function userRoutes(UserService) {
     const router = express.Router();
 
     router.get('/me', requireJwtAuth, async (req, res) => {
-        console.log("in me")
+        // console.log("in me")
         let user = req.user.toJSON();
         res.json({
             success: true,
