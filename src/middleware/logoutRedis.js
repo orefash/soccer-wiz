@@ -5,10 +5,10 @@ const logoutRedis = async (req, res, next) => {
   try {
     const token = req.headers["x-auth-token"]
 
-    console.log('token: ', token);
+    // console.log('token: ', token);
 
     if(!token) {
-      console.log('in no token')
+      // console.log('in no token')
       return res.status(401).send('Invalid token');
     }
 
