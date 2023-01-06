@@ -10,7 +10,6 @@ const sendMail = () => async ({ to, subject, message, from }) => {
         region: process.env.AWS_REGION
     }
 
-    // console.log('Cred: ', cred)
 
     AWS.config.update(cred);
 

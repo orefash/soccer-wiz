@@ -1,5 +1,6 @@
 # Environment variables
 .env
+app_env.list
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release

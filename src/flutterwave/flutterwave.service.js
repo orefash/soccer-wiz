@@ -56,9 +56,18 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
 
     try {
 
+        let flwStatus = process.env.FLW_STATUS;
+        let flwSecretKey = null;
+
+        if(flwStatus === 'test'){
+            flwSecretKey = process.env.FLW_SECRET_KEY_TEST
+        }else{
+            flwSecretKey = process.env.FLW_SECRET_KEY_LIVE
+        }
+
         const response = await axios.post(flwUrl, reqBody, {
             headers: {
-                'Authorization': `Bearer ${process.env.FLW_SECRET_KEY_TEST}`
+                'Authorization': `Bearer ${flwSecretKey}`
             }
         })
 
@@ -92,8 +101,19 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
 
     if (status === 'successful') {
 
+        let flwStatus = process.env.FLW_STATUS;
+        let flwSecretKey = null;
+        let flwPublicKey = null;
 
-        const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY_TEST, process.env.FLW_SECRET_KEY_TEST);
+        if(flwStatus === 'test'){
+            flwSecretKey = process.env.FLW_SECRET_KEY_TEST
+            flwPublicKey = process.env.FLW_PUBLIC_KEY_TEST
+        }else{
+            flwSecretKey = process.env.FLW_SECRET_KEY_LIVE
+            flwPublicKey = process.env.FLW_PUBLIC_KEY_LIVE
+        }
+
+        const flw = new Flutterwave(flwPublicKey, flwSecretKey);
 
         const transactionDetails = await gatewayTransactionService.getGatewayTransactionByRef(tx_ref);
 
