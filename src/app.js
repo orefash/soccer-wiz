@@ -51,7 +51,7 @@ app.use(
     })
 );
 
-var whitelist = ['http://localhost:3001', 'http://localhost:3000', 'https://expensive-mite-housecoat.cyclic.app', 'https://soccerwiz.netlify.app']
+var whitelist = ['http://localhost:3001', 'http://localhost:3000', 'https://soccerwiztrivia-admin.netlify.app', 'https://soccerwiz.netlify.app']
 
 app.use(cors({
     origin: whitelist, // (Whatever your frontend url is) 
