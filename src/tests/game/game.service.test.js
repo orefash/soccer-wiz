@@ -194,6 +194,8 @@ describe('Game Service', () => {
             // console.log("Game response: ", JSON.stringify(gameResponse, null, 4));
 
             expect(gameResponse.gameScore.totalScore).toBe(4.9)
+            expect(gameResponse.gameScore.noOfCorrect).toBe(4)
+            expect(gameResponse.gameScore.noOfQuestions).toBe(6)
         })
 
     })
@@ -238,6 +240,8 @@ describe('Game Service', () => {
             expect(gameResponse.gameScore.totalScore).toBe(4.9)
             expect(gameResponse.submitLate).toBe(false)
             expect(savedGame.score).toBe(gameResponse.gameScore.totalScore)
+            expect(gameResponse.gameScore.noOfCorrect).toBe(4)
+            expect(gameResponse.gameScore.noOfQuestions).toBe(6)
 
         })
 

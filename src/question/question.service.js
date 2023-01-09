@@ -140,7 +140,7 @@ const getGameWeekQuestionData = (Question, gameCategoryService) => async (catego
         throw new Error('Invalid Category')
 
     let data = await Question.aggregate([
-        { $match: { category: category }},
+        { $match: { category: category } },
         { $sortByCount: '$gameWeek' },
         {
             $lookup: {
@@ -169,7 +169,20 @@ const getGameWeekQuestionData = (Question, gameCategoryService) => async (catego
 
 const getQuestionsForGame = (Question, gameCategoryService, userService, gameSettingService) => async ({ userId, category, demo, date }) => {
 
-    let required_game_credits = 10;
+
+    const settings = await gameSettingService.getSettings();
+
+    if (!settings)
+        throw new Error('Game Configuration not Set')
+
+    let questionLimit = settings.questionPerQuiz;
+    let questionDuration = settings.questionTimeLimit;
+    let required_game_credits = settings.creditsPerGame;
+
+    if (!questionLimit || questionLimit === 0 || !questionDuration || !required_game_credits)
+        throw new Error('Game configuration not set')
+
+    
 
     if (demo && category !== 'demo') {
         throw Error("Demo field not set")
@@ -205,20 +218,22 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
         return data;
     }
 
-    const settings = await gameSettingService.getSettings();
-
-    if (!settings)
-        throw new Error('Game Configuration not Set')
-
-    let questionLimit = settings.questionPerQuiz
-
-    if (!questionLimit || questionLimit === 0)
-        throw new Error('Question Limit not set in configuration')
+    
 
     // if (queryLimit > 0)
     //     questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
     // else
-    questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: questionLimit } }]);
+    questions = await Question.aggregate([
+        { $match: { category: category } },
+        { $sample: { size: questionLimit } },
+        { $project: { 
+            points: 1,
+            category: 1,
+            question: 1,
+            answers: 1,
+            timeLimit: {$literal: questionDuration}
+         }}
+    ]);
 
     if (!demo) {
         let updatedUser = await userService.updateWalletBalance({ id: userId, credits: -required_game_credits })

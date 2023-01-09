@@ -668,8 +668,6 @@ describe('Question Service', () => {
     describe('getQuestionsForGame', () => {
         it('valid user should be able to get Questions for demo Game', async () => {
 
-
-
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
@@ -688,14 +686,9 @@ describe('Question Service', () => {
             expect(fetchedGame.questions.length).toEqual(1);
             expect(fetchedGame.user).toEqual(userId);
             expect(fetchedGame.error).toEqual(false);
-
-
         })
 
         it('should throw error with invlaid category', async () => {
-
-
-
             await questionService.addQuestion(q1);
             await questionService.addQuestion(q2);
             await questionService.addQuestion(q3);
@@ -712,8 +705,6 @@ describe('Question Service', () => {
             // console.log("in game: ", fetchedGame)
 
             await expect(questionService.getQuestionsForGame(data)).rejects.toThrow();
-
-
         })
 
 
@@ -732,8 +723,6 @@ describe('Question Service', () => {
             }
 
             await expect(questionService.getQuestionsForGame(data)).rejects.toThrow();
-
-
         })
 
         it('user with insufficient balance should not be able to get Questions for live Game', async () => {
@@ -750,7 +739,6 @@ describe('Question Service', () => {
                 userId: userId,
                 date: new Date('October 17, 2022 10:50:39 AM')
             }
-
 
             const fetchedGame = await questionService.getQuestionsForGame(data);
 

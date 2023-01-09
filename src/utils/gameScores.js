@@ -29,27 +29,25 @@ const getPointsPerSpeed = (time) => {
 
 const calcGameScore = (answers) => {
 
-    let results = []
-
+    // let results = []
+    let correct = 0;
+ 
     let totalScore = answers
-    // .filter(
-    //     (item) =>
-    //     item.isCorrect === true
-    // )
     .reduce((accumulator, item) => {
-        let data = {
-            isCorrect: item.isCorrect,
-            timeTaken: item.timeTaken
-        }
+        // let data = {
+        //     isCorrect: item.isCorrect,
+        //     timeTaken: item.timeTaken
+        // }
 
         if(item.isCorrect === true){
             let points =  getPointsPerSpeed(parseInt(item.timeTaken));
-            data.points = points;
-            results.push(data)
+            correct++;
+            // data.points = points;
+            // results.push(data)
             return accumulator + points;
         }else{
-            data.points = 0
-            results.push(data)
+            // data.points = 0
+            // results.push(data)
             return accumulator + 0;
         }
         
@@ -57,7 +55,8 @@ const calcGameScore = (answers) => {
 
     // console.log("in score calc: ", totalScore)
 
-    return {totalScore: Math.round(totalScore * 10) / 10, breakdown: results};
+    // return {totalScore: Math.round(totalScore * 10) / 10, breakdown: results};
+    return {totalScore: Math.round(totalScore * 10) / 10, noOfCorrect: correct, noOfQuestions: answers.length};
 }
 
 module.exports = {
