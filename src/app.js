@@ -1,3 +1,4 @@
+"use strict";
 
 require("dotenv").config();
 const cors = require('cors');
@@ -9,6 +10,11 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
+const { logger } = require("./logger")
+
+app.use(logger)
+
+
 
 const {
     GoogleAuthController,

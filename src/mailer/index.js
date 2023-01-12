@@ -1,4 +1,4 @@
-
+"use strict";
 const MailerService = require('./mailer.service')
 
 const mailerService = MailerService();

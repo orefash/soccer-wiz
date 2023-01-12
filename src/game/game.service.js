@@ -1,3 +1,4 @@
+"use strict";
 const checkTodayWithinMatchday = require("../utils/timeValidations");
 
 const { calcGameScore } = require("../utils/gameScores")

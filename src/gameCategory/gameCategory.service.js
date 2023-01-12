@@ -1,4 +1,4 @@
-
+"use strict";
 
 const saveCategory = (GameCategory) => async (data) => {
 

@@ -1,4 +1,4 @@
-
+"use strict";
 
 const saveGatewayTransaction = (GatewayTransaction) => async ({ userId, transactionId, name, email, amount, currency, paymentStatus, paymentGateway }) => {
 

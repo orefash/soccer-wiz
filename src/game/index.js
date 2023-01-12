@@ -1,4 +1,4 @@
-
+"use strict";
 const Game = require('./game.model')
 const GameService = require('./game.service')
 const GameController = require('./game.controller')

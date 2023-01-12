@@ -1,4 +1,4 @@
-
+"use strict";
 const GameSetting = require('./gameSettings.model')
 const GameSettingService = require('./gameSettings.service')
 const GameSettingController = require('./gameSettings.controller')

@@ -1,3 +1,4 @@
+"use strict";
 const GameWeek = require('./gameWeek.model');
 const GameWeekService = require('./gameWeek.service')
 const GameWeekController = require('./gameWeek.controller')

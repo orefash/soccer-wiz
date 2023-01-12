@@ -1,15 +1,19 @@
+"use strict";
+
 const https = require('https');
 const { readFileSync } = require('fs')
 const { resolve, join } = require('path')
 require("dotenv").config();
 const dbconn = require('./db')
 
+// var heapdump = require('heapdump');
+
 
 const app = require("./app");
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-var port =  process.env.PORT || 3000;
+var port = process.env.PORT || 3000;
 
 
 dbconn.on('error', () => console.error.bind(console, 'MongoDB Connection error'));
@@ -19,18 +23,23 @@ dbconn.once('open', () => {
     if (isProduction) {
         app.listen(port, console.log("Server started on port - ", port));
     } else {
-    
+
         const httpsOptions = {
             key: readFileSync(resolve(__dirname, './security/cert.key')),
             cert: readFileSync(resolve(__dirname, './security/cert.pem')),
-    
+
             rejectUnauthorized: false
         };
-    
+
         const server = https.createServer(httpsOptions, app).listen(port, () => {
             console.log('Dev server running at : ' + port);
         });
     }
+
+    // const filename = '../scripts/heapdump.txt';
+    // heapdump.writeSnapshot(function (err, filename = '../scripts/heapdump.txt') {
+    //     console.log('dump written to', filename);
+    // });
 });
 
 

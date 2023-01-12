@@ -1,5 +1,4 @@
-
-
+"use strict";
 
 const addGameWeek = (GameWeek) => async ({ gameWeek, startDate, endDate }) => {
 

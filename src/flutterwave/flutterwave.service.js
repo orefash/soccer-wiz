@@ -1,4 +1,4 @@
-// const got = require('got');
+"use strict";
 const axios = require('axios');
 
 const Flutterwave = require('flutterwave-node-v3');

@@ -1,4 +1,4 @@
-
+"use strict";
 const GameCategory = require('./gameCategory.model')
 const GameCategoryService = require('./gameCategory.service')
 const GameCategoryController = require('./gameCategory.controller')

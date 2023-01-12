@@ -1,4 +1,4 @@
-
+"use strict";
 
 const saveOrUpdateSettings = (GameSetting) => async (data) => {
 

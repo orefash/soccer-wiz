@@ -1,6 +1,5 @@
+"use strict";
 const AWS = require('aws-sdk');
-
-
 
 const sendMail = () => async ({ to, subject, message, from }) => {
 
