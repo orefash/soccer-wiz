@@ -10,9 +10,9 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const session = require("express-session");
-const { logger } = require("./logger")
+const { appLogger } = require("./logger")
 
-app.use(logger)
+app.use(appLogger)
 
 
 

@@ -7,22 +7,6 @@ const UserService = require('../../user/user.service');
 
 const userService = UserService(User);
 
-// const getUserById = jest.fn();
-// when(getUserById).calledWith('low_bal_id').mockReturnValue({
-//     wallet_balance: 0
-// })
-// when(getUserById).calledWith('invalid_id').mockReturnValue(null)
-// when(getUserById).calledWith('good_bal').mockReturnValue({
-//     wallet_balance: 100
-// })
-
-// let userService = {
-//     getUserById: getUserById
-// }
-
-// const questionService = QuestionService(Question, userService);
-
-
 beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
 afterAll(async () => await closeDatabase())

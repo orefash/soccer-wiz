@@ -41,6 +41,7 @@ const userSchema = new Schema({
   role: {
     type: String,
     default: "USER",
+    index: true,
     required: [true, "user role is required"],
     enum: ["ADMIN", "USER"], // Payment gateway might differs as the application grows
   },

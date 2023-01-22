@@ -6,8 +6,6 @@ const { resolve, join } = require('path')
 require("dotenv").config();
 const dbconn = require('./db')
 
-// var heapdump = require('heapdump');
-
 
 const app = require("./app");
 
@@ -36,10 +34,6 @@ dbconn.once('open', () => {
         });
     }
 
-    // const filename = '../scripts/heapdump.txt';
-    // heapdump.writeSnapshot(function (err, filename = '../scripts/heapdump.txt') {
-    //     console.log('dump written to', filename);
-    // });
 });
 
 

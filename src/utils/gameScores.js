@@ -29,34 +29,25 @@ const getPointsPerSpeed = (time) => {
 
 const calcGameScore = (answers) => {
 
-    // let results = []
     let correct = 0;
  
     let totalScore = answers
     .reduce((accumulator, item) => {
-        // let data = {
-        //     isCorrect: item.isCorrect,
-        //     timeTaken: item.timeTaken
-        // }
 
         if(item.isCorrect === true){
             let points =  getPointsPerSpeed(parseInt(item.timeTaken));
             correct++;
-            // data.points = points;
-            // results.push(data)
             return accumulator + points;
         }else{
-            // data.points = 0
-            // results.push(data)
             return accumulator + 0;
         }
         
     }, 0);
 
-    // console.log("in score calc: ", totalScore)
+    let speedBonus = totalScore - correct;
 
     // return {totalScore: Math.round(totalScore * 10) / 10, breakdown: results};
-    return {totalScore: Math.round(totalScore * 10) / 10, noOfCorrect: correct, noOfQuestions: answers.length};
+    return {totalScore: Math.round(totalScore * 10) / 10, speedBonus: Math.round(speedBonus * 10) / 10, noOfCorrect: correct, noOfQuestions: answers.length};
 }
 
 module.exports = {
