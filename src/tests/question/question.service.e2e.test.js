@@ -1,10 +1,10 @@
 const { when } = require('jest-when')
 
 const { connect, clearDatabase, closeDatabase } = require('../db')
-const { Question } = require('../../question')
+const Question = require('../../question/question.model')
 const QuestionService = require('../../question/question.service');
 
-const { User } = require('../../user')
+const User = require('../../user/user.model');
 const UserService = require('../../user/user.service');
 
 const userService = UserService(User);

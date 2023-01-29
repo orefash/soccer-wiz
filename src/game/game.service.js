@@ -1,7 +1,8 @@
 "use strict";
-const checkTodayWithinMatchday = require("../utils/timeValidations");
+const { checkTodayWithinMatchday } = require("../utils/timeValidations");
 
-const { calcGameScore } = require("../utils/gameScores")
+const { calcGameScore } = require("../utils/gameScores");
+const { questionService } = require("../question");
 
 const saveGame = (Game) => async ({ player, category, gameWeek, score }) => {
 
@@ -78,7 +79,7 @@ const getGameByWeekday = (Game) => async (category, gameWeek) => {
 
 
 
-module.exports = (Game, userService, scoreService) => {
+module.exports = (Game, userService, scoreService, questionService) => {
     return {
         submitGame: submitGame(Game, userService, scoreService),
         getGames: getGames(Game),

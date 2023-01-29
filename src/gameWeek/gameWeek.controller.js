@@ -19,8 +19,25 @@ function gameWeekRoutes(gameWeekService) {
 
 
         } catch (err) {
-            // return next(err);
-            // console.log("reg erro: ", err)
+            res.json({ success: false, message: err.message });
+        }
+    });
+
+    router.patch('/:id', requireAdminJwtAuth, async (req, res, next) => {
+
+        try {
+            const gameWeekId = req.params.id;
+            const data = req.body;
+
+            const gameData = await gameWeekService.updateGameWeek(gameWeekId, data);
+
+            res.status(200).json({
+                success: true,
+                game: gameData
+            });
+
+
+        } catch (err) {
             res.json({ success: false, message: err.message });
         }
     });
@@ -67,6 +84,37 @@ function gameWeekRoutes(gameWeekService) {
             res.status(500).json({
                 success: false,
                 message: error
+            });
+        }
+
+    });
+
+    router.get("/category/:category/info", requireAdminJwtAuth, async (req, res) => {
+        try {
+
+            console.log('test')
+            const category = req.params.category;
+            if(!category) throw new Error('Invalid Category')
+
+            const data = await gameWeekService.getGameweekQuestionInfo(category);
+
+            if (data) {
+                res.status(200).json({
+                    success: true,
+                    data: data
+                });
+            } else {
+                res.status(400).json({
+                    success: false,
+                    message: "Data not found"
+                });
+            }
+
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
             });
         }
 

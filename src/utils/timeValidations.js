@@ -23,4 +23,45 @@ const checkTodayWithinMatchday = (dt) => {
     return true 
 }
 
-module.exports = checkTodayWithinMatchday;
+
+const isValidTime = (time) => {
+    let regex = new RegExp(/^([01]\d|2[0-3]):?([0-5]\d)$/);
+
+	if (time == null) {
+		return false;
+	}
+
+    return regex.test(time);
+}
+
+const isValidTimePeriod = ({startDate, endDate, startTime, endTime}) => {
+    try{
+        let startDt = new Date(startDate);
+        let endDt = new Date(endDate);
+
+        if(endDt < startDt){
+            console.log('date order')
+
+            return false;
+        } 
+
+        if(!isValidTime(startTime) || !isValidTime(endTime)){
+
+            console.log('time invalid')
+            return false;
+        } 
+
+        return true;
+
+    }catch(error){
+
+        console.log(error.message, ' - date order');
+        return false
+    }
+}
+
+module.exports = {
+    checkTodayWithinMatchday,
+    isValidTime,
+    isValidTimePeriod
+};

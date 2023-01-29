@@ -1,7 +1,7 @@
 const { when } = require('jest-when')
 
 const { connect, clearDatabase, closeDatabase } = require('../db')
-const { Question,  } = require('../../question')
+const  Question = require('../../question/question.model');
 
 
 beforeAll(async () => await connect())

@@ -5,4 +5,4 @@ WORKDIR /usr/src/app
 COPY --chown=node:node . .
 RUN npm install --omit=dev
 USER node
-CMD ["dumb-init", "node", "./src/server.js"]
+CMD ["dumb-init", "node", "server.js"]

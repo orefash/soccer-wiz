@@ -24,10 +24,14 @@ const addQuestion = (Question, gameCategoryService) => async (data) => {
     return newQuestion.save()
 }
 
-const addMultipleQuestions = (Question, gameCategoryService) => async (data) => {
+const addMultipleQuestions = (Question, gameCategoryService, gameWeekService) => async (data) => {
 
     if(!data.gameWeek) 
         throw new Error('Invalid game week')
+    
+    let gameWeekData = await gameWeekService.getGameByWeek(data.gameWeek);
+
+    if(!gameWeekData) throw new Error('Invalid game week');
 
     const category = await gameCategoryService.getCategoryByName(data.category)
 
@@ -157,12 +161,15 @@ const getGameWeekQuestionData = (Question, gameCategoryService) => async (catego
             "$project": {
                 "gameWeek": "$_id",
                 "count": 1,
+                "title": "$game.title",
                 "_id": 0,
                 "status": "$game.status",
                 "startDate": "$game.startDate",
             }
         }
     ]);
+
+    console.log('after q')
 
     return data;
 }
@@ -255,11 +262,11 @@ const getQuestionById = (Question) => async (id) => {
 }
 
 
-module.exports = (Question, userService, gameCategoryService, gameSettingService) => {
+module.exports = (Question, userService, gameCategoryService, gameSettingService, gameWeekService) => {
     return {
 
         addQuestion: addQuestion(Question, gameCategoryService),
-        addMultipleQuestions: addMultipleQuestions(Question, gameCategoryService),
+        addMultipleQuestions: addMultipleQuestions(Question, gameCategoryService, gameWeekService),
         addBulkQuestions: addBulkQuestions(Question, gameCategoryService),
         deleteQuestion: deleteQuestion(Question),
         deleteAllQuestions: deleteAllQuestions(Question),

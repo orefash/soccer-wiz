@@ -1,8 +1,25 @@
 const { connect, clearDatabase, closeDatabase } = require('../db')
 
-const { GameWeek, gameWeekService } = require('../../gameWeek')
+const GameWeek = require('../../gameWeek/gameWeek.model');
+const GameWeekService = require('../../gameWeek/gameWeek.service');
 
-const gameWeekStub = require('../stubs/gameWeek.stub')
+let questionService = {}
+let data = [
+    {
+        "count": 90,
+        "gameWeek": 3,
+        "status": "Scheduled",
+        "startDate": "2023-09-02T00:00:00.000Z"
+    }
+]
+
+let getGameWeekQuestionData = jest.fn().mockReturnValue(data);
+
+questionService.getGameWeekQuestionData = getGameWeekQuestionData;
+
+
+
+const gameWeekStub = require('../stubs/gameWeek.stub');
 
 beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
@@ -10,17 +27,25 @@ afterAll(async () => await closeDatabase())
 
 
 describe('GameWeek Service', () => {
+    let gameWeekService = GameWeekService(GameWeek, questionService);
+
     describe('addGameWeek', () => {
         it('should save game week', async () => {
 
-            let game = await gameWeekService.addGameWeek(gameWeekStub.valid)
+            let game = await gameWeekService.addGameWeek(gameWeekStub.valid);
 
             expect(game.gameWeek).toEqual(gameWeekStub.valid.gameWeek);
+            expect(game.title).toEqual("Match Day "+game.gameWeek);
         })
 
         it('should throw exception if parameters are incomplete', async () => {
 
             await expect(gameWeekService.addGameWeek(gameWeekStub.invalid)).rejects.toThrow()
+        })
+
+        it('should throw exception if time is invalid', async () => {
+
+            await expect(gameWeekService.addGameWeek(gameWeekStub.invalidTime)).rejects.toThrow()
         })
 
     })
@@ -31,9 +56,50 @@ describe('GameWeek Service', () => {
             await gameWeekService.addGameWeek(gameWeekStub.valid);
             let games = await gameWeekService.getGameWeeks();
 
+            console.log('gw: ', games);
+
             expect(games.length).toEqual(1)
         })
 
+    })
+
+    describe('getGameweekQuestionInfo', () => {
+        it('should fetch game week Info for game cat list', async () => {
+
+            await gameWeekService.addGameWeek(gameWeekStub.valid);
+            await gameWeekService.addGameWeek(gameWeekStub.valid2);
+
+            let games = await gameWeekService.getGameweekQuestionInfo('category');
+
+            
+            expect(games.length).toEqual(3)
+            expect(questionService.getGameWeekQuestionData).toBeCalledTimes(1);
+        });
+        it("return error message and throw exception ßif error occurs", async () => {
+            questionService.getGameWeekQuestionData.mockImplementationOnce(() => {
+                throw new Error();
+            });
+
+            await gameWeekService.addGameWeek(gameWeekStub.valid);
+            await gameWeekService.addGameWeek(gameWeekStub.valid2);
+
+            await expect(gameWeekService.getGameweekQuestionInfo('category')).rejects.toThrow();
+
+            // expect(games.length).toEqual(3)
+            expect(questionService.getGameWeekQuestionData).toBeCalled();
+        });
+        it('should return game week list alone if category call is empty', async () => {
+
+            questionService.getGameWeekQuestionData.mockReturnValue([]);
+            await gameWeekService.addGameWeek(gameWeekStub.valid);
+            await gameWeekService.addGameWeek(gameWeekStub.valid2);
+
+            let games = await gameWeekService.getGameweekQuestionInfo('category');
+
+
+            expect(games.length).toEqual(2)
+            expect(questionService.getGameWeekQuestionData).toBeCalled();
+        });
     })
 
     describe('getGameByWeek', () => {
@@ -43,7 +109,15 @@ describe('GameWeek Service', () => {
             
             let game = await gameWeekService.getGameByWeek(gameWeekStub.valid.gameWeek);
 
+            console.log('g game: ', game);
+
             expect(game.gameWeek).toEqual(gameWeekStub.valid.gameWeek)
+        })
+        it('should return null if gameweek doesnt exist', async () => {
+
+            let game = await gameWeekService.getGameByWeek(3);
+
+            expect(game).toBeNull();
         })
 
     })
@@ -53,7 +127,7 @@ describe('GameWeek Service', () => {
 
             let created = await gameWeekService.addGameWeek(gameWeekStub.valid);
 
-            let data = await gameWeekService.deleteGameWeek(created._id);
+            let data = await gameWeekService.deleteGameWeek(created.id);
 
             expect(data).toBeTruthy();
         })
@@ -68,7 +142,9 @@ describe('GameWeek Service', () => {
             let updateData = {
                 status: "LIVE"
             }
-            let game = await gameWeekService.updateGameWeek(created._id, updateData);
+            let game = await gameWeekService.updateGameWeek(created.id, updateData);
+
+            console.log('upg: ', game)
 
             expect(game.gameWeek).toEqual(gameWeekStub.valid.gameWeek)
             expect(game.status).toEqual(updateData.status)

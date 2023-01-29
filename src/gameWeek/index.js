@@ -4,7 +4,8 @@ const GameWeekService = require('./gameWeek.service')
 const GameWeekController = require('./gameWeek.controller')
 
 
-const gameWeekService = GameWeekService(GameWeek)
+const { questionService } = require('../question');
+const gameWeekService = GameWeekService(GameWeek, questionService)
 
 module.exports = {
     gameWeekService: gameWeekService,

@@ -4,10 +4,10 @@ const https = require('https');
 const { readFileSync } = require('fs')
 const { resolve, join } = require('path')
 require("dotenv").config();
-const dbconn = require('./db')
+const dbconn = require('./src/db')
 
 
-const app = require("./app");
+const app = require("./src/app");
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -23,8 +23,8 @@ dbconn.once('open', () => {
     } else {
 
         const httpsOptions = {
-            key: readFileSync(resolve(__dirname, './security/cert.key')),
-            cert: readFileSync(resolve(__dirname, './security/cert.pem')),
+            key: readFileSync(resolve(__dirname, './src/security/cert.key')),
+            cert: readFileSync(resolve(__dirname, './src/security/cert.pem')),
 
             rejectUnauthorized: false
         };

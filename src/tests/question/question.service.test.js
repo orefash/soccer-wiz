@@ -1,15 +1,22 @@
-require("dotenv").config()
+require("dotenv").config();
 
-const { when } = require('jest-when')
+const { when } = require('jest-when');
 
-const { connect, clearDatabase, closeDatabase } = require('../db')
-const { Question } = require('../../question')
+const { connect, clearDatabase, closeDatabase } = require('../db');
+const Question = require('../../question/question.model');
 const QuestionService = require('../../question/question.service');
 
 
-const { gameWeekService } = require('../../gameWeek')
+// const { gameWeekService } = require('../../gameWeek')
 
-const gameWeekStub = require('../stubs/gameWeek.stub')
+// const gameWeekStub = require('../stubs/gameWeek.stub')
+let gameWeekService = {};
+
+const gameWeekStub = require('../stubs/gameWeek.stub');
+
+let getGameByWeek = jest.fn().mockReturnValue(gameWeekStub);
+
+gameWeekService.getGameByWeek = getGameByWeek;
 
 
 const getUserById = jest.fn();
@@ -52,7 +59,6 @@ when(getSettings).calledWith().mockReturnValue({
     questionTimeLimit: 12,
     questionPerQuiz: 15
 })
-// when(getCategoryByName).calledWith().mockReturnValue(null)
 
 
 let gameSettingService = {
@@ -60,7 +66,7 @@ let gameSettingService = {
 }
 
 
-const questionService = QuestionService(Question, userService, gameCategoryService, gameSettingService);
+const questionService = QuestionService(Question, userService, gameCategoryService, gameSettingService, gameWeekService);
 
 
 beforeAll(async () => await connect())
@@ -331,6 +337,19 @@ describe('Question Service', () => {
             expect(createdQuestion.saved).toBeTruthy();
             expect(createdQuestion.questions.length).toEqual(data.questions.length)
             // done();
+
+        })
+
+        it('should throw error if gameweek not set', async () => {
+
+            gameWeekService.getGameByWeek.mockImplementationOnce(() => {
+                throw new Error();
+            });
+            // const createdQuestion = await questionService.addMultipleQuestions(data);
+
+            await expect(questionService.addMultipleQuestions(data)).rejects.toThrow();
+           
+            expect(gameWeekService.getGameByWeek).toBeCalled();
 
         })
 
