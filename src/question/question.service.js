@@ -142,45 +142,8 @@ const getQuestionsByCategory = (Question, gameCategoryService) => async (categor
     return questions;
 }
 
-const getGameWeekQuestionData = (Question, gameCategoryService) => async (category) => {
-    const questionCategory = await gameCategoryService.getCategoryByName(category)
-
-    if (!questionCategory)
-        throw new Error('Invalid Category')
-
-    let data = await Question.aggregate([
-        { $match: { category: category } },
-        { $sortByCount: '$gameWeek' },
-        {
-            $lookup: {
-                from: 'gameWeek',
-                localField: '_id',
-                foreignField: 'gameWeek',
-                as: 'games'
-            }
-        },
-        {
-            $project: { game: { $first: "$games" }, "count": 1 }
-        },
-        {
-            "$project": {
-                "gameWeek": "$_id",
-                "count": 1,
-                "title": "$game.title",
-                "_id": 0,
-                "status": "$game.status",
-                "startDate": "$game.startDate",
-            }
-        }
-    ]);
-
-    console.log('after q')
-
-    return data;
-}
 
 const getQuestionsForGame = (Question, gameCategoryService, userService, gameSettingService, gameWeekService) => async ({ userId, category, date, gameWeek }) => {
-
 
     const settings = await gameSettingService.getSettings();
 
@@ -193,16 +156,6 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
 
     if (!questionLimit || questionLimit === 0 || !questionDuration || !required_game_credits)
         throw new Error('Game configuration not set')
-
-
-
-    // if (demo && category !== 'demo') {
-    //     throw Error("Demo field not set")
-    // }
-
-    // if (!demo && category === 'demo') {
-    //     throw Error("Invalid category for Live game")
-    // }
 
     const questionCategory = await gameCategoryService.getCategoryByName(category)
 
@@ -231,7 +184,15 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
 
         const gameWeekData = await gameWeekService.getGameById(gameWeek);
 
-        if(gameWeekData && isValidTimePeriod(gameWeekData.startDate, date) && isValidTimePeriod(date, gameWeekData.endDate)){
+        let isValidDateCHeck1 = isValidTimePeriod({
+            startDate: gameWeekData.startDate, 
+            endDate: today
+        });
+        let isValidDateCHeck2 = isValidTimePeriod({
+            startDate: today, endDate: gameWeekData.endDate
+        });
+
+        if(gameWeekData && isValidDateCHeck1 && isValidDateCHeck2 ){
 
             data.in_matchday = true
         }else{
@@ -287,7 +248,6 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
         getQuestionById: getQuestionById(Question),
         getQuestions: getQuestions(Question),
         getQuestionsByCategory: getQuestionsByCategory(Question, gameCategoryService),
-        getGameWeekQuestionData: getGameWeekQuestionData(Question, gameCategoryService),
         getQuestionsForGame: getQuestionsForGame(Question, gameCategoryService, userService, gameSettingService, gameWeekService)
 
     }

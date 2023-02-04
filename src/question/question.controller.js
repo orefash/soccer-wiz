@@ -97,34 +97,6 @@ function questionRoutes(QuestionService) {
 
 
 
-    router.get("/games/category/:category", async (req, res) => {
-        try {
-            let category = req.params.category;
-
-            if (!category) throw new Error('No Category Input');
-
-            const data = await QuestionService.getGameWeekQuestionData(category);
-
-            if (data) {
-                res.status(200).json({
-                    success: true,
-                    data: data
-                });
-            } else {
-                res.status(400).json({
-                    success: false,
-                    message: "Invalid Details"
-                });
-            }
-
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
-        }
-
-    });
 
 
     router.get("/game/user/:userId/gameweek/:gameWeek", requireJwtAuth, async (req, res) => {

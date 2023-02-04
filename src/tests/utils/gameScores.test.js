@@ -34,7 +34,7 @@ describe('Game Scores', () => {
 
     describe('calcGameScore', () => {
         it('should return game score details', async () => {
-            let scores = await calcGameScore(gameAnswers1);
+            let scores =  calcGameScore(gameAnswers1);
 
             console.log("score: ", scores)
 

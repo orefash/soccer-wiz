@@ -3,17 +3,18 @@ const { when } = require('jest-when')
 const { connect, clearDatabase, closeDatabase } = require('../db')
 
 
-const { Game } = require('../../game')
+const Game = require('../../game/game.model');
 const GameService = require('../../game/game.service');
 
+let validUser = '5a1154523a6bcc1d245e143d';
 
 const getUserById = jest.fn();
 when(getUserById).calledWith('low_bal_id').mockReturnValue({
     wallet_balance: 0
 })
 when(getUserById).calledWith('invalid_id').mockReturnValue(null)
-when(getUserById).calledWith('5a1154523a6bcc1d245e143d').mockReturnValue({
-    _id: '5a1154523a6bcc1d245e143d'
+when(getUserById).calledWith(validUser).mockReturnValue({
+    _id: validUser
 })//for valid user
 
 const updateGameRecords = jest.fn();
@@ -27,9 +28,14 @@ const saveScore = jest.fn();
 
 let scoreService = {
     saveScore: saveScore
-}
+};
 
-const gameService = GameService(Game, userService, scoreService);
+
+const { valid0 } = require('../stubs/gameWeek.stub');
+
+const GameWeek = require('../../gameWeek/gameWeek.model');
+
+const gameService = GameService(Game, userService, scoreService, GameWeek);
 
 
 beforeAll(async () => await connect())
@@ -63,23 +69,39 @@ const gameAnswers1 = [
     }
 ]
 
+function getGameData(category, gameWeek) {
+
+    return {
+        category: category,
+        player: validUser,
+        score: 10,
+        gameWeek: gameWeek
+
+    }
+}
+
 
 describe('Game Service', () => {
+
+let gameWeek1 = '63c8e9dea08a3244b63e9d05';
+let gameWeek2 = '61c8e9dea08a3244b63e9d05';
+
+let category1 = "General";
+let demoCat = "demo";
+
+let game1 = getGameData(category1, gameWeek1);
+let game2 = getGameData(category1, gameWeek2);
+let game3 = getGameData(category1, gameWeek1);
+
+let demoGame = getGameData(demoCat, gameWeek1);
 
     describe('saveGame', () => {
         it('should save game details', async () => {
 
-            const newGame = {
-                category: 'General',
-                player: '5a1154523a6bcc1d245e143d',
-                score: 10,
-                gameWeek: 2
-            }
 
-            let createdGame = await gameService.saveGame(newGame);
+            let createdGame = await gameService.saveGame(game1);
 
-            expect(createdGame.score).toBe(10)
-            expect(createdGame.gameWeek).toBe(2)
+            expect(createdGame.score).toBe(game1.score);
         })
 
     })
@@ -87,19 +109,11 @@ describe('Game Service', () => {
     describe('getGameById', () => {
         it('should get saved game details by id', async () => {
 
-            const newGame = {
-                category: 'General',
-                player: '5a1154523a6bcc1d245e143d',
-                score: 10,
-                gameWeek: 2
-            }
-
-            let createdGame = await gameService.saveGame(newGame);
+            let createdGame = await gameService.saveGame(game1);
 
             let fetchedGame = await gameService.getGameById(createdGame._id)
 
-            expect(fetchedGame.score).toBe(newGame.score)
-            expect(fetchedGame.gameWeek).toBe(newGame.gameWeek)
+            expect(fetchedGame.score).toBe(game1.score);
         })
 
     })
@@ -107,22 +121,10 @@ describe('Game Service', () => {
     describe('getGames', () => {
         it('should return all game details', async () => {
 
-            const newGame1 = {
-                category: 'General',
-                playerId: '5a1154523a6bcc1d245e143d',
-                score: 10,
-                gameWeek: 2
-            }
+           
 
-            const newGame2 = {
-                category: 'Premier League',
-                playerId: '5a1154523a6bcc1d245e143d',
-                score: 14,
-                gameWeek: 2
-            }
-
-            let createdGame1 = await gameService.saveGame(newGame1);
-            let createdGame2 = await gameService.saveGame(newGame2);
+            let createdGame1 = await gameService.saveGame(game1);
+            let createdGame2 = await gameService.saveGame(game2);
 
             let games = await gameService.getGames();
 
@@ -135,57 +137,42 @@ describe('Game Service', () => {
     describe('getGameByWeekday', () => {
         it('should return all games in a specific weekday for a category', async () => {
 
-            const newGame1 = {
-                category: 'General',
-                playerId: '5a1154523a6bcc1d245e143d',
-                score: 10,
-                gameWeek: 2
-            }
+           
 
-            const newGame2 = {
-                category: 'Premier League',
-                playerId: '5a1154523a6bcc1d245e143d',
-                score: 14,
-                gameWeek: 2
-            }
+            await gameService.saveGame(game1);
+            await gameService.saveGame(game2);
+            await gameService.saveGame(game3);
+            await gameService.saveGame(demoGame);
 
-            const newGame3 = {
-                category: 'Premier League',
-                playerId: '5a1154523a6bcc1d245e143d',
-                score: 12,
-                gameWeek: 1
-            }
-
-            const newGame4 = {
-                category: 'General',
-                playerId: '5a1154523a6bcc1d245e143d',
-                score: 9,
-                gameWeek: 2
-            }
-
-            await gameService.saveGame(newGame1);
-            await gameService.saveGame(newGame2);
-            await gameService.saveGame(newGame3);
-            await gameService.saveGame(newGame4);
-
-            let generalGames = await gameService.getGameByWeekday('General', 2);
-            let premierGames = await gameService.getGameByWeekday('Premier League', 2);
+            let generalGames = await gameService.getGameByWeekday(category1, gameWeek1);
 
             expect(generalGames.length).toBe(2)
-            expect(premierGames.length).toBe(1)
         })
 
     })
 
     describe('submitGame', () => {
+        let gameWeekData = undefined;
+        let validGame = undefined;
+        beforeEach(async () => {
+            
+            gameWeekData = await new GameWeek(valid0).save();
+            validGame = {
+                ...game1,
+                gameWeek: gameWeekData._id,
+                answers: gameAnswers1,
+                today: gameWeekData.startDate
+            }
+            // console.log('C G: ', gameWeekData);
+            // console.log('V G: ', validGame);
+        })
+
         it('should return total points for all questions answered by user in demo game', async () => {
 
             const newGame = {
-                category: 'General',
-                playerId: '5a1154523a6bcc1d245e143d',
-                username: 'john',
+                category: demoCat,
+                player: '5a1154523a6bcc1d245e143d',
                 answers: gameAnswers1,
-                demo: true
             }
 
             let gameResponse = await gameService.submitGame(newGame);
@@ -198,45 +185,51 @@ describe('Game Service', () => {
             expect(gameResponse.gameScore.noOfQuestions).toBe(6)
         })
 
-    })
-
-
-    describe('submitGame', () => {
+       
         it('should throw error when user is invalid', async () => {
 
             const newGame = {
                 category: 'General',
                 playerId: 'invalid_id',
                 username: 'john',
-                answers: gameAnswers1,
-                demo: true
+                answers: gameAnswers1
             }
 
-            await expect( gameService.submitGame(newGame)).rejects.toThrow()
+            await expect(gameService.submitGame(newGame)).rejects.toThrow()
         })
 
-    })
 
+        it('should return score for live game played; indicate late submission in response if outside matchday', async () => {
 
-
-    describe('submitGame', () => {
-        it('should return score for live game played; save game details if within match day ', async () => {
-
+            // console.log('invald chk: ')
             const newGame = {
-                gameWeek: 1,
-                category: 'General',
-                playerId: '5a1154523a6bcc1d245e143d',
-                username: 'john',
-                answers: gameAnswers1,
-                demo: false,
-                today: new Date('02/11/2022')
+                ...validGame,
+                today: new Date('05/07/2022')
             }
 
             let gameResponse = await gameService.submitGame(newGame);
 
+            // let savedGame = await gameService.getGameById(gameResponse.gameId)
+
+
+            expect(gameResponse.gameScore.totalScore).toBe(4.9)
+            expect(gameResponse.submitLate).toBe(true)
+            expect(gameResponse.gameId).toBe(null)
+
+        })
+
+        it('should return score for live game played; save game details if within match day ', async () => {
+
+
+            // console.log('in check: ');
+            let games = await GameWeek.find();
+            let gameResponse = await gameService.submitGame(validGame);
+
+            // console.log('TResp: ', gameResponse);
+
             let savedGame = await gameService.getGameById(gameResponse.gameId)
 
-            
+
             expect(gameResponse.gameScore.totalScore).toBe(4.9)
             expect(gameResponse.submitLate).toBe(false)
             expect(savedGame.score).toBe(gameResponse.gameScore.totalScore)
@@ -245,33 +238,7 @@ describe('Game Service', () => {
 
         })
 
-    })
-
-
-    describe('submitGame', () => {
-        it('should return score for live game played; indicate late submission in response if outside matchday', async () => {
-
-            const newGame = {
-                gameWeek: 1,
-                category: 'General',
-                playerId: '5a1154523a6bcc1d245e143d',
-                username: 'john',
-                answers: gameAnswers1,
-                demo: false,
-                today: new Date('30/10/2022')
-            }
-
-            let gameResponse = await gameService.submitGame(newGame);
-
-            // let savedGame = await gameService.getGameById(gameResponse.gameId)
-
-            
-            expect(gameResponse.gameScore.totalScore).toBe(4.9)
-            expect(gameResponse.submitLate).toBe(true)
-            expect(gameResponse.gameId).toBe(null)
-
-        })
 
     })
-    
+
 })

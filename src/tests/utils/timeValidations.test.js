@@ -23,12 +23,25 @@ describe('Time Validations', () => {
     describe('isValidTimePeriod', () => {
         let timePeriod = {
             startDate: "02/01/2022",
-            endDate: "07/01/2022",
+            endDate: "02/05/2022",
         }
+
+        let timePeriod4 = {
+            startDate: "02/01/2022",
+            endDate: "02/01/2022",
+        }
+
+
+        let timePeriod5 = {
+            startDate: "02/01/2022",
+            endDate: "02/01/2022",
+        }
+
         let timePeriod2 = {
             startDate: "02/02/2022",
             endDate: "01/01/2022",
         }
+
         let timePeriod3 = {
             startDate: "02/02/2022",
             endDate: "01/01",
@@ -37,6 +50,7 @@ describe('Time Validations', () => {
         it('should return true if time period is valid else return false', async () => {
             
             expect(isValidTimePeriod(timePeriod)).toBeTruthy();
+            expect(isValidTimePeriod(timePeriod4)).toBeTruthy();
             expect(isValidTimePeriod(timePeriod2)).toBeFalsy();
             expect(isValidTimePeriod(timePeriod3)).toBeFalsy();
         });

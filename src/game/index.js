@@ -3,11 +3,14 @@ const Game = require('./game.model');
 const GameService = require('./game.service');
 const GameController = require('./game.controller');
 
-const { userService } = require('../user');
 const { scoreService } = require('../score');
 
+const User = require('../user/user.model');
+const UserService = require('../user/user.service');
 
-const gameService = GameService(Game, userService, scoreService);
+const GameWeek = require('../gameWeek/gameWeek.model');
+
+const gameService = GameService(Game, UserService(User), scoreService, GameWeek);
 
 
 module.exports = {

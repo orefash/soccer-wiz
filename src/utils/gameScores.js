@@ -1,5 +1,5 @@
 
-const getPointsPerSpeed = async (time) => {
+const getPointsPerSpeed = (time) => {
     let point = 1;
 
     switch (time) {
@@ -27,15 +27,16 @@ const getPointsPerSpeed = async (time) => {
     return point;
 }
 
-const calcGameScore = async (answers) => {
+const calcGameScore =  (answers) => {
 
     let correct = 0;
  
-    let totalScore = answers
-    .reduce((accumulator, item) => {
+    let totalScore =  answers
+    .reduce( (accumulator, item) => {
 
         if(item.isCorrect === true){
-            let points =  getPointsPerSpeed(parseInt(item.timeTaken));
+            let points = getPointsPerSpeed(parseInt(item.timeTaken));
+            
             correct++;
             return accumulator + points;
         }else{

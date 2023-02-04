@@ -1,20 +1,20 @@
 
 
-// const isValidTime = (time) => {
-//     let regex = new RegExp(/^([01]\d|2[0-3]):?([0-5]\d)$/);
-
-// 	if (time == null) {
-// 		return false;
-// 	}
-
-//     return regex.test(time);
-// }
+Date.prototype.isValid = function () {
+    // An invalid date object returns NaN for getTime() and NaN is the only
+    // object not strictly equal to itself.
+    return this.getTime() === this.getTime();
+};  
 
 const isValidTimePeriod = ({startDate, endDate}) => {
     try{
         let startDt = new Date(startDate);
         let endDt = new Date(endDate);
 
+        if(!startDt.isValid() || !endDt.isValid())  throw new Error('data is invalid');
+
+        console.log(`start: ${startDate} - - end: ${endDate}`);
+        console.log(`format: start: ${startDt} - - end: ${endDt}`);
         if(endDt < startDt){
 
             return false;

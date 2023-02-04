@@ -14,8 +14,7 @@ function gameRoutes(gameService) {
                 gameWeek,
                 category,
                 playerId,
-                answers,
-                demo
+                answers
             } = req.body;
 
             if (!category || !gameWeek || !playerId || !answers ) {

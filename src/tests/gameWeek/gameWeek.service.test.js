@@ -3,6 +3,11 @@ const { connect, clearDatabase, closeDatabase } = require('../db')
 const GameWeek = require('../../gameWeek/gameWeek.model');
 const GameWeekService = require('../../gameWeek/gameWeek.service');
 
+const Question = require('../../question/question.model');
+
+const { questionData } = require('../stubs/question.stub');
+
+
 let questionService = {}
 let data = [
     {
@@ -63,40 +68,23 @@ describe('GameWeek Service', () => {
     describe('getGameweekQuestionInfo', () => {
         it('should fetch game week Info for game cat list', async () => {
 
-            await gameWeekService.addGameWeek(gameWeekStub.valid);
-            await gameWeekService.addGameWeek(gameWeekStub.valid2);
+            let g1 = await gameWeekService.addGameWeek(gameWeekStub.valid);
+            let g2 = await gameWeekService.addGameWeek(gameWeekStub.valid2);
+            let g3 = await gameWeekService.addGameWeek(gameWeekStub.valid3);
 
-            let games = await gameWeekService.getGameweekQuestionInfo('category');
-
+            let q1 = await new Question(questionData(g1.id, "General")).save();
+            let q2 = await new Question(questionData(g1.id, "General")).save();
+            let q3 = await new Question(questionData(g2.id, "General")).save();
             
+
+            let games = await gameWeekService.getGameweekQuestionInfo('General');
+
             expect(games.length).toEqual(3)
-            expect(questionService.getGameWeekQuestionData).toBeCalledTimes(1);
+            expect(games[0].Questions).toEqual(0)
+            expect(games[1].Questions).toEqual(1)
+            expect(games[2].Questions).toEqual(2)
         });
-        it("return error message and throw exception ßif error occurs", async () => {
-            questionService.getGameWeekQuestionData.mockImplementationOnce(() => {
-                throw new Error();
-            });
-
-            await gameWeekService.addGameWeek(gameWeekStub.valid);
-            await gameWeekService.addGameWeek(gameWeekStub.valid2);
-
-            await expect(gameWeekService.getGameweekQuestionInfo('category')).rejects.toThrow();
-
-            // expect(games.length).toEqual(3)
-            expect(questionService.getGameWeekQuestionData).toBeCalled();
-        });
-        it('should return game week list alone if category call is empty', async () => {
-
-            questionService.getGameWeekQuestionData.mockReturnValue([]);
-            await gameWeekService.addGameWeek(gameWeekStub.valid);
-            await gameWeekService.addGameWeek(gameWeekStub.valid2);
-
-            let games = await gameWeekService.getGameweekQuestionInfo('category');
-
-
-            expect(games.length).toEqual(2)
-            expect(questionService.getGameWeekQuestionData).toBeCalled();
-        });
+   
     })
 
     describe('getGameById', () => {
@@ -105,8 +93,6 @@ describe('GameWeek Service', () => {
             let created = await gameWeekService.addGameWeek(gameWeekStub.valid);
             
             let game = await gameWeekService.getGameById(created.id);
-
-            console.log('g game: ', game);
 
             expect(game.title).toEqual(gameWeekStub.valid.title)
         })

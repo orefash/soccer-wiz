@@ -3,10 +3,10 @@ const { isValidTimePeriod } = require('../utils/timeValidations');
 
 const addGameWeek = (GameWeek) => async ({ startDate, endDate, title }) => {
 
-    if (!startDate || !endDate || !title )
+    if (!startDate || !endDate || !title)
         throw new Error('Invalid parameters');
 
-    if(!isValidTimePeriod({ startDate, endDate }))
+    if (!isValidTimePeriod({ startDate, endDate }))
         throw new Error('Invalid Time Period');
 
     const savedGameWeek = new GameWeek({ startDate, endDate, title })
@@ -14,12 +14,6 @@ const addGameWeek = (GameWeek) => async ({ startDate, endDate, title }) => {
     let savedData = await savedGameWeek.save();
     return savedData.toJSON();
 }
-
-// const checkWithinGameWeek = (GameWeek) => async (gameWeek, date) => {
-
-
-
-// }
 
 const getGameWeeks = (GameWeek) => async () => {
     const gameWeeks = await GameWeek.find();
@@ -41,30 +35,31 @@ const getGameById = (GameWeek) => async (_id) => {
     return game.toJSON();
 }
 
-const getGameweekQuestionInfo = (GameWeek, questionService) => async (category) => {
+const getGameweekQuestionInfo = (GameWeek) => async (category) => {
 
     try {
 
-        let qData = await questionService.getGameWeekQuestionData(category);
+        let data = await GameWeek.aggregate([
+            {
+                "$lookup": {
+                    "from": "question",
+                    "localField": "_id",
+                    "foreignField": "gameWeek",
+                    "as": "Questions"
+                }
+            },
+            {
+                "$addFields": {
+                    "Questions": {
+                        $size: "$Questions"
+                    }
+                }
+            },
+            { $sort : { createdAt : -1 } }
+        ])
 
-        const gameweeks = await GameWeek.find({}, { endDate: 0, _id: 0, __v: 0 }).sort({ createdAt: 'desc' });
 
-        let diff = gameweeks.filter(object1 => {
-            return !qData.some(object2 => {
-                return object1.gameWeek === object2.gameWeek;
-            });
-        });
-
-
-
-        if (diff.length > 0) {
-            let diffArray = diff.map((x) => {
-                x = x.toObject();
-                return { ...x, count: 0 }
-            });
-            return qData.concat(diffArray);
-        }
-        return qData;
+        return data;
 
 
     } catch (error) {
@@ -93,9 +88,9 @@ const updateGameWeek = (GameWeek) => async (id, updateQuery = {}) => {
 }
 
 
-module.exports = (GameWeek, questionService) => {
+module.exports = (GameWeek) => {
     return {
-        getGameweekQuestionInfo: getGameweekQuestionInfo(GameWeek, questionService),
+        getGameweekQuestionInfo: getGameweekQuestionInfo(GameWeek),
         addGameWeek: addGameWeek(GameWeek),
         getGameWeeks: getGameWeeks(GameWeek),
         getGameById: getGameById(GameWeek),

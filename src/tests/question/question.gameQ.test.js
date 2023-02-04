@@ -67,7 +67,7 @@ beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
 afterAll(async () => await closeDatabase())
 
-describe('Question Service - E2E', () => {
+describe('Question Service - Game', () => {
 
     const gameWeekDemo = "63c8e9dea08a3244b63e9d05";
     const generalQuestion = questionData(gameWeekDemo, category1);
@@ -113,8 +113,8 @@ describe('Question Service - E2E', () => {
             expect(fetchedGame.error).toEqual(false);
     
             let sameUser = await userService.getUserById(userId);
-            console.log('user: ', createdUser);
-            console.log('user - after: ', sameUser);
+            // console.log('user: ', createdUser);
+            // console.log('user - after: ', sameUser);
 
             
             expect(sameUser.wallet_balance).toEqual(original_wallet_balance-10);
@@ -123,37 +123,6 @@ describe('Question Service - E2E', () => {
         })
 
     });
-
-    
-
-    // describe('getGameWeekQuestionData', () => {
-    //     it('should be able to get Question By Id', async () => {
-
-    //         await gameWeekService.addGameWeek(gameWeekStub.valid)
-    //         await gameWeekService.addGameWeek(gameWeekStub.valid2)
-
-    //         await questionService.addQuestion(q3);
-    //         await questionService.addQuestion(q3);
-    //         await questionService.addQuestion(q3);
-    //         let t1 = q3;
-    //         t1.gameWeek = 2
-    //         await questionService.addQuestion(t1);
-    //         await questionService.addQuestion(t1);
-    //         await questionService.addQuestion(q2);
-    //         await questionService.addQuestion(q2);
-
-    //         let data2 = await questionService.getGameWeekQuestionData(t1.category)
-
-    //         expect(data2.length).toEqual(2);
-    //         expect(data2[0].count).toEqual(3);
-
-
-
-    //     })
-
-
-    // })
-
 
 })
 
