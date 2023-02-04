@@ -1,23 +1,29 @@
-const checkTodayWithinMatchday = require("../utils/timeValidations");
+const { isValidTimePeriod } = require("../utils/timeValidations");
 
 const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require("../utils/loadQuestions");
 
-const addQuestion = (Question, gameCategoryService) => async (data) => {
+const addQuestion = (Question, gameCategoryService, gameWeekService) => async (data) => {
 
-    if (data.answers.length !== 4)
+    const { question, category, answers, gameWeek } = data;
+
+    if (!question || !category || !answers || !gameWeek) {
+        throw new Error("Incomplete Request details")
+    }
+
+    if (answers.length !== 4)
         throw new Error('Question requires 4 options')
 
-    // const existing = await Question.findOne({ question: data.question })
+    const isValidGameWeek = await gameWeekService.getGameById(gameWeek);
 
-    // // console.log("in create: ", existing)
+    if (!isValidGameWeek) throw new Error('Invalid GameWeek');
 
-    // if (existing)
-    //     throw new Error('Question already Exists')
+    const checkCategory = await gameCategoryService.getCategoryByName(data.category)
 
-    const category = await gameCategoryService.getCategoryByName(data.category)
-
-    if (!category && data.category !== 'demo')
-        throw new Error('Invalid Category')
+    if (!checkCategory && category !== 'demo'){
+        console.log(`cat: ${checkCategory}, catg: ${category} `)
+        throw new Error('Invalid Category');
+    }
+        
 
     const newQuestion = new Question(data)
 
@@ -26,16 +32,19 @@ const addQuestion = (Question, gameCategoryService) => async (data) => {
 
 const addMultipleQuestions = (Question, gameCategoryService, gameWeekService) => async (data) => {
 
-    if(!data.gameWeek) 
-        throw new Error('Invalid game week')
-    
-    let gameWeekData = await gameWeekService.getGameByWeek(data.gameWeek);
+    const { questions, category, gameWeek } = data;
 
-    if(!gameWeekData) throw new Error('Invalid game week');
+    if (!questions || !category || !gameWeek) {
+        throw new Error("Incomplete Request details")
+    };
 
-    const category = await gameCategoryService.getCategoryByName(data.category)
+    let gameWeekData = await gameWeekService.getGameById(data.gameWeek);
 
-    if (!category && data.category !== 'demo')
+    if (!gameWeekData) throw new Error('Invalid game week');
+
+    const checkCategory = await gameCategoryService.getCategoryByName(data.category)
+
+    if (!checkCategory && category !== 'demo')
         throw new Error('Invalid Category')
 
     try {
@@ -54,21 +63,15 @@ const addMultipleQuestions = (Question, gameCategoryService, gameWeekService) =>
 
 const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
 
-    // if (data.answers.length !== 4)
-    //     throw new Error('Question requires 4 options')
     if (!data.category || !data.spreadsheetId) throw new Error('Incomplete parameters')
     let dataRange = "Sheet1!A:G";
 
     const category = await gameCategoryService.getCategoryByName(data.category)
 
-    // console.log("dat: ", data.category)
-    // console.log("cat: ", category)
-
     if (!category && data.category !== 'demo')
         throw new Error('Invalid Category')
 
     try {
-
         let rawData = await loadQuestionsFromGoogleSheets(data.spreadsheetId, dataRange);
 
         // console.log("Fetched Q: ", rawData)
@@ -126,8 +129,10 @@ const getQuestionsByCategory = (Question, gameCategoryService) => async (categor
     const questionCategory = await gameCategoryService.getCategoryByName(category)
 
 
-    if (!questionCategory && category !== 'demo')
+    if (!questionCategory && category !== 'demo'){
         throw new Error('Invalid Category')
+    }
+        
 
     if (queryLimit > 0)
         questions = await Question.find({ category: category }).limit(queryLimit);
@@ -174,7 +179,7 @@ const getGameWeekQuestionData = (Question, gameCategoryService) => async (catego
     return data;
 }
 
-const getQuestionsForGame = (Question, gameCategoryService, userService, gameSettingService) => async ({ userId, category, demo, date }) => {
+const getQuestionsForGame = (Question, gameCategoryService, userService, gameSettingService, gameWeekService) => async ({ userId, category, date, gameWeek }) => {
 
 
     const settings = await gameSettingService.getSettings();
@@ -189,20 +194,22 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
     if (!questionLimit || questionLimit === 0 || !questionDuration || !required_game_credits)
         throw new Error('Game configuration not set')
 
-    
 
-    if (demo && category !== 'demo') {
-        throw Error("Demo field not set")
-    }
 
-    if (!demo && category === 'demo') {
-        throw Error("Invalid category for Live game")
-    }
+    // if (demo && category !== 'demo') {
+    //     throw Error("Demo field not set")
+    // }
+
+    // if (!demo && category === 'demo') {
+    //     throw Error("Invalid category for Live game")
+    // }
 
     const questionCategory = await gameCategoryService.getCategoryByName(category)
 
     if (!questionCategory && category !== 'demo')
         throw new Error('Invalid Category')
+
+    let demo = category === 'demo'? true : false;
 
     let data = {
         user: userId, sufficient_balance: true, demo: demo, in_matchday: false, error: true
@@ -219,32 +226,38 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
         return data;
     }
 
-    if (!demo && !checkTodayWithinMatchday(date)) {
-        // console.log("In date check: ")
-        data.in_matchday = false
-        return data;
+    if (!demo) {
+        console.log("In date check: ");
+
+        const gameWeekData = await gameWeekService.getGameById(gameWeek);
+
+        if(gameWeekData && isValidTimePeriod(gameWeekData.startDate, date) && isValidTimePeriod(date, gameWeekData.endDate)){
+
+            data.in_matchday = true
+        }else{
+            data.in_matchday = false
+            return data;
+        }
     }
 
-    
 
-    // if (queryLimit > 0)
-    //     questions = await Question.aggregate([{ $match: { category: category } }, { $sample: { size: queryLimit } }]);
-    // else
     questions = await Question.aggregate([
         { $match: { category: category } },
         { $sample: { size: questionLimit } },
-        { $project: { 
-            points: 1,
-            category: 1,
-            question: 1,
-            answers: 1,
-            timeLimit: {$literal: questionDuration}
-         }}
+        {
+            $project: {
+                points: 1,
+                category: 1,
+                question: 1,
+                answers: 1,
+                timeLimit: { $literal: questionDuration }
+            }
+        }
     ]);
 
     if (!demo) {
         let updatedUser = await userService.updateWalletBalance({ id: userId, credits: -required_game_credits })
-        data.in_matchday = true
+
     }
 
     data.error = false;
@@ -265,7 +278,7 @@ const getQuestionById = (Question) => async (id) => {
 module.exports = (Question, userService, gameCategoryService, gameSettingService, gameWeekService) => {
     return {
 
-        addQuestion: addQuestion(Question, gameCategoryService),
+        addQuestion: addQuestion(Question, gameCategoryService, gameWeekService),
         addMultipleQuestions: addMultipleQuestions(Question, gameCategoryService, gameWeekService),
         addBulkQuestions: addBulkQuestions(Question, gameCategoryService),
         deleteQuestion: deleteQuestion(Question),
@@ -275,7 +288,7 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
         getQuestions: getQuestions(Question),
         getQuestionsByCategory: getQuestionsByCategory(Question, gameCategoryService),
         getGameWeekQuestionData: getGameWeekQuestionData(Question, gameCategoryService),
-        getQuestionsForGame: getQuestionsForGame(Question, gameCategoryService, userService, gameSettingService)
+        getQuestionsForGame: getQuestionsForGame(Question, gameCategoryService, userService, gameSettingService, gameWeekService)
 
     }
 }

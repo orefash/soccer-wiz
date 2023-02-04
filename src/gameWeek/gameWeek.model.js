@@ -4,30 +4,27 @@ let Schema = mongoose.Schema;
 
 
 const gameWeekSchema = new Schema({
-    gameWeek: {
-        type: Number, 
-        unique: true,
-        index: true,
-    },
     startDate: {
-        type: Date, 
+        type: Date,
         required: 'Please specify start date',
     },
     startTime: {
-        type: String, 
+        type: String,
+        default: '00:00',
         required: 'Please specify start time',
     },
     endDate: {
-        type: Date, 
+        type: Date,
         required: 'Please specify end date',
     },
     endTime: {
-        type: String, 
+        type: String,
+        default: '23:59',
         required: 'Please specify end time',
     },
     title: {
         type: String,
-        // required: [true, "title is required"]
+        required: [true, "title is required"]
     },
     status: {
         type: String,
@@ -36,21 +33,24 @@ const gameWeekSchema = new Schema({
         enum: ["Scheduled", "Live", "Passed"],
     }
 },
-{
-    timestamps: false,
-});
+    {
+        timestamps: true,
+    });
 
 gameWeekSchema.methods.toJSON = function () {
-   
+
     return {
-      id: this._id,
-      gameWeek: this.gameWeek,
-      startDate: this.startDate.toISOString().split('T')[0],
-      endDate: this.endDate.toISOString().split('T')[0],
-      title: this.title,
-      status: this.status
+        id: this._id,
+        startDate: this.startDate.toISOString().split('T')[0],
+        endDate: this.endDate.toISOString().split('T')[0],
+        endTime: this.endTime,
+        startTime: this.startTime,
+        title: this.title,
+        status: this.status,
+        createdAt: this.createdAt,
+        updatedAt: this.updatedAt,
     };
-  };
+};
 
 var gameWeekModel = mongoose.model("gameWeek", gameWeekSchema, "gameWeek");
 

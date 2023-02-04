@@ -1,5 +1,5 @@
 
-const getPointsPerSpeed = (time) => {
+const getPointsPerSpeed = async (time) => {
     let point = 1;
 
     switch (time) {
@@ -27,7 +27,7 @@ const getPointsPerSpeed = (time) => {
     return point;
 }
 
-const calcGameScore = (answers) => {
+const calcGameScore = async (answers) => {
 
     let correct = 0;
  
@@ -46,8 +46,7 @@ const calcGameScore = (answers) => {
 
     let speedBonus = totalScore - correct;
 
-    // return {totalScore: Math.round(totalScore * 10) / 10, breakdown: results};
-    return {totalScore: Math.round(totalScore * 10) / 10, speedBonus: Math.round(speedBonus * 10) / 10, noOfCorrect: correct, noOfQuestions: answers.length};
+    return { totalScore: Math.round(totalScore * 10) / 10, speedBonus: Math.round(speedBonus * 10) / 10, noOfCorrect: correct, noOfQuestions: answers.length };
 }
 
 module.exports = {

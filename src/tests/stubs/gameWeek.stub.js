@@ -1,15 +1,15 @@
 
 module.exports = {
         valid: {
-            gameWeek: 1, startDate: '01/01/2022', endDate: '08/01/2022', startTime: '02:15', endTime: '20:30'
+            startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1'
         },
         valid2: {
-            gameWeek: 2, startDate: '01/01/2022', endDate: '08/01/2022', startTime: '02:15', endTime: '10:30'
+            startDate: '01/01/2022', endDate: '08/01/2022', title: 'World Cup week'
         },
         invalid: {
-            gameWeek: 1, startDate: '01/01/2022'
+            startDate: '01/01/2022'
         },
         invalidTime: {
-            gameWeek: 1, startDate: '01/02/2022', endDate: '08/01/2021', startTime: '12:15', endTime: '10:30'
+            title: 'Invlaid Gameweek', startDate: '01/02/2022', endDate: '08/01/2021'
         }
 };

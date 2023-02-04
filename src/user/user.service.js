@@ -1,25 +1,4 @@
-// const uuid = require("uuid");
-const bcrypt = require("bcrypt");
 
-// const { generateUsernameFromEmail } = require("../utils/usernameGenerator");
-
-// function generateUniqueUserName(User, email) {
-//     let proposedName = generateUsernameFromEmail(email, 2);
-//     return User
-//         .findOne({ username: proposedName })
-//         .then(function (account) {
-//             if (account) {
-//                 //   console.log('no can do try again: ' + proposedName);
-//                 return generateUniqueUserName(User, email);
-//             }
-//             // console.log('proposed name is unique' + proposedName);
-//             return proposedName;
-//         })
-//         .catch(function (err) {
-//             console.error(err);
-//             throw err;
-//         });
-// }
 
 const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 

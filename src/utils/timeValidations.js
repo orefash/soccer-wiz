@@ -1,53 +1,22 @@
-const getBeginningOfTheMatchday = (now) => {
-
-    const days = (now.getDay() + 7 - 2) % 7;
-    now.setDate(now.getDate() - days);
-    now.setHours(9, 0, 0, 0);
-    return now;
-};
-
-const checkTodayWithinMatchday = (dt) => {
-
-    const day = dt.getDay();
-
-    if (!(day >= 2 && day <= 5)){
-        return false
-    }
-
-    const matchDayStart = getBeginningOfTheMatchday(dt);
-
-    if(dt<matchDayStart){
-        return false
-    }
-
-    return true 
-}
 
 
-const isValidTime = (time) => {
-    let regex = new RegExp(/^([01]\d|2[0-3]):?([0-5]\d)$/);
+// const isValidTime = (time) => {
+//     let regex = new RegExp(/^([01]\d|2[0-3]):?([0-5]\d)$/);
 
-	if (time == null) {
-		return false;
-	}
+// 	if (time == null) {
+// 		return false;
+// 	}
 
-    return regex.test(time);
-}
+//     return regex.test(time);
+// }
 
-const isValidTimePeriod = ({startDate, endDate, startTime, endTime}) => {
+const isValidTimePeriod = ({startDate, endDate}) => {
     try{
         let startDt = new Date(startDate);
         let endDt = new Date(endDate);
 
         if(endDt < startDt){
-            console.log('date order')
 
-            return false;
-        } 
-
-        if(!isValidTime(startTime) || !isValidTime(endTime)){
-
-            console.log('time invalid')
             return false;
         } 
 
@@ -61,7 +30,5 @@ const isValidTimePeriod = ({startDate, endDate, startTime, endTime}) => {
 }
 
 module.exports = {
-    checkTodayWithinMatchday,
-    isValidTime,
     isValidTimePeriod
 };

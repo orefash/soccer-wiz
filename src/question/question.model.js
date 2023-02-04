@@ -31,9 +31,9 @@ const questionSchema = new Schema({
         default: 1
     },
     gameWeek: {
-        index: true,
-        type: Number,
-        required: 'Please specify gameweek',
+        type: Schema.Types.ObjectId, 
+        ref: 'gameWeek',
+        required: 'Please specify gameweek Id',
     },
     answers: {
         type: [answerSchema],
@@ -42,16 +42,6 @@ const questionSchema = new Schema({
     }
 },
     { timestamps: true });
-
-questionSchema.virtual('gameWeeks', {
-    ref: 'gameWeek',
-    localField: 'gameWeek',
-    foreignField: 'gameWeek',
-    justOne: true
-})
-
-questionSchema.set('toObject', { virtuals: true });
-questionSchema.set('toJSON', { virtuals: true });
 
 var questionModel = mongoose.model("question", questionSchema, "question");
 

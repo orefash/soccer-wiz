@@ -34,8 +34,7 @@ describe('GameWeek Service', () => {
 
             let game = await gameWeekService.addGameWeek(gameWeekStub.valid);
 
-            expect(game.gameWeek).toEqual(gameWeekStub.valid.gameWeek);
-            expect(game.title).toEqual("Match Day "+game.gameWeek);
+            expect(game.title).toEqual(gameWeekStub.valid.title);
         })
 
         it('should throw exception if parameters are incomplete', async () => {
@@ -55,8 +54,6 @@ describe('GameWeek Service', () => {
 
             await gameWeekService.addGameWeek(gameWeekStub.valid);
             let games = await gameWeekService.getGameWeeks();
-
-            console.log('gw: ', games);
 
             expect(games.length).toEqual(1)
         })
@@ -102,20 +99,21 @@ describe('GameWeek Service', () => {
         });
     })
 
-    describe('getGameByWeek', () => {
+    describe('getGameById', () => {
         it('should fetch game by week', async () => {
 
-            await gameWeekService.addGameWeek(gameWeekStub.valid);
+            let created = await gameWeekService.addGameWeek(gameWeekStub.valid);
             
-            let game = await gameWeekService.getGameByWeek(gameWeekStub.valid.gameWeek);
+            let game = await gameWeekService.getGameById(created.id);
 
             console.log('g game: ', game);
 
-            expect(game.gameWeek).toEqual(gameWeekStub.valid.gameWeek)
+            expect(game.title).toEqual(gameWeekStub.valid.title)
         })
         it('should return null if gameweek doesnt exist', async () => {
 
-            let game = await gameWeekService.getGameByWeek(3);
+            let id ='63c8e9dea08a3244b63e9d05';
+            let game = await gameWeekService.getGameById(id);
 
             expect(game).toBeNull();
         })
@@ -135,7 +133,7 @@ describe('GameWeek Service', () => {
     })
 
     describe('updateGameWeek', () => {
-        it('should fetch game by week', async () => {
+        it('should update game week', async () => {
 
             let created = await gameWeekService.addGameWeek(gameWeekStub.valid);
 
@@ -144,7 +142,6 @@ describe('GameWeek Service', () => {
             }
             let game = await gameWeekService.updateGameWeek(created.id, updateData);
 
-            console.log('upg: ', game)
 
             expect(game.gameWeek).toEqual(gameWeekStub.valid.gameWeek)
             expect(game.status).toEqual(updateData.status)

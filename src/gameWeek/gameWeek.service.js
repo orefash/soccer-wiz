@@ -1,23 +1,25 @@
 "use strict";
-const { isValidTime, isValidTimePeriod } = require('../utils/timeValidations');
+const { isValidTimePeriod } = require('../utils/timeValidations');
 
-const addGameWeek = (GameWeek) => async ({ gameWeek, startDate, endDate, startTime, endTime, title }) => {
+const addGameWeek = (GameWeek) => async ({ startDate, endDate, title }) => {
 
-    if (!startDate || !endDate || !gameWeek || !endTime || !startTime )
+    if (!startDate || !endDate || !title )
         throw new Error('Invalid parameters');
 
-    if(!isValidTimePeriod({ startDate, endDate, startTime, endTime }))
+    if(!isValidTimePeriod({ startDate, endDate }))
         throw new Error('Invalid Time Period');
 
-    let ntitle;
-    if (!title) ntitle = "Match Day " + gameWeek;
-
-    const savedGameWeek = new GameWeek({ gameWeek, startDate, endDate, title: ntitle, startTime, endTime })
+    const savedGameWeek = new GameWeek({ startDate, endDate, title })
 
     let savedData = await savedGameWeek.save();
     return savedData.toJSON();
 }
 
+// const checkWithinGameWeek = (GameWeek) => async (gameWeek, date) => {
+
+
+
+// }
 
 const getGameWeeks = (GameWeek) => async () => {
     const gameWeeks = await GameWeek.find();
@@ -32,8 +34,8 @@ const getGameWeeks = (GameWeek) => async () => {
     return gameWeeks;
 }
 
-const getGameByWeek = (GameWeek) => async (gameWeek) => {
-    let game = await GameWeek.findOne({ gameWeek })
+const getGameById = (GameWeek) => async (_id) => {
+    let game = await GameWeek.findOne({ _id })
 
     if (!game) return game;
     return game.toJSON();
@@ -43,9 +45,9 @@ const getGameweekQuestionInfo = (GameWeek, questionService) => async (category) 
 
     try {
 
-        let qData = questionService.getGameWeekQuestionData(category);
+        let qData = await questionService.getGameWeekQuestionData(category);
 
-        const gameweeks = await GameWeek.find({}, { endDate: 0, _id: 0, __v: 0 }).sort({ gameWeek: 'desc' });
+        const gameweeks = await GameWeek.find({}, { endDate: 0, _id: 0, __v: 0 }).sort({ createdAt: 'desc' });
 
         let diff = gameweeks.filter(object1 => {
             return !qData.some(object2 => {
@@ -96,7 +98,7 @@ module.exports = (GameWeek, questionService) => {
         getGameweekQuestionInfo: getGameweekQuestionInfo(GameWeek, questionService),
         addGameWeek: addGameWeek(GameWeek),
         getGameWeeks: getGameWeeks(GameWeek),
-        getGameByWeek: getGameByWeek(GameWeek),
+        getGameById: getGameById(GameWeek),
         deleteGameWeek: deleteGameWeek(GameWeek),
         updateGameWeek: updateGameWeek(GameWeek)
     }
