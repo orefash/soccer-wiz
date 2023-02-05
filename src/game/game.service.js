@@ -22,7 +22,6 @@ const submitGame = (Game, userService, scoreService, GameWeek) => async ({ gameW
     let demo = category === 'demo' ? true : false;
 
     // console.log('today: ', today)
-    let gameWeekData = await GameWeek.findOne({ _id: gameWeek });
 
     // if(!gameWeekData) throw new Error('Invalid GameWeek');
     // console.log(`demo: ${demo}  -  -  gameweek:  ${gameWeekData}  -  -  `)
@@ -30,6 +29,9 @@ const submitGame = (Game, userService, scoreService, GameWeek) => async ({ gameW
     let responseData = { gameScore: gScore, player, demo, gameId: null }
 
     if(demo) return responseData;
+
+
+    let gameWeekData = await GameWeek.findOne({ _id: gameWeek });
 
     let isValidDateCHeck1 = isValidTimePeriod({
         startDate: gameWeekData.startDate, 

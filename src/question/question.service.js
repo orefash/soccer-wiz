@@ -186,10 +186,10 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
 
         let isValidDateCHeck1 = isValidTimePeriod({
             startDate: gameWeekData.startDate, 
-            endDate: today
+            endDate: date
         });
         let isValidDateCHeck2 = isValidTimePeriod({
-            startDate: today, endDate: gameWeekData.endDate
+            startDate: date, endDate: gameWeekData.endDate
         });
 
         if(gameWeekData && isValidDateCHeck1 && isValidDateCHeck2 ){

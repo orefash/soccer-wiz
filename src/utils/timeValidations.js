@@ -13,8 +13,8 @@ const isValidTimePeriod = ({startDate, endDate}) => {
 
         if(!startDt.isValid() || !endDt.isValid())  throw new Error('data is invalid');
 
-        console.log(`start: ${startDate} - - end: ${endDate}`);
-        console.log(`format: start: ${startDt} - - end: ${endDt}`);
+        // console.log(`start: ${startDate} - - end: ${endDate}`);
+        // console.log(`format: start: ${startDt} - - end: ${endDt}`);
         if(endDt < startDt){
 
             return false;

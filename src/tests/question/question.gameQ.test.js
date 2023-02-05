@@ -99,10 +99,9 @@ describe('Question Service - Game', () => {
             const data = {
                 category: category1,
                 userId: userId,
-                date: new Date('October 19, 2022 10:50:39 AM'),
+                date: gameWeekStub.valid.startDate,
                 gameWeek: gameWeekDemo
             }
-            // const limit = 1;
     
             const fetchedGame = await questionService.getQuestionsForGame(data);
             // console.log("in game: ", fetchedGame)

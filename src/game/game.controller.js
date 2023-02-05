@@ -6,19 +6,18 @@ function gameRoutes(gameService) {
     const router = express.Router();
 
 
-    // router.post('/submit',requireJwtAuth, async (req, res) => {
-    router.post('/submit', async (req, res) => {
+    router.post('/submit',requireJwtAuth, async (req, res) => {
 
         try {
             const { 
                 gameWeek,
                 category,
-                playerId,
+                player,
                 answers
             } = req.body;
 
-            if (!category || !gameWeek || !playerId || !answers ) {
-                throw Error("Incomplete Request details")
+            if (!category || !gameWeek || !player || !answers ) {
+                throw new Error(`Incomplete Request Params: `)
             }
 
             let data = req.body;
