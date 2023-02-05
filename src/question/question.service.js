@@ -1,6 +1,8 @@
 const { isValidTimePeriod } = require("../utils/timeValidations");
 
 const { loadQuestionsFromGoogleSheets, formatDataForQuestionService } = require("../utils/loadQuestions");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 const addQuestion = (Question, gameCategoryService, gameWeekService) => async (data) => {
 
@@ -19,11 +21,11 @@ const addQuestion = (Question, gameCategoryService, gameWeekService) => async (d
 
     const checkCategory = await gameCategoryService.getCategoryByName(data.category)
 
-    if (!checkCategory && category !== 'demo'){
+    if (!checkCategory && category !== 'demo') {
         console.log(`cat: ${checkCategory}, catg: ${category} `)
         throw new Error('Invalid Category');
     }
-        
+
 
     const newQuestion = new Question(data)
 
@@ -129,10 +131,10 @@ const getQuestionsByCategory = (Question, gameCategoryService) => async (categor
     const questionCategory = await gameCategoryService.getCategoryByName(category)
 
 
-    if (!questionCategory && category !== 'demo'){
+    if (!questionCategory && category !== 'demo') {
         throw new Error('Invalid Category')
     }
-        
+
 
     if (queryLimit > 0)
         questions = await Question.find({ category: category }).limit(queryLimit);
@@ -162,7 +164,9 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
     if (!questionCategory && category !== 'demo')
         throw new Error('Invalid Category')
 
-    let demo = category === 'demo'? true : false;
+    let demo = category === 'demo' ? true : false;
+
+    let questionFilter = { category };
 
     let data = {
         user: userId, sufficient_balance: true, demo: demo, in_matchday: false, error: true
@@ -180,30 +184,40 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
     }
 
     if (!demo) {
-        console.log("In date check: ");
 
         const gameWeekData = await gameWeekService.getGameById(gameWeek);
 
+        if(!gameWeekData) return data;
+        
+
         let isValidDateCHeck1 = isValidTimePeriod({
-            startDate: gameWeekData.startDate, 
+            startDate: gameWeekData.startDate,
             endDate: date
         });
         let isValidDateCHeck2 = isValidTimePeriod({
             startDate: date, endDate: gameWeekData.endDate
         });
 
-        if(gameWeekData && isValidDateCHeck1 && isValidDateCHeck2 ){
+        if (gameWeekData && isValidDateCHeck1 && isValidDateCHeck2) {
 
-            data.in_matchday = true
-        }else{
-            data.in_matchday = false
+            data.in_matchday = true;
+            questionFilter = {
+                "$and": [
+                    { category: category },
+                    { gameWeek: ObjectId(gameWeek) }
+                ]
+            }
+        } else {
             return data;
         }
     }
 
+    // console.log('filter: ', questionFilter);
 
     questions = await Question.aggregate([
-        { $match: { category: category } },
+        {
+            $match: questionFilter
+        },
         { $sample: { size: questionLimit } },
         {
             $project: {

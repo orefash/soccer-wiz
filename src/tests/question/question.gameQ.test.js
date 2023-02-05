@@ -14,7 +14,16 @@ let gameWeekService = {};
 const gameWeekStub = require('../stubs/gameWeek.stub');
 const { questionData } = require('../stubs/question.stub');
 
+
+const gameWeekDemo = "63c8e9dea08a3244b63e9d05";
+const gameWeekDemo2 = "63c8e9dea08a3244b63e9d06";
+const invalidGW = "63c8e9dea08a3244b63e9d08";
+
 let getGameById = jest.fn().mockReturnValue(gameWeekStub.valid);
+
+when(getGameById).calledWith(gameWeekDemo).mockReturnValue(gameWeekStub.valid)
+when(getGameById).calledWith(gameWeekDemo2).mockReturnValue(gameWeekStub.valid)
+when(getGameById).calledWith(invalidGW).mockReturnValue(null)
 
 gameWeekService.getGameById = getGameById;
 
@@ -69,8 +78,8 @@ afterAll(async () => await closeDatabase())
 
 describe('Question Service - Game', () => {
 
-    const gameWeekDemo = "63c8e9dea08a3244b63e9d05";
     const generalQuestion = questionData(gameWeekDemo, category1);
+    const generalQuestion1 = questionData(gameWeekDemo2, category1);
 
     describe('Question Service - getQuestionsForGame', () => {
 
@@ -78,7 +87,11 @@ describe('Question Service - Game', () => {
     
             await questionService.addQuestion(generalQuestion);
             await questionService.addQuestion(generalQuestion);
+            await questionService.addQuestion(generalQuestion1);
             
+
+            // let qs = await questionService.getQuestions();
+            // console.log('qs: ', qs);
         })
 
         it('valid user should be able to get Questions for live Game within match day period and user wallet balance is reduced', async () => {
@@ -117,6 +130,39 @@ describe('Question Service - Game', () => {
 
             
             expect(sameUser.wallet_balance).toEqual(original_wallet_balance-10);
+    
+    
+        })
+
+        it('valid user should be able to return error when invalid gameweek', async () => {
+
+            
+    
+            let original_wallet_balance = 30;
+    
+            
+    
+            const user = new User({
+                email: 'test@mail.com', source: "local", username: 'orefash', wallet_balance: original_wallet_balance
+            })
+            let createdUser = await user.save();
+    
+            const userId = createdUser._id;
+    
+            const data = {
+                category: category1,
+                userId: userId,
+                date: gameWeekStub.valid.startDate,
+                gameWeek: invalidGW
+            }
+    
+            const fetchedGame = await questionService.getQuestionsForGame(data);
+            // console.log("in game: ", fetchedGame)/\
+    
+            expect(getGameById).toBeCalled();
+            expect(fetchedGame.questions).toBeUndefined();
+            expect(fetchedGame.user).toEqual(userId);
+            expect(fetchedGame.error).toEqual(true);
     
     
         })
