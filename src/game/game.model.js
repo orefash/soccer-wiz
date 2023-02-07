@@ -17,6 +17,7 @@ const gameSchema = new Schema({
     player: {type: mongoose.Types.ObjectId, ref: "user"},
     gameWeek: {
         type: Schema.Types.ObjectId, 
+        index: true,
         ref: 'gameWeek',
         required: 'Please specify gameweek Id',
     },

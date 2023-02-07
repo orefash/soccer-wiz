@@ -6,20 +6,38 @@ const rewardSchema = Schema(
     {
         value: { type: Number, default: 0 },
 
-        gameWeek: { type: Number, default: 0 },
-
-        userId: {
-            type: String,
-            ref: "user",
-            required: true,
+        gameWeek: {
+            type: Schema.Types.ObjectId,
+            ref: 'gameWeek',
+            required: 'Please specify gameweek Id',
+            index: true,
         },
 
-        claimed: { type: Boolean, default: false },
-        issued: { type: Boolean, default: false },
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "user",
+            required: true
+        },
 
-        type: { 
-            type: String, 
-            enum: ["airtime", "cash"], 
+        claimed: {
+            type: Boolean, default: false,
+            index: true,
+        },
+        issued: {
+            type: Boolean, default: false,
+            index: true
+        },
+
+        type: {
+            type: String,
+            enum: ["airtime", "cash"],
+            required: true
+        },
+
+        tier: {
+            type: Number,
+            enum: [1, 2, 3],
+            required: true
         },
 
         currency: {
@@ -31,15 +49,14 @@ const rewardSchema = Schema(
 
         issueDate: {
             type: Date,
-            required: true,
         },
 
         claimDate: {
             type: Date,
         },
 
-    }
-);
+    },
+    { timestamps: true });
 
 var RewardModel = mongoose.model("rewards", rewardSchema, "rewards");
 

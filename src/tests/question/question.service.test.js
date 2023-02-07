@@ -6,11 +6,12 @@ const { connect, clearDatabase, closeDatabase } = require('../db');
 const Question = require('../../question/question.model');
 const QuestionService = require('../../question/question.service');
 
-let gameWeekService = {};
 
 const gameWeekStub = require('../stubs/gameWeek.stub');
 const { questionData } = require('../stubs/question.stub');
 
+
+let gameWeekService = {};
 let getGameById = jest.fn().mockReturnValue(gameWeekStub.valid);
 
 gameWeekService.getGameById = getGameById;

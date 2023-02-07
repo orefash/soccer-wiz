@@ -1,131 +1,135 @@
-const { when } = require('jest-when')
+const { when } = require('jest-when');
 
-const { connect, clearDatabase, closeDatabase } = require('../db')
+const { connect, clearDatabase, closeDatabase } = require('../db');
 
+const RewardService = require('../../reward/reward.service');
+const Reward = require('../../reward/reward.model');
 
-const { rewardService, Reward, RewardController } = require('../../reward')
+const { rewards } = require('../../reward/rewards');
 
-const { WalletTransaction, walletTransactionService } = require('../../walletTransaction')
+const getUserById = jest.fn().mockReturnValue(true);
 
-beforeAll(async () => await connect())
-afterEach(async () => await clearDatabase())
-afterAll(async () => await closeDatabase())
-
-
-const reward1 = {
-    gameWeek: 2, userId: '63776732713c51a3d29cd62e', value: 100, currency: 'NGN', type: 'airtime'
+let userService = {
+    getUserById: getUserById
 }
 
-const reward2 = {
-    gameWeek: 3, userId: '63776732713c51a3d19cd62e', value: 200, currency: 'NGN', type: 'cash'
-}
+const rewardService = RewardService(Reward, userService);
 
-const reward3 = {
-    gameWeek: 4, userId: '63776732713c51a3d19cd62e', value: 300, currency: 'NGN', type: 'airtime'
-}
+beforeAll(async () => await connect());
+afterEach(async () => await clearDatabase());
+afterAll(async () => await closeDatabase());
+
 
 describe('Reward Service', () => {
 
-    describe('saveReward',  () => {
-        it('should save reward details', async () => {
+    let user1 = '63c8e9dea08a3244b63e9d05';
+    let user2 = '63c8e9dea08a3244b63e9d06';
+    let user3 = '63c8e9dea08a3244b63e9d07';
 
-            const savedReward1 = await rewardService.saveReward(reward1)
+    let t1Reward = {
+        userId: user1,
+        score: 17,
+        gameWeek: '63c8e9dea08a3244b63e9d05'
+    }
 
-            const savedReward2 = await rewardService.saveReward(reward2)
+    let t3Reward = {
+        userId: user2,
+        score: 22.5,
+        gameWeek: '63c8e9dea08a3244b63e9d05'
+    }
 
-            const rewards = await rewardService.getRewards()
+    // let t2Reward = {
+    //     userId: user2,
+    //     score: 22.5,
+    //     gameWeek: '63c8e9dea08a3244b63e9d05'
+    // }
 
-            expect(savedReward1.gameWeek).toBe(2)
-            expect(savedReward2.gameWeek).toBe(3)
+    let noReward = {
+        userId: user1,
+        score: 13,
+        gameWeek: '63c8e9dea08a3244b63e9d05'
+    }
 
-            expect(rewards.length).toBe(2)
+    beforeEach(async () => {
 
+        const savedReward1 = await rewardService.saveReward(t1Reward);
+
+        const savedReward2 = await rewardService.saveReward(t3Reward);
+
+        const savedReward3 = await rewardService.saveReward(noReward);
+    });
+
+    describe('saveReward', () => {
+        it('should save reward details if score is eligible and return null if ineligible', async () => {
+            const fetchedRewards = await rewardService.getRewards()
+
+            expect(fetchedRewards.length).toBe(2)
         })
-
     })
 
 
-    describe('getRewardsByUser',  () => {
+    describe('getRewardsByUser', () => {
         it('should get rewards by User', async () => {
+            const rewards = await rewardService.getRewardsByUser(user1);
 
-            const savedReward1 = await rewardService.saveReward(reward1)
-            const savedReward2 = await rewardService.saveReward(reward2)
-            const savedReward3 = await rewardService.saveReward(reward3)
+            expect(rewards).not.toBeFalsy();
+            expect(rewards.available.length).toBe(1);
+        });
 
-            let user = '63776732713c51a3d19cd62e'
+        it('should return null when user is invalid', async () => {
+            const rewards = await rewardService.getRewardsByUser(user3);
 
-            const rewards = await rewardService.getRewardsByUser(user)
+            console.log('in fetchby user: ', rewards);
 
-            // console.log("rew; ", rewards)
-
-            expect(savedReward1.gameWeek).toBe(2)
-            expect(savedReward2.gameWeek).toBe(3)
-
-            expect(rewards).not.toBeFalsy()
-            expect(rewards.available.length).toBe(2)
-
-        })
-
+            expect(rewards).not.toBeFalsy();
+            expect(rewards.available.length).toBe(0);
+            expect(rewards.claimed.length).toBe(0);
+        });
     })
 
 
 
-    describe('claimReward',  () => {
+    describe('claimReward / Issue Reward', () => {
+
+        let savedReward = undefined;
+
+        beforeEach(async () => {
+
+            savedReward = await rewardService.saveReward(t1Reward);
+
+        });
+
         it('should allow User claim rewards', async () => {
 
-            const savedReward1 = await rewardService.saveReward(reward1)
-            const savedReward2 = await rewardService.saveReward(reward2)
-            const savedReward3 = await rewardService.saveReward(reward3)
+            let rewardId1 = savedReward._id;
 
-            let user = '63776732713c51a3d19cd62e'
-            let rewardId1 = savedReward2._id;
-
-            let data = { userId: user, rewardId: rewardId1 }
+            let data = { userId: user1, rewardId: rewardId1 }
 
             const rewards = await rewardService.claimReward(data)
 
-            // console.log("rew; ", rewards)
-
-            // expect(savedReward1.gameWeek).toBe(2)
-            // expect(savedReward2.gameWeek).toBe(3)
-            // expect(savedReward2.gameWeek).toBe(3)
-
-            expect(rewards.claimed).toBe(true)
-            // expect(rewards.available.length).toBe(2)
+            expect(rewards.claimed).toBe(true);
 
         })
 
-    })
-
-
-
-    describe('issueReward',  () => {
         it('should allow Admin to issue User Claimed rewards', async () => {
 
-            const savedReward1 = await rewardService.saveReward(reward1)
-            const savedReward2 = await rewardService.saveReward(reward2)
-            const savedReward3 = await rewardService.saveReward(reward3)
+         
+            let rewardId1 = savedReward._id;
 
-            let user = '63776732713c51a3d19cd62e'
-            let rewardId1 = savedReward2._id;
-
-            let data = { userId: user, rewardId: rewardId1 }
+            let data = { userId: user1, rewardId: rewardId1 }
 
             const rewards = await rewardService.claimReward(data)
 
             const issuedReward = await rewardService.issueReward(rewardId1)
-            // console.log("rew; ", rewards)
-
-            // expect(savedReward1.gameWeek).toBe(2)
-            // expect(savedReward2.gameWeek).toBe(3)
-            // expect(savedReward2.gameWeek).toBe(3)
+           
 
             expect(rewards.claimed).toBe(true)
-            expect(issuedReward.issued).toBe(true)
-            // expect(rewards.available.length).toBe(2)
+            expect(issuedReward.issued).toBe(true);
 
         })
 
     })
+
+
 
 })

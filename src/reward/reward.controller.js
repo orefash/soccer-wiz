@@ -1,7 +1,7 @@
 const express = require('express');
 const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
-function rewardRoutes(rewardService, userService) {
+function rewardRoutes(rewardService) {
     const router = express.Router();
 
 
@@ -29,10 +29,6 @@ function rewardRoutes(rewardService, userService) {
         try {
             let uid = req.params.userId;
 
-            let user = await userService.getUserById(uid)
-
-            if(!user) throw new Error('User does not exist')
-
             const rewards = await rewardService.getRewardsByUser(uid);
             res.status(200).json({
                 success: true,
@@ -48,30 +44,58 @@ function rewardRoutes(rewardService, userService) {
     });
 
 
-    router.post("/", async (req, res) => {
+    // router.post("/", async (req, res) => {
+    //     try {
+    //         const { gameWeek, userId, value, currency, type } = req.body;
+
+    //         // if (!question || !category || !answers) {
+    //         //     throw Error("Incomplete Request details")
+    //         // }
+
+    //         let uid = userId;
+
+    //         let user = await userService.getUserById(uid)
+
+    //         if(!user) throw new Error('User does not exist')
+
+    //         const rewardData = req.body;
+
+    //         const savedReward = await rewardService.saveReward(rewardData);
+    //         res.status(200).json({
+    //             success: true,
+    //             reward: savedReward
+    //         });
+
+    //     } catch (error) {
+    //         console.log("Error in rewards: ", error.message)
+    //         res.status(500).json({
+    //             success: false,
+    //             message: error.message
+    //         });
+    //     }
+
+    // });
+
+
+    router.post("/claim",requireJwtAuth, async (req, res) => {
         try {
-            const { gameWeek, userId, value, currency, type } = req.body;
+            const { rewardId, userId } = req.body;
 
-            // if (!question || !category || !answers) {
-            //     throw Error("Incomplete Request details")
-            // }
-
-            let uid = userId;
-
-            let user = await userService.getUserById(uid)
-
-            if(!user) throw new Error('User does not exist')
+            if (!rewardId || !userId ) {
+                throw Error("Incomplete Request details")
+            }
 
             const rewardData = req.body;
 
-            const savedReward = await rewardService.saveReward(rewardData);
+            const claimedReward = await rewardService.claimReward(rewardData);
+
             res.status(200).json({
                 success: true,
-                reward: savedReward
+                reward: claimedReward
             });
 
         } catch (error) {
-            console.log("Error in rewards: ", error.message)
+            // console.log("Error in rewards: ", error.message)
             res.status(500).json({
                 success: false,
                 message: error.message
@@ -81,27 +105,16 @@ function rewardRoutes(rewardService, userService) {
     });
 
 
-    router.post("/claim",requireJwtAuth, async (req, res) => {
+
+    router.post("/:id/issue",requireJwtAuth, async (req, res) => {
         try {
-            const { rewardId, userId } = req.body;
+            const id = req.params.id;
 
-            // if (!question || !category || !answers) {
-            //     throw Error("Incomplete Request details")
-            // }
-
-            // let uid = userId;
-
-            let user = await userService.getUserById(userId)
-
-            if(!user) throw new Error('User does not exist')
-
-            const rewardData = req.body;
-
-            const claimedReward = await rewardService.claimReward(rewardData);
+            const issued = await rewardService.issueReward(id);
 
             res.status(200).json({
                 success: true,
-                reward: claimedReward
+                reward: issued
             });
 
         } catch (error) {

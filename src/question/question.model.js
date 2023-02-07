@@ -31,6 +31,7 @@ const questionSchema = new Schema({
         default: 1
     },
     gameWeek: {
+        index: true,
         type: Schema.Types.ObjectId, 
         ref: 'gameWeek',
         required: 'Please specify gameweek Id',

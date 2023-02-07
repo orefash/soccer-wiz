@@ -3,23 +3,37 @@ const { when } = require('jest-when')
 const { connect, clearDatabase, closeDatabase } = require('../db')
 
 
-const { Game, gameService } = require('../../game')
-const { gameCategoryService } = require('../../gameCategory')
-// const GameService = require('../../game/game.service');
+const Game = require('../../game/game.model');
+const GameService = require('../../game/game.service');
 
-const { User, userService } = require('../../user');
+const User = require('../../user/user.model');
+const UserService = require('../../user/user.service');
+const userService = UserService(User);
 
-// const { ScoreService, DailyScore, WeeklyScore, MonthlyScore, Score } = require('../../score')
+const { ScoreService, DailyScore, WeeklyScore, MonthlyScore, Score } = require('../../score');
 
-// const getCategoryByName = jest.fn();
-// when(getCategoryByName).calledWith('EFL').mockReturnValue(true)
-// when(getCategoryByName).calledWith('PL').mockReturnValue(true)
 
-// let gameCategoryService = {
-//     getCategoryByName: getCategoryByName
-// }
+let category1 = 'General';
 
-// const scoreService = ScoreService(DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService);
+const getCategoryByName = jest.fn();
+when(getCategoryByName).calledWith(category1).mockReturnValue(true);
+
+let gameCategoryService = {
+    getCategoryByName: getCategoryByName
+}
+
+const gameWeekStub = require('../stubs/gameWeek.stub');
+const GameWeek = {
+    findOne: jest.fn().mockReturnValue(gameWeekStub.valid0)
+}
+
+const scoreService = ScoreService(DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService);
+
+const gameService = GameService(Game, userService, scoreService, GameWeek);
+
+
+
+const getGameData = require('../stubs/game.stub');
 
 beforeAll(async () => await connect())
 afterEach(async () => await clearDatabase())
@@ -82,47 +96,47 @@ const gameAnswers2 = [
 
 describe('Game Service Full', () => {
 
+    let game1 = null;
 
+    let savedUser = undefined;
+
+    let gameWeek1 = '63c8e9dea08a3244b63e9d05';
+
+    beforeEach(async () => {
+
+        const newUser = {
+            email: "orefash@gmail.com",
+            password: "password",
+            source: "local"
+        }
+
+        savedUser = await userService.addLocalUser(newUser);
+
+    })
 
 
     describe('submitGame', () => {
         it('should return total points for all questions answered by user in live game', async () => {
 
-            const newUser = {
-                email: "orefash@gmail.com",
-                password: "password",
-                source: "local"
-            }
+            gameData = getGameData(category1, gameWeek1, savedUser._id);
 
-            const savedUser = await userService.addLocalUser(newUser);
 
             // console.log('Saved User: ', savedUser)
 
 
-            const gameCategory1 = { category: 'PL', description: 'PL game questions' }
+            // const gameCategory1 = { category: category1, description: 'PL game questions' }
 
-            await gameCategoryService.saveCategory(gameCategory1)
+            // await gameCategoryService.saveCategory(gameCategory1)
 
 
             const newGame = {
-                gameWeek: 1,
-                category: 'PL',
-                playerId: savedUser._id,
-                username: 'john',
+                ...gameData,
                 answers: gameAnswers1,
                 demo: false,
-                today: new Date('02/11/2022')
+                today: gameWeekStub.valid0.startDate
             }
 
-            const newGame1 = {
-                gameWeek: 1,
-                category: 'PL',
-                playerId: savedUser._id,
-                username: 'john',
-                answers: gameAnswers2,
-                demo: false,
-                today: new Date('02/11/2022')
-            }
+    
 
             let gameResponse = await gameService.submitGame(newGame);
 
@@ -130,7 +144,7 @@ describe('Game Service Full', () => {
 
             let game = await gameService.getGameById(gameResponse.gameId);
 
-            let gameResponse1 = await gameService.submitGame(newGame1);
+            let gameResponse1 = await gameService.submitGame(newGame);
 
             let mUser1 = await userService.getUserById(savedUser._id);
 
@@ -142,7 +156,7 @@ describe('Game Service Full', () => {
 
 
             expect(game.score).toBe(4.9)
-            expect(game.category).toBe('PL')
+            expect(game.category).toBe(category1)
 
             expect(gameResponse.gameScore.totalScore).toBe(4.9)
 
@@ -150,13 +164,12 @@ describe('Game Service Full', () => {
 
 
 
-            expect(gameResponse1.gameScore.totalScore).toBe(4.7)
-            expect(Math.round(mUser1.totalScore * 10) / 10).toBe(9.6)
+            expect(gameResponse1.gameScore.totalScore).toBe(4.9)
+            expect(Math.round(mUser1.totalScore * 10) / 10).toBe(9.8)
             expect(mUser1.gamesPlayed).toBe(2)
-            expect(game1.score).toBe(4.7)
-            expect(game1.category).toBe('PL')
+            expect(game1.score).toBe(4.9)
+            expect(game1.category).toBe(category1)
 
-            // expect(savedGame.score).toBe(gameResponse.gameScore.totalScore)
         })
 
     })

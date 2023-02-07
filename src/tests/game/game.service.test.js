@@ -69,16 +69,7 @@ const gameAnswers1 = [
     }
 ]
 
-function getGameData(category, gameWeek) {
-
-    return {
-        category: category,
-        player: validUser,
-        score: 10,
-        gameWeek: gameWeek
-
-    }
-}
+const getGameData = require('../stubs/game.stub');
 
 
 describe('Game Service', () => {
@@ -89,9 +80,9 @@ let gameWeek2 = '61c8e9dea08a3244b63e9d05';
 let category1 = "General";
 let demoCat = "demo";
 
-let game1 = getGameData(category1, gameWeek1);
-let game2 = getGameData(category1, gameWeek2);
-let game3 = getGameData(category1, gameWeek1);
+let game1 = getGameData(category1, gameWeek1, validUser);
+let game2 = getGameData(category1, gameWeek2, validUser);
+let game3 = getGameData(category1, gameWeek1, validUser);
 
 let demoGame = getGameData(demoCat, gameWeek1);
 

@@ -7,7 +7,11 @@ const ScoreService = require('./score.service')
 const ScoreController = require('./score.controller')
 
 // const { userService } = require('../user')
-const { gameCategoryService } = require('../gameCategory')
+const GameCategoryService = require('../gameCategory/gameCategory.service');
+const GameCategory = require('../gameCategory/gameCategory.model');
+const gameCategoryService = GameCategoryService(GameCategory);
+
+
 // const { gameSettingService } = require('../gameSettings')
 
 const scoreService = ScoreService(DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService);

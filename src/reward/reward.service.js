@@ -1,21 +1,30 @@
 
+const { getReward } = require('./rewards');
 
-const saveReward = (Reward) => async ({ gameWeek, userId, value, currency, type }) => {
+const saveReward = (Reward) => async ({score, userId, gameWeek}) => {
 
+    let reward = getReward(score);
+
+    if(!reward) return null;
+
+    let rewardData = {
+        ...reward,
+        userId,
+        gameWeek
+    };
     
-    const newReward = new Reward({ gameWeek, userId, value, issueDate: new Date(), currency, type })
+    const newReward = new Reward(rewardData);
 
-    return newReward.save()
+    return newReward.save();
 }
 
-const claimReward = (Reward, walletTransactionService) => async ({rewardId, userId}) => {
+const claimReward = (Reward) => async ({rewardId, userId}) => {
 
-    const rewards = await Reward.findOne({ _id: rewardId })
+    const rewards = await Reward.findOne({ _id: rewardId });
 
-    // console.log("Rewards; ", rewards)
     if(rewards.claimed) throw new Error("Reward already claimed")
 
-    if(rewards.userId !== userId) throw new Error('Invalid User')
+    if(rewards.userId != userId) throw new Error('Invalid User')
 
     const updatedReward = await Reward.findByIdAndUpdate(rewardId, { claimed: true, claimDate: new Date() }, {
         new: true,
@@ -33,13 +42,10 @@ const claimReward = (Reward, walletTransactionService) => async ({rewardId, user
 }
 
 
-const issueReward = (Reward, walletTransactionService) => async (id) => {
+const issueReward = (Reward) => async (id) => {
 
     const rewards = await Reward.findOne({ _id: id })
 
-    console.log('Rewards: ', rewards)
-
-    // if(rewards.userId !== uid) throw new Error('Invalid User')
     if(rewards.claimed !== true) throw new Error('Reward not claimed by user')
 
     const updatedReward = await Reward.findByIdAndUpdate(id, { issued: true, issueDate: new Date() }, {
@@ -48,7 +54,7 @@ const issueReward = (Reward, walletTransactionService) => async (id) => {
 
     if(!updatedReward.issued) throw new Error('Reward Issuance Error - DB Error')
 
-    const newTransaction = await walletTransactionService.saveWalletTransaction({ userId: userId, isInflow: false, value: updatedReward.value, description: "Withdrawal of rewards", status: "successful", type: updatedReward.type })
+    // const newTransaction = await walletTransactionService.saveWalletTransaction({ userId: userId, isInflow: false, value: updatedReward.value, description: "Withdrawal of rewards", status: "successful", type: updatedReward.type })
     
 
     return updatedReward
@@ -67,7 +73,6 @@ const getRewardsByUser = (Reward) => async (userId) => {
 
     const rewards = await Reward.find({ "userId": userId});
 
-    // console.log("Re: ", rewards)
 
     let data = {  };
     let available = [], claimed = [];
@@ -91,12 +96,12 @@ const getRewardsByUser = (Reward) => async (userId) => {
 
 
 
-module.exports = (Reward, walletTransactionService) => {
+module.exports = (Reward) => {
     return {
         saveReward: saveReward(Reward),
         getRewards: getRewards(Reward),
         getRewardsByUser: getRewardsByUser(Reward),
-        claimReward: claimReward(Reward, walletTransactionService),
-        issueReward: issueReward(Reward, walletTransactionService)
+        claimReward: claimReward(Reward),
+        issueReward: issueReward(Reward)
     }
 }

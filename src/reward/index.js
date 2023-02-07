@@ -1,16 +1,15 @@
 
-const Reward = require('./reward.model')
-const RewardService = require('./reward.service')
-const RewardController = require('./reward.controller')
+const Reward = require('./reward.model');
+const RewardService = require('./reward.service');
+const RewardController = require('./reward.controller');
 
+const User = require('../user/user.model');
+const UserService = require('../user/user.service');
 
-const { walletTransactionService } = require('../walletTransaction')
-const rewardService = RewardService(Reward, walletTransactionService);
-
-const { userService } = require('../user')
+const rewardService = RewardService(Reward,  UserService(User));
 
 module.exports = {
     rewardService: rewardService,
     Reward: Reward,
-    RewardController: RewardController.rewardRoutes(rewardService, userService)
+    RewardController: RewardController.rewardRoutes(rewardService)
 }
