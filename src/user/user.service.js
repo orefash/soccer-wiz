@@ -56,9 +56,9 @@ const getUserByUsername = (User) => async (username) => {
     return await User.findOne({ username })
 }
 
-const updateUsernameAndCountry = (User) => async (id, { username, country }) => {
+const updateUser = (User) => async (id, updateQuery) => {
 
-    const updatedUser = await User.findByIdAndUpdate(id, { username, country }, {
+    const updatedUser = await User.findByIdAndUpdate(id, updateQuery, {
         new: true,
     });
 
@@ -188,7 +188,7 @@ module.exports = (User) => {
         getUsers: getUsers(User),
         getUserByEmail: getUserByEmail(User),
         getUserById: getUserById(User),
-        updateUsernameAndCountry: updateUsernameAndCountry(User),
+        updateUser: updateUser(User),
         updateUsername: updateUsername(User),
         getUserByUsername: getUserByUsername(User),
         updateGameRecords: updateGameRecords(User),

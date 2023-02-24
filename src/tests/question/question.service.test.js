@@ -81,9 +81,12 @@ afterAll(async () => await closeDatabase())
 describe('Question Service', () => {
 
     const gameWeekDemo = "63c8e9dea08a3244b63e9d05";
+    const gameWeekDemo1 = "63c8e9dea08a3244b63e9d06";
     const invalidQuestionC = questionData(gameWeekDemo, categoryInvalid);
     const invalidAnswers = questionData(gameWeekDemo, category1, false);
     const generalQuestion = questionData(gameWeekDemo, category1);
+    const generalQuestion1 = questionData(gameWeekDemo, category1);
+    const generalQuestion2 = questionData(gameWeekDemo1, category1);
     const italyQuestion = questionData(gameWeekDemo, category2);
     const demoQuestion = questionData(gameWeekDemo, 'demo');
 
@@ -360,6 +363,8 @@ describe('Question Service', () => {
 
         beforeEach(async () => {
             await questionService.addQuestion(generalQuestion);
+            await questionService.addQuestion(generalQuestion1);
+            await questionService.addQuestion(generalQuestion2);
             await questionService.addQuestion(demoQuestion);
         });
 
@@ -367,7 +372,7 @@ describe('Question Service', () => {
 
             const fetchedQuestions = await questionService.getQuestions();
 
-            expect(fetchedQuestions.length).toEqual(2);
+            expect(fetchedQuestions.length).toEqual(4);
 
         })
 
@@ -378,7 +383,7 @@ describe('Question Service', () => {
 
             const fetchedQuestions = await questionService.getQuestions(filter);
 
-            expect(fetchedQuestions.length).toEqual(1);
+            expect(fetchedQuestions.length).toEqual(3);
 
         })
 
@@ -386,6 +391,18 @@ describe('Question Service', () => {
 
             let filter = {}
             filter.gameWeek = gameWeekDemo;
+
+            const fetchedQuestions = await questionService.getQuestions(filter);
+
+            expect(fetchedQuestions.length).toEqual(3);
+
+        })
+
+        it('should be able to get questions by gameWeek and category', async () => {
+
+            let filter = {}
+            filter.gameWeek = gameWeekDemo;
+            filter.category = category1;
 
             const fetchedQuestions = await questionService.getQuestions(filter);
 

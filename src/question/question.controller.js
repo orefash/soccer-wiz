@@ -14,6 +14,8 @@ function questionRoutes(QuestionService) {
             if (gameWeek) filters.gameWeek = gameWeek;
             if (category) filters.category = category;
 
+            // console.log('q filter: ', filters);
+
             const questions = await QuestionService.getQuestions(filters);
             res.status(200).json({
                 success: true,
@@ -90,6 +92,46 @@ function questionRoutes(QuestionService) {
             res.status(500).json({
                 success: false,
                 message: error
+            });
+        }
+
+    });
+
+
+    router.get("/game/demo/user/:userId", requireJwtAuth, async (req, res) => {
+        try {
+
+            let userId = req.params.userId;
+            let category = "demo";
+
+         
+            if (!category || !userId ) {
+                throw new Error("Incomplete Request details")
+            }
+
+            const questionData = {
+                category, userId, date: new Date()
+            }
+
+            const data = await QuestionService.getQuestionsForGame(questionData);
+
+            if (data) {
+                data.timeLimit = 12
+                res.status(200).json({
+                    success: !data.error,
+                    data: data
+                });
+            } else {
+                res.status(400).json({
+                    success: false,
+                    message: "Questions not found"
+                });
+            }
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
             });
         }
 

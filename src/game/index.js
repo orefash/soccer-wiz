@@ -10,7 +10,9 @@ const UserService = require('../user/user.service');
 
 const GameWeek = require('../gameWeek/gameWeek.model');
 
-const gameService = GameService(Game, UserService(User), scoreService, GameWeek);
+const { rewardService } = require('../reward');
+
+const gameService = GameService(Game, UserService(User), scoreService, GameWeek, rewardService);
 
 
 module.exports = {

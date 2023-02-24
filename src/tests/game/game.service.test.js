@@ -30,12 +30,17 @@ let scoreService = {
     saveScore: saveScore
 };
 
+const saveReward = jest.fn();
+
+let rewardService = {
+    saveReward: saveReward
+};
 
 const { valid0 } = require('../stubs/gameWeek.stub');
 
 const GameWeek = require('../../gameWeek/gameWeek.model');
 
-const gameService = GameService(Game, userService, scoreService, GameWeek);
+const gameService = GameService(Game, userService, scoreService, GameWeek, rewardService);
 
 
 beforeAll(async () => await connect())

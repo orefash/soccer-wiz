@@ -29,7 +29,9 @@ const GameWeek = {
 
 const scoreService = ScoreService(DailyScore, WeeklyScore, MonthlyScore, Score, gameCategoryService);
 
-const gameService = GameService(Game, userService, scoreService, GameWeek);
+const { rewardService } = require('../../reward');
+
+const gameService = GameService(Game, userService, scoreService, GameWeek, rewardService);
 
 
 
@@ -68,28 +70,64 @@ const gameAnswers1 = [
 
 const gameAnswers2 = [
     {
-        timeTaken: 9,
-        isCorrect: true
+        "timeTaken": 9,
+        "isCorrect": true
     },
     {
-        timeTaken: 5,
-        isCorrect: false
+        "timeTaken": 5,
+        "isCorrect": false
     },
     {
-        timeTaken: 2,
-        isCorrect: true
+        "timeTaken": 2,
+        "isCorrect": true
     },
     {
-        timeTaken: 8,
-        isCorrect: false
+        "timeTaken": 8,
+        "isCorrect": false
     },
     {
-        timeTaken: 9,
-        isCorrect: true
+        "timeTaken": 9,
+        "isCorrect": true
     },
     {
-        timeTaken: 5,
-        isCorrect: true
+        "timeTaken": 5,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 5,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 2,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 5,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 5,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 1,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 1,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 4,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 1,
+        "isCorrect": true
+    },
+    {
+        "timeTaken": 1,
+        "isCorrect": true
     }
 ]
 
@@ -163,12 +201,58 @@ describe('Game Service Full', () => {
             expect(gameResponse.submitLate).toBe(false)
 
 
+            expect(gameResponse.reward_level).toBe(null)
+
+
 
             expect(gameResponse1.gameScore.totalScore).toBe(4.9)
             expect(Math.round(mUser1.totalScore * 10) / 10).toBe(9.8)
             expect(mUser1.gamesPlayed).toBe(2)
             expect(game1.score).toBe(4.9)
             expect(game1.category).toBe(category1)
+
+        })
+
+        it('should return total points for all questions answered by user in live game and show reward tier', async () => {
+
+            gameData = getGameData(category1, gameWeek1, savedUser._id);
+
+
+
+            const newGame = {
+                ...gameData,
+                answers: gameAnswers2,
+                demo: false,
+                today: gameWeekStub.valid0.startDate
+            }
+
+    
+
+            let gameResponse = await gameService.submitGame(newGame);
+
+            console.log('gr: ', gameResponse)
+
+            let mUser = await userService.getUserById(savedUser._id);
+
+            let game = await gameService.getGameById(gameResponse.gameId);
+
+          
+            expect(mUser.totalScore).toBe(17)
+            expect(mUser.gamesPlayed).toBe(1)
+
+
+            expect(game.score).toBe(17)
+            expect(game.category).toBe(category1)
+
+            expect(gameResponse.gameScore.totalScore).toBe(17)
+
+            expect(gameResponse.submitLate).toBe(false)
+
+
+            expect(gameResponse.reward_level).toBe('Tier 1')
+
+
+
 
         })
 

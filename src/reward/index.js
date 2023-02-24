@@ -6,7 +6,7 @@ const RewardController = require('./reward.controller');
 const User = require('../user/user.model');
 const UserService = require('../user/user.service');
 
-const rewardService = RewardService(Reward,  UserService(User));
+const rewardService = RewardService(Reward, UserService(User));
 
 module.exports = {
     rewardService: rewardService,

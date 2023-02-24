@@ -11,7 +11,7 @@ const saveGame = (Game) => async ({ player, category, gameWeek, score }) => {
 }
 
 
-const submitGame = (Game, userService, scoreService, GameWeek) => async ({ gameWeek, category, player, answers, today = new Date() }) => {
+const submitGame = (Game, userService, scoreService, GameWeek, rewardService) => async ({ gameWeek, category, player, answers, today = new Date() }) => {
 
     let user = await userService.getUserById(player);
     if (!user)
@@ -21,11 +21,7 @@ const submitGame = (Game, userService, scoreService, GameWeek) => async ({ gameW
 
     let demo = category === 'demo' ? true : false;
 
-    // console.log('today: ', today)
-
-    // if(!gameWeekData) throw new Error('Invalid GameWeek');
-    // console.log(`demo: ${demo}  -  -  gameweek:  ${gameWeekData}  -  -  `)
-
+   
     let responseData = { gameScore: gScore, player, demo, gameId: null }
 
     if(demo) return responseData;
@@ -58,7 +54,14 @@ const submitGame = (Game, userService, scoreService, GameWeek) => async ({ gameW
 
         const gameScore = await scoreService.saveScore({ score: gScore.totalScore, category, gameWeek, date: today, userId: player, username: user.username })
 
+        const rewards = await rewardService.saveReward({score: gScore.totalScore, userId: player, gameWeek})
         // console.log('updated score: game: ', gameScore)
+
+        if(rewards){
+            responseData.reward_level = 'Tier '+rewards.tier
+        }else{
+            responseData.reward_level = null;
+        }
 
         responseData.gameId = newGame._id;
         responseData.submitLate = false
@@ -96,9 +99,9 @@ const getGameByWeekday = (Game) => async (category, gameWeek) => {
 
 
 
-module.exports = (Game, userService, scoreService, GameWeek) => {
+module.exports = (Game, userService, scoreService, GameWeek, rewardService) => {
     return {
-        submitGame: submitGame(Game, userService, scoreService, GameWeek),
+        submitGame: submitGame(Game, userService, scoreService, GameWeek, rewardService),
         getGames: getGames(Game),
         getGameById: getGameById(Game),
         getGameByWeekday: getGameByWeekday(Game),

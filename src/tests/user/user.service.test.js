@@ -2,7 +2,7 @@ const { when } = require('jest-when')
 
 const { connect, clearDatabase, closeDatabase } = require('../db')
 
-const { User } = require('../../user')
+const { User } = require('../../user/user.model')
 const UserService = require('../../user/user.service');
 
 const userService = UserService(User);
@@ -213,7 +213,7 @@ describe('User Service', () => {
                 country: "Kenya"
             }
 
-            const updatedUser = await userService.updateUsernameAndCountry(createdUser._id, updateData);
+            const updatedUser = await userService.updateUser(createdUser._id, updateData);
 
 
             const fetchedUser = await userService.getUserById(createdUser._id);
