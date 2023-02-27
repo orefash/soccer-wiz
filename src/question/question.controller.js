@@ -187,14 +187,14 @@ function questionRoutes(QuestionService) {
 
     router.post("/bulk", requireAdminJwtAuth, async (req, res) => {
         try {
-            const { spreadsheetId, category } = req.body;
+            const { spreadsheetId, category, gameWeek } = req.body;
 
-            if (!spreadsheetId || !category) {
+            if (!spreadsheetId || !category || !gameWeek) {
                 throw Error("Incomplete Request details")
             }
 
             const questionData = {
-                spreadsheetId, category
+                spreadsheetId, category, gameWeek
             }
 
             const questions = await QuestionService.addBulkQuestions(questionData);

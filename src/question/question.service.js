@@ -63,15 +63,23 @@ const addMultipleQuestions = (Question, gameCategoryService, gameWeekService) =>
     }
 }
 
-const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
+const addBulkQuestions = (Question, gameCategoryService, gameWeekService) => async (data) => {
 
-    if (!data.category || !data.spreadsheetId) throw new Error('Incomplete parameters')
+    if (!data.category || !data.spreadsheetId ) throw new Error('Incomplete parameters')
     let dataRange = "Sheet1!A:G";
 
-    const category = await gameCategoryService.getCategoryByName(data.category)
+    const category = await gameCategoryService.getCategoryByName(data.category);
 
     if (!category && data.category !== 'demo')
-        throw new Error('Invalid Category')
+        throw new Error('Invalid Category');
+
+
+    if(data.category !== 'demo'){
+        const gameWeekData = await gameWeekService.getGameById(gameWeek);
+
+        if(!gameWeekData)
+            throw new Error('Invalid Gameweek');
+    }
 
     try {
         let rawData = await loadQuestionsFromGoogleSheets(data.spreadsheetId, dataRange);
@@ -86,7 +94,7 @@ const addBulkQuestions = (Question, gameCategoryService) => async (data) => {
 
         // console.log("insert Q: ", insertedData)
 
-        return insertedData
+        return insertedData;
 
     } catch (error) {
         console.log("Error in data load: ", error.message)

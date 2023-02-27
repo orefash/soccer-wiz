@@ -12,6 +12,8 @@ const passport = require("passport");
 const session = require("express-session");
 const { appLogger } = require("./logger")
 
+const scheduledGameWeekFunctions = require('./gameWeek/gameWeek.cron');
+
 app.use(appLogger)
 
 
@@ -92,5 +94,7 @@ app.use("/api/wallet/transactions", WalletController);
 app.use("/api/rewards", RewardController);
 app.use("/api/payments", FlwController);
 app.use("/api/gameWeeks", GameWeekController);
+
+scheduledGameWeekFunctions.initScheduledJobs();
 
 module.exports = app;

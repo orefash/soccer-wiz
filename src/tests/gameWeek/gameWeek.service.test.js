@@ -68,6 +68,7 @@ describe('GameWeek Service', () => {
     describe('getGameweekQuestionInfo', () => {
         it('should fetch game week Info for game cat list', async () => {
 
+
             let g1 = await gameWeekService.addGameWeek(gameWeekStub.valid);
             let g2 = await gameWeekService.addGameWeek(gameWeekStub.valid2);
             let g3 = await gameWeekService.addGameWeek(gameWeekStub.valid3);
@@ -75,30 +76,111 @@ describe('GameWeek Service', () => {
             let q1 = await new Question(questionData(g1.id, "General")).save();
             let q2 = await new Question(questionData(g1.id, "General")).save();
             let q3 = await new Question(questionData(g2.id, "General")).save();
-            
+            let q4 = await new Question(questionData(g2.id, "PL")).save();
+
+            let gamesList = await gameWeekService.getGameWeeks();
 
             let games = await gameWeekService.getGameweekQuestionInfo('General');
 
+
+            expect(gamesList.length).toEqual(3)
             expect(games.length).toEqual(3)
             expect(games[0].Questions).toEqual(0)
             expect(games[1].Questions).toEqual(1)
             expect(games[2].Questions).toEqual(2)
         });
-   
+
+    })
+
+
+    describe('getGameweekList', () => {
+        it('should fetch game week live/upcoming game cat list', async () => {
+
+            let valid = {
+                startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1', status: "Live"
+            }
+            let valid2 = {
+                startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1', status: "Live"
+            }
+            let valid3 = {
+                startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1', status: "Scheduled"
+            }
+            let valid4 = {
+                startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1', status: "Passed"
+            }
+
+            let g1 = await gameWeekService.addGameWeek(valid);
+            let g2 = await gameWeekService.addGameWeek(valid2);
+            let g3 = await gameWeekService.addGameWeek(valid3);
+            let g4 = await gameWeekService.addGameWeek(valid4);
+
+
+            let q1 = await new Question(questionData(g1.id, "General")).save();
+            let q2 = await new Question(questionData(g3.id, "Sport")).save();
+            let q3 = await new Question(questionData(g3.id, "General")).save();
+
+            let gamesList = await gameWeekService.getGameweekList('General');
+
+
+            expect(gamesList.live.length).toEqual(1)
+            expect(gamesList.upcoming.length).toEqual(1)
+        });
+
+    })
+
+    describe('updateGameweekStatus', () => {
+        it('should set gameweeks to live or Passed based on date', async () => {
+
+            const addDays = (date, nos) => {
+                date.setDate(date.getDate() + nos);
+                return date;
+            };
+            
+            let past = {
+                startDate: addDays(new Date(), -6), endDate: addDays(new Date(), -4), title: 'Gameweek 1'
+            }
+            let current = {
+                startDate: addDays(new Date(), -2), endDate: addDays(new Date(), 2), title: 'Gameweek 2'
+            }
+            let after = {
+                startDate: addDays(new Date(), 2), endDate: addDays(new Date(), 4), title: 'Gameweek 3'
+            }
+
+            let g1 = await gameWeekService.addGameWeek(past);
+            let g2 = await gameWeekService.addGameWeek(current);
+            let g3 = await gameWeekService.addGameWeek(after);
+
+
+            // let games = await gameWeekService.getGameWeeks();
+            // console.log('Gs: ', games)
+
+            let statusUpdate = await gameWeekService.updateGameweekStatus();
+
+            // console.log('Update Gs: ', statusUpdate)
+           
+            let ngames = await gameWeekService.getGameWeeks();
+            // console.log('uGs: ', ngames)
+
+            expect(statusUpdate).toEqual(true);
+            expect(ngames[0].status).toEqual('Passed');
+            expect(ngames[1].status).toEqual('Live');
+            expect(ngames[2].status).toEqual('Scheduled');
+        });
+
     })
 
     describe('getGameById', () => {
         it('should fetch game by week', async () => {
 
             let created = await gameWeekService.addGameWeek(gameWeekStub.valid);
-            
+
             let game = await gameWeekService.getGameById(created.id);
 
             expect(game.title).toEqual(gameWeekStub.valid.title)
         })
         it('should return null if gameweek doesnt exist', async () => {
 
-            let id ='63c8e9dea08a3244b63e9d05';
+            let id = '63c8e9dea08a3244b63e9d05';
             let game = await gameWeekService.getGameById(id);
 
             expect(game).toBeNull();

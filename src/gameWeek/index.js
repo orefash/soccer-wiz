@@ -6,6 +6,8 @@ const GameWeekController = require('./gameWeek.controller');
 
 const gameWeekService = GameWeekService(GameWeek);
 
+
+
 module.exports = {
     gameWeekService: gameWeekService,
     GameWeek: GameWeek,

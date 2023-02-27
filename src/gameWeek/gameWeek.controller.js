@@ -1,6 +1,7 @@
 "use strict";
 const express = require('express');
 const requireAdminJwtAuth = require('../middleware/requireAdminJwtAuth');
+const requireJwtAuth = require('../middleware/requireUserJwtAuth');
 
 function gameWeekRoutes(gameWeekService) {
     const router = express.Router();
@@ -15,6 +16,23 @@ function gameWeekRoutes(gameWeekService) {
             res.status(200).json({
                 success: true,
                 game: gameData
+            });
+
+
+        } catch (err) {
+            res.status(500).json({ success: false, message: err.message });
+        }
+    });
+
+    router.post('/update-status', requireAdminJwtAuth, async (req, res, next) => {
+
+        try {
+
+            const gameData = await gameWeekService.updateGameweekStatus();
+
+            res.status(200).json({
+                success: true,
+                status: gameData
             });
 
 
@@ -92,7 +110,6 @@ function gameWeekRoutes(gameWeekService) {
     router.get("/category/:category/info", requireAdminJwtAuth, async (req, res) => {
         try {
 
-            console.log('test')
             const category = req.params.category;
             if(!category) throw new Error('Invalid Category')
 
@@ -119,6 +136,37 @@ function gameWeekRoutes(gameWeekService) {
         }
 
     });
+
+    router.get("/category/:category/list", requireJwtAuth, async (req, res) => {
+        try {
+
+            const category = req.params.category;
+            if(!category) throw new Error('Invalid Category')
+
+            const data = await gameWeekService.getGameweekList(category);
+
+            if (data) {
+                res.status(200).json({
+                    success: true,
+                    data: data
+                });
+            } else {
+                res.status(400).json({
+                    success: false,
+                    message: "Data not found"
+                });
+            }
+
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+    });
+
 
     router.delete('/:id', async (req, res) => {
 

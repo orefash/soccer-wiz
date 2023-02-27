@@ -6,6 +6,7 @@ let Schema = mongoose.Schema;
 const gameWeekSchema = new Schema({
     startDate: {
         type: Date,
+        index: true,
         required: 'Please specify start date',
     },
     startTime: {
@@ -15,6 +16,7 @@ const gameWeekSchema = new Schema({
     },
     endDate: {
         type: Date,
+        index: true,
         required: 'Please specify end date',
     },
     endTime: {
@@ -29,6 +31,7 @@ const gameWeekSchema = new Schema({
     status: {
         type: String,
         default: "Scheduled",
+        index: true,
         required: [true, "status is required"],
         enum: ["Scheduled", "Live", "Passed"],
     }

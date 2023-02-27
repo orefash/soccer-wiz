@@ -1,7 +1,7 @@
 "use strict";
 const { isValidTimePeriod } = require('../utils/timeValidations');
 
-const addGameWeek = (GameWeek) => async ({ startDate, endDate, title }) => {
+const addGameWeek = (GameWeek) => async ({ startDate, endDate, title, status }) => {
 
     if (!startDate || !endDate || !title)
         throw new Error('Invalid parameters');
@@ -9,7 +9,7 @@ const addGameWeek = (GameWeek) => async ({ startDate, endDate, title }) => {
     if (!isValidTimePeriod({ startDate, endDate }))
         throw new Error('Invalid Time Period');
 
-    const savedGameWeek = new GameWeek({ startDate, endDate, title })
+    const savedGameWeek = new GameWeek({ startDate, endDate, title, status })
 
     let savedData = await savedGameWeek.save();
     return savedData.toJSON();
@@ -45,6 +45,117 @@ const getGameweekQuestionInfo = (GameWeek) => async (category) => {
                     "from": "question",
                     "localField": "_id",
                     "foreignField": "gameWeek",
+
+                    pipeline: [
+                        {
+                            $match: {
+                                category: category
+                            }
+                        }],
+                    "as": "Questions"
+                }
+            },
+
+            {
+                "$addFields": {
+                    "Questions": {
+                        $size: "$Questions"
+                    }
+                }
+            },
+            { $sort: { createdAt: -1 } }
+        ]);
+
+        return data;
+
+    } catch (error) {
+        console.log('err: ', error.message);
+        throw new Error('in Game: ', error.message)
+    }
+}
+
+const updateGameweekStatus = (GameWeek) => async () => {
+
+    try {
+
+        let today = new Date();
+
+        let passedGameweeks = await GameWeek.updateMany(
+            {
+                endDate: {
+                    $lt: today,
+                }
+            },
+            {
+                "$set": {
+                    status: "Passed"
+                }
+            },
+            {
+                "multi": true
+            }
+        );
+
+        // console.log('passed: ', passedGameweeks);
+
+        let liveGameweeks = await GameWeek.updateMany(
+            {
+                startDate: {
+                    $lte: today,
+                },
+                endDate: {
+                    $gte: today,
+                },
+            },
+            {
+                "$set": {
+                    status: "Live"
+                }
+            },
+            {
+                "multi": true
+            }
+        );
+
+
+        // console.log('live: ', liveGameweeks);
+
+        return true;
+
+    } catch (error) {
+        console.log('err: ', error.message);
+        throw new Error('Update Gameweek: ', error.message)
+    }
+
+
+
+}
+
+
+const getGameweekList = (GameWeek) => async (category) => {
+
+    try {
+
+        let data = {};
+
+        let upcomingGameWeeks = await GameWeek.aggregate([
+            {
+                $match: {
+                    status: "Scheduled"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "question",
+                    "localField": "_id",
+                    "foreignField": "gameWeek",
+
+                    pipeline: [
+                        {
+                            $match: {
+                                category: category
+                            }
+                        }],
                     "as": "Questions"
                 }
             },
@@ -55,15 +166,57 @@ const getGameweekQuestionInfo = (GameWeek) => async (category) => {
                     }
                 }
             },
-            { $sort : { createdAt : -1 } }
-        ])
+            {
+                $match: {
+                    Questions: { $gt: 0 }
+                }
+            },
+            { $sort: { createdAt: -1 } }
+        ]);
 
+        let liveGameWeeks = await GameWeek.aggregate([
+            {
+                $match: {
+                    status: "Live"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "question",
+                    "localField": "_id",
+                    "foreignField": "gameWeek",
+
+                    pipeline: [
+                        {
+                            $match: {
+                                category: category
+                            }
+                        }],
+                    "as": "Questions"
+                }
+            },
+            {
+                "$addFields": {
+                    "Questions": {
+                        $size: "$Questions"
+                    }
+                }
+            },
+            {
+                $match: {
+                    Questions: { $gt: 0 }
+                }
+            },
+            { $sort: { createdAt: -1 } }
+        ]);
+
+        data.live = liveGameWeeks;
+        data.upcoming = upcomingGameWeeks;
 
         return data;
 
-
     } catch (error) {
-        console.log('err: ', error.message)
+        console.log('err: ', error.message);
         throw new Error('in Game: ', error.message)
     }
 }
@@ -93,8 +246,10 @@ module.exports = (GameWeek) => {
         getGameweekQuestionInfo: getGameweekQuestionInfo(GameWeek),
         addGameWeek: addGameWeek(GameWeek),
         getGameWeeks: getGameWeeks(GameWeek),
+        getGameweekList: getGameweekList(GameWeek),
         getGameById: getGameById(GameWeek),
         deleteGameWeek: deleteGameWeek(GameWeek),
+        updateGameweekStatus: updateGameweekStatus(GameWeek),
         updateGameWeek: updateGameWeek(GameWeek)
     }
 }
