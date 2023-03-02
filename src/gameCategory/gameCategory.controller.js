@@ -37,7 +37,7 @@ function categoryRoutes(gameCategoryService) {
 
 
 
-    router.get('/', async (req, res) => {
+    router.get('/', requireAdminJwtAuth, async (req, res) => {
 
         try {
             const categories = await gameCategoryService.getCategories();
@@ -54,7 +54,7 @@ function categoryRoutes(gameCategoryService) {
         }
     });
 
-    router.delete('/', async (req, res) => {
+    router.delete('/', requireAdminJwtAuth, async (req, res) => {
 
         try {
             const categories = await gameCategoryService.deleteAllCategories();
@@ -71,7 +71,7 @@ function categoryRoutes(gameCategoryService) {
         }
     });
 
-    router.delete('/:id', async (req, res) => {
+    router.delete('/:id', requireAdminJwtAuth, async (req, res) => {
 
         try {
             let categoryId = req.params.id;

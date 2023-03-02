@@ -32,7 +32,7 @@ function questionRoutes(QuestionService) {
     });
 
 
-    router.get("/:id", async (req, res) => {
+    router.get("/:id", requireAdminJwtAuth, async (req, res) => {
         try {
             const question = await QuestionService.getQuestionById(req.params.id);
 
@@ -59,7 +59,7 @@ function questionRoutes(QuestionService) {
     });
 
 
-    router.delete("/:id", async (req, res) => {
+    router.delete("/:id", requireAdminJwtAuth, async (req, res) => {
         try {
             const question = await QuestionService.deleteQuestion(req.params.id);
 
@@ -79,7 +79,7 @@ function questionRoutes(QuestionService) {
 
 
 
-    router.delete("/", async (req, res) => {
+    router.delete("/", requireAdminJwtAuth, async (req, res) => {
         try {
             const question = await QuestionService.deleteAllQuestions();
 
@@ -255,32 +255,6 @@ function questionRoutes(QuestionService) {
 
     });
 
-    // router.post("/demo",requireAdminJwtAuth, async (req, res) => {
-    //     try {
-    //         const { question, answers } = req.body;
-
-    //         if (!question || !answers) {
-    //             throw Error("Incomplete Request details")
-    //         }
-
-    //         const questionData = {
-    //             question, category: 'demo', gameWeek: 0, answers
-    //         }
-    //         const questions = await QuestionService.addQuestion(questionData);
-    //         res.status(200).json({
-    //             success: true,
-    //             questions: questions
-    //         });
-
-    //     } catch (error) {
-    //         console.log("Error in questions: ", error)
-    //         res.status(500).json({
-    //             success: false,
-    //             message: error.message
-    //         });
-    //     }
-
-    // });
 
     router.patch("/:id", async (req, res) => {
         try {
