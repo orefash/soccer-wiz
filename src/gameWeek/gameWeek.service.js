@@ -1,6 +1,6 @@
 "use strict";
 const { isValidTimePeriod } = require('../utils/timeValidations');
-
+// const { logger } = require('../logger');
 const addGameWeek = (GameWeek) => async ({ startDate, endDate, title, status }) => {
 
     if (!startDate || !endDate || !title)
@@ -8,6 +8,9 @@ const addGameWeek = (GameWeek) => async ({ startDate, endDate, title, status }) 
 
     if (!isValidTimePeriod({ startDate, endDate }))
         throw new Error('Invalid Time Period');
+
+    startDate = startDate+'Z';
+    endDate = endDate+'Z';
 
     const savedGameWeek = new GameWeek({ startDate, endDate, title, status })
 
@@ -78,12 +81,14 @@ const updateGameweekStatus = (GameWeek) => async () => {
 
     try {
 
-        let today = new Date();
+        let today = new Date().toISOString().split('T')[0];
+
+        // console.log(`today: ${today} - ISO: ${today} `)
 
         let passedGameweeks = await GameWeek.updateMany(
             {
                 endDate: {
-                    $lt: today,
+                    $lt: new Date().toISOString().split('T')[0],
                 }
             },
             {
@@ -123,7 +128,7 @@ const updateGameweekStatus = (GameWeek) => async () => {
         return true;
 
     } catch (error) {
-        console.log('err: ', error.message);
+        console.log('err: ', error);
         throw new Error('Update Gameweek: ', error.message)
     }
 
@@ -230,6 +235,12 @@ const deleteGameWeek = (GameWeek) => async (_id) => {
     return false;
 }
 
+const deleteGameWeeks = (GameWeek) => async () => {
+    const data = await GameWeek.deleteMany({  })
+
+    return data;
+}
+
 const updateGameWeek = (GameWeek) => async (id, updateQuery = {}) => {
 
     const updatedGameWeek = await GameWeek.findByIdAndUpdate(id, updateQuery, {
@@ -249,6 +260,7 @@ module.exports = (GameWeek) => {
         getGameweekList: getGameweekList(GameWeek),
         getGameById: getGameById(GameWeek),
         deleteGameWeek: deleteGameWeek(GameWeek),
+        deleteGameWeeks: deleteGameWeeks(GameWeek),
         updateGameweekStatus: updateGameweekStatus(GameWeek),
         updateGameWeek: updateGameWeek(GameWeek)
     }

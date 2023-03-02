@@ -1,26 +1,28 @@
-const { logger } = require('../logger');
+const { cronLogger } = require('../logger');
 const { gameWeekService } = require('./index');
 
 const CronJob = require('cron').CronJob;
 
 
 exports.initScheduledJobs = () => {
-    logger.info('Before update Gameweek job instantiation');
-    const job = new CronJob('00 00 00 * * *', async function () {
+    cronLogger.info('Before update Gameweek job instantiation');
+    const job = new CronJob('0 21 * * *', async function () {
+        // const job = new CronJob('* * * * * *', async function () {
         const d = new Date();
-        logger.info(`At Midnight: ${d}`);
+        cronLogger.info(`At Midnight: ${d}`);
 
         try {
             let status = await gameWeekService.updateGameweekStatus();
-
             console.log("s: ", status);
-            logger.info(`Update Gameweek Status: ${status}`);
-
+            cronLogger.info(`Update Gameweek Status: ${status}`);
         } catch (error) {
-            logger.error(`Update Gameweek error: ${error.message}`);
-
+            cronLogger.error(`Update Gameweek error: ${error.message}`);
         }
+
+    }, {
+        scheduled: true,
+        timezone: "Africa/Lagos"
     });
-    logger.info('After update Gameweek job instantiation');
+    cronLogger.info('After update Gameweek job instantiation');
     job.start();
 }

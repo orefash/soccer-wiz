@@ -21,3 +21,5 @@ package-lock.json
 Dockerfile
 .dockerignore
 app_env.list
+
+scripts

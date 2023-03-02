@@ -26,10 +26,27 @@ const logger = createLogger({
         format.prettyPrint()
     )
 })
+const cronLogger = createLogger({
+    transports: [
+        new transports.Console(),
+        new transports.MongoDB({
+            db: mongodbUri,
+            useUnifiedTopology: true,
+            collection: 'cron-logs'
+        })
+    ],
+    format: format.combine(
+        format.json(),
+        format.timestamp(),
+        format.metadata(),
+        format.prettyPrint()
+    )
+})
 module.exports = {
     appLogger: expressWinston.logger({
         winstonInstance: logger,
         statusLevels: true
     }),
-    logger: logger
+    logger: logger,
+    cronLogger: cronLogger
 }

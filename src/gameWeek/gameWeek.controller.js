@@ -168,7 +168,7 @@ function gameWeekRoutes(gameWeekService) {
     });
 
 
-    router.delete('/:id', async (req, res) => {
+    router.delete('/:id', requireAdminJwtAuth, async (req, res) => {
 
         try {
             let weekId = req.params.id;
@@ -176,7 +176,27 @@ function gameWeekRoutes(gameWeekService) {
             if(!weekId) throw new Error('No weekDay Id')
             const data = await gameWeekService.deleteGameWeek(weekId);
             res.status(200).json({
-                success: data
+                success: true,
+                data: data
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    });
+
+
+    router.delete('/', requireAdminJwtAuth, async (req, res) => {
+
+        try {
+
+            const data = await gameWeekService.deleteGameWeeks();
+            res.status(200).json({
+                success: true,
+                data: data
             });
 
         } catch (error) {

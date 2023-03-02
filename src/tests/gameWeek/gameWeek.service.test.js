@@ -135,13 +135,31 @@ describe('GameWeek Service', () => {
                 date.setDate(date.getDate() + nos);
                 return date;
             };
-            
+
+            function dateToEpoch() {
+                return new Date().toISOString().split('T')[0];
+            }
+
             let past = {
                 startDate: addDays(new Date(), -6), endDate: addDays(new Date(), -4), title: 'Gameweek 1'
             }
+            
             let current = {
                 startDate: addDays(new Date(), -2), endDate: addDays(new Date(), 2), title: 'Gameweek 2'
             }
+
+            let current2 = {
+                startDate: addDays(new Date(), -2), endDate: new Date().toISOString().split('T')[0], title: 'Gameweek 21'
+            }
+
+            let current3 = {
+                startDate: new Date().toISOString().split('T')[0], endDate: addDays(new Date(), 1), title: 'Gameweek 21'
+            }
+
+            let cToday = {
+                startDate: new Date().toISOString().split('T')[0], endDate: new Date().toISOString().split('T')[0], title: 'Gameweek 21'
+            }
+
             let after = {
                 startDate: addDays(new Date(), 2), endDate: addDays(new Date(), 4), title: 'Gameweek 3'
             }
@@ -149,22 +167,44 @@ describe('GameWeek Service', () => {
             let g1 = await gameWeekService.addGameWeek(past);
             let g2 = await gameWeekService.addGameWeek(current);
             let g3 = await gameWeekService.addGameWeek(after);
+            let g4 = await gameWeekService.addGameWeek(current2);
+            let g5 = await gameWeekService.addGameWeek(current3);
+            let g6 = await gameWeekService.addGameWeek(cToday);
+
+            console.log("g4: ", g4)
+            console.log("g5: ", g5)
+            console.log("g6: ", g6)
+
+            // console.log("today: ", new Date())
+
+            let nDate = dateToEpoch();
 
 
-            // let games = await gameWeekService.getGameWeeks();
-            // console.log('Gs: ', games)
+            // console.log("ntoday: ", nDate);
+
+            // const check = g4.endDate < new Date() ? 'is before' : 'is not before';
+
+            // console.log('check: ', check)
+
+
+
+            let games = await gameWeekService.getGameWeeks();
+            console.log('Gs: ', games)
 
             let statusUpdate = await gameWeekService.updateGameweekStatus();
 
             // console.log('Update Gs: ', statusUpdate)
            
             let ngames = await gameWeekService.getGameWeeks();
-            // console.log('uGs: ', ngames)
+            console.log('uGs: ', ngames)
 
             expect(statusUpdate).toEqual(true);
             expect(ngames[0].status).toEqual('Passed');
             expect(ngames[1].status).toEqual('Live');
             expect(ngames[2].status).toEqual('Scheduled');
+            expect(ngames[3].status).toEqual('Live');
+            expect(ngames[4].status).toEqual('Live');
+            expect(ngames[5].status).toEqual('Live');
         });
 
     })
