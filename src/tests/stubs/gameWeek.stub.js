@@ -1,7 +1,7 @@
 
 module.exports = {
         valid: {
-            startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1'
+            startDate: '01/01/2022', endDate: '08/01/2022', title: 'Gameweek 1', status: 'Live'
         },
         valid0: {
             startDate: '05/01/2022', endDate: '05/06/2022', title: 'Gameweek 9'

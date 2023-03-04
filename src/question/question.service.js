@@ -198,15 +198,9 @@ const getQuestionsForGame = (Question, gameCategoryService, userService, gameSet
         if(!gameWeekData) return data;
         
 
-        let isValidDateCHeck1 = isValidTimePeriod({
-            startDate: gameWeekData.startDate,
-            endDate: date
-        });
-        let isValidDateCHeck2 = isValidTimePeriod({
-            startDate: date, endDate: gameWeekData.endDate
-        });
+        
 
-        if (gameWeekData && isValidDateCHeck1 && isValidDateCHeck2) {
+        if (gameWeekData && gameWeekData.status === 'Live') {
 
             data.in_matchday = true;
             questionFilter = {

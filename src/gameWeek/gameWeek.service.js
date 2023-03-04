@@ -9,8 +9,25 @@ const addGameWeek = (GameWeek) => async ({ startDate, endDate, title, status }) 
     if (!isValidTimePeriod({ startDate, endDate }))
         throw new Error('Invalid Time Period');
 
-    startDate = startDate+'Z';
-    endDate = endDate+'Z';
+    let nStatus = 'Scheduled';
+
+    let date = new Date(new Date().toISOString().split('T')[0]);
+
+   
+    if(date < startDate){
+        nStatus = 'Scheduled';
+    }else if(endDate < date){
+        nStatus = 'Passed'
+    }else{
+        nStatus = 'Live'
+    }
+
+    if(!status){
+        status = nStatus;
+    }
+
+    startDate = startDate + 'Z';
+    endDate = endDate + 'Z';
 
     const savedGameWeek = new GameWeek({ startDate, endDate, title, status })
 
@@ -236,7 +253,7 @@ const deleteGameWeek = (GameWeek) => async (_id) => {
 }
 
 const deleteGameWeeks = (GameWeek) => async () => {
-    const data = await GameWeek.deleteMany({  })
+    const data = await GameWeek.deleteMany({})
 
     return data;
 }

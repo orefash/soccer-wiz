@@ -22,6 +22,10 @@ let getGameWeekQuestionData = jest.fn().mockReturnValue(data);
 
 questionService.getGameWeekQuestionData = getGameWeekQuestionData;
 
+const addDays = (date, nos) => {
+    date.setDate(date.getDate() + nos);
+    return date;
+};
 
 
 const gameWeekStub = require('../stubs/gameWeek.stub');
@@ -35,11 +39,44 @@ describe('GameWeek Service', () => {
     let gameWeekService = GameWeekService(GameWeek, questionService);
 
     describe('addGameWeek', () => {
-        it('should save game week', async () => {
+        it('should save game week and set correct status', async () => {
 
-            let game = await gameWeekService.addGameWeek(gameWeekStub.valid);
+            // new Date().toISOString().split('T')[0]
+            let d1 = addDays(new Date(), 1);
+            let d2 = addDays(new Date(), 2);
+            let d_2 = addDays(new Date(), -2);
+            let d_1 = addDays(new Date(), -1);
+            let d = new Date().toISOString().split('T')[0];
+            
 
-            expect(game.title).toEqual(gameWeekStub.valid.title);
+            let passed = {
+                startDate: d_2, endDate: d_1, title: 'Gameweek 1',
+            }
+            let live1 = {
+                startDate: d_2, endDate: d2, title: 'Gameweek 2',
+            }
+            let live2 = {
+                startDate: d, endDate: d1, title: 'Gameweek 3',
+            }
+            let live3 = {
+                startDate: d, endDate: d, title: 'Gameweek 4',
+            }
+            let schd = {
+                startDate: d1, endDate: d2, title: 'Gameweek 5',
+            }
+
+            let game = await gameWeekService.addGameWeek(passed);
+            let game1 = await gameWeekService.addGameWeek(live1);
+            let game2 = await gameWeekService.addGameWeek(live2);
+            let game4 = await gameWeekService.addGameWeek(schd);
+            let game3 = await gameWeekService.addGameWeek(live3);
+
+            expect(game.title).toEqual(passed.title);
+            expect(game.status).toEqual('Passed');
+            expect(game1.status).toEqual('Live');
+            expect(game4.status).toEqual('Scheduled');
+            expect(game3.status).toEqual('Live');
+            expect(game2.status).toEqual('Live');
         })
 
         it('should throw exception if parameters are incomplete', async () => {
@@ -131,10 +168,7 @@ describe('GameWeek Service', () => {
     describe('updateGameweekStatus', () => {
         it('should set gameweeks to live or Passed based on date', async () => {
 
-            const addDays = (date, nos) => {
-                date.setDate(date.getDate() + nos);
-                return date;
-            };
+            
 
             function dateToEpoch() {
                 return new Date().toISOString().split('T')[0];
@@ -171,9 +205,9 @@ describe('GameWeek Service', () => {
             let g5 = await gameWeekService.addGameWeek(current3);
             let g6 = await gameWeekService.addGameWeek(cToday);
 
-            console.log("g4: ", g4)
-            console.log("g5: ", g5)
-            console.log("g6: ", g6)
+            // console.log("g4: ", g4)
+            // console.log("g5: ", g5)
+            // console.log("g6: ", g6)
 
             // console.log("today: ", new Date())
 
@@ -189,14 +223,14 @@ describe('GameWeek Service', () => {
 
 
             let games = await gameWeekService.getGameWeeks();
-            console.log('Gs: ', games)
+            // console.log('Gs: ', games)
 
             let statusUpdate = await gameWeekService.updateGameweekStatus();
 
             // console.log('Update Gs: ', statusUpdate)
            
             let ngames = await gameWeekService.getGameWeeks();
-            console.log('uGs: ', ngames)
+            // console.log('uGs: ', ngames)
 
             expect(statusUpdate).toEqual(true);
             expect(ngames[0].status).toEqual('Passed');

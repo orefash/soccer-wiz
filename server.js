@@ -11,6 +11,9 @@ const app = require("./src/app");
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+
+const isTest = process.env.IS_TEST === 'true';
+
 var port = process.env.PORT || 3000;
 
 
@@ -18,7 +21,7 @@ dbconn.on('error', () => console.error.bind(console, 'MongoDB Connection error')
 
 dbconn.once('open', () => {
     console.info('Connection to MongoDB is successful')
-    if (isProduction) {
+    if (isProduction && !isTest) {
         app.listen(port, console.log("Server started on port - ", port));
     } else {
 
