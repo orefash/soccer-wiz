@@ -19,6 +19,8 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
     if (amount < 300)
         throw new Error("Amount below minimum amount");
 
+    // if (amount%300!=0)
+    //     throw new Error("Amount is not vali");
     const transactionRef = generateId();
 
     let server_url = null;
@@ -59,9 +61,9 @@ const getFlutterwaveLink = (userService, gatewayTransactionService) => async ({ 
         let flwStatus = process.env.FLW_STATUS;
         let flwSecretKey = null;
 
-        if(flwStatus === 'test'){
+        if (flwStatus === 'test') {
             flwSecretKey = process.env.FLW_SECRET_KEY_TEST
-        }else{
+        } else {
             flwSecretKey = process.env.FLW_SECRET_KEY_LIVE
         }
 
@@ -105,10 +107,10 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
         let flwSecretKey = null;
         let flwPublicKey = null;
 
-        if(flwStatus === 'test'){
+        if (flwStatus === 'test') {
             flwSecretKey = process.env.FLW_SECRET_KEY_TEST
             flwPublicKey = process.env.FLW_PUBLIC_KEY_TEST
-        }else{
+        } else {
             flwSecretKey = process.env.FLW_SECRET_KEY_LIVE
             flwPublicKey = process.env.FLW_PUBLIC_KEY_LIVE
         }

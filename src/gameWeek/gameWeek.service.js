@@ -11,12 +11,20 @@ const addGameWeek = (GameWeek) => async ({ startDate, endDate, title, status }) 
 
     let nStatus = 'Scheduled';
 
-    let date = new Date(new Date().toISOString().split('T')[0]);
+    let date = new Date();
 
+    date.setHours(0,0,0,0);
+
+    console.log(`Dates: start - ${startDate} ; end - ${endDate} ; date - ${date}`)
    
-    if(date < startDate){
+    let stDate = new Date(startDate);
+    let edDate = new Date(endDate);
+
+    console.log(`Dates: start - ${stDate} ; end - ${edDate} ; date - ${date}`)
+   
+    if(date < stDate){
         nStatus = 'Scheduled';
-    }else if(endDate < date){
+    }else if(edDate < date){
         nStatus = 'Passed'
     }else{
         nStatus = 'Live'

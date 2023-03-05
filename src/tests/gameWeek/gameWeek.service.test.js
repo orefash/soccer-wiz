@@ -61,6 +61,9 @@ describe('GameWeek Service', () => {
             let live3 = {
                 startDate: d, endDate: d, title: 'Gameweek 4',
             }
+            let live4 = {
+                startDate: d_1, endDate: d, title: 'Gameweek 4',
+            }
             let schd = {
                 startDate: d1, endDate: d2, title: 'Gameweek 5',
             }
@@ -70,6 +73,7 @@ describe('GameWeek Service', () => {
             let game2 = await gameWeekService.addGameWeek(live2);
             let game4 = await gameWeekService.addGameWeek(schd);
             let game3 = await gameWeekService.addGameWeek(live3);
+            let game5 = await gameWeekService.addGameWeek(live4);
 
             expect(game.title).toEqual(passed.title);
             expect(game.status).toEqual('Passed');
@@ -77,6 +81,7 @@ describe('GameWeek Service', () => {
             expect(game4.status).toEqual('Scheduled');
             expect(game3.status).toEqual('Live');
             expect(game2.status).toEqual('Live');
+            expect(game5.status).toEqual('Live');
         })
 
         it('should throw exception if parameters are incomplete', async () => {
