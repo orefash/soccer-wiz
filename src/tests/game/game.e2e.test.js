@@ -145,7 +145,8 @@ describe('Game Service Full', () => {
         const newUser = {
             email: "orefash@gmail.com",
             password: "password",
-            source: "local"
+            source: "local",
+            username: "Orefash"
         }
 
         savedUser = await userService.addLocalUser(newUser);
@@ -174,6 +175,12 @@ describe('Game Service Full', () => {
                 today: gameWeekStub.valid0.startDate
             }
 
+            const newGame1 = {
+                ...gameData,
+                answers: gameAnswers2,
+                demo: false,
+                today: gameWeekStub.valid0.startDate
+            }
     
 
             let gameResponse = await gameService.submitGame(newGame);
@@ -182,12 +189,15 @@ describe('Game Service Full', () => {
 
             let game = await gameService.getGameById(gameResponse.gameId);
 
-            let gameResponse1 = await gameService.submitGame(newGame);
+            let gameResponse1 = await gameService.submitGame(newGame1);
 
             let mUser1 = await userService.getUserById(savedUser._id);
 
             let game1 = await gameService.getGameById(gameResponse1.gameId);
-            // console.log('game: ', gameResponse1)
+
+            let scores = await scoreService.getScores('1');
+
+            console.log('socres: ', scores)
 
             expect(mUser.totalScore).toBe(4.9)
             expect(mUser.gamesPlayed).toBe(1)
@@ -205,10 +215,10 @@ describe('Game Service Full', () => {
 
 
 
-            expect(gameResponse1.gameScore.totalScore).toBe(4.9)
-            expect(Math.round(mUser1.totalScore * 10) / 10).toBe(9.8)
+            expect(gameResponse1.gameScore.totalScore).toBe(17)
+            expect(Math.round(mUser1.totalScore * 10) / 10).toBe(21.9)
             expect(mUser1.gamesPlayed).toBe(2)
-            expect(game1.score).toBe(4.9)
+            expect(game1.score).toBe(17)
             expect(game1.category).toBe(category1)
 
         })

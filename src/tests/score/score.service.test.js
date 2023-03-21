@@ -108,23 +108,23 @@ describe('Score Service', () => {
         it('should save score details in daily, weekly and monthly collections if greater than previous', async () => {
             let s1 = await scoreService.saveScore(score1)
 
-            // console.log('s1: ',s1)
+            console.log('s1: ',s1)
 
             let s2 = await scoreService.saveScore(score2)
 
-            // console.log('s2: ',s2)
+            console.log('s2: ',s2)
 
             let s5 = await scoreService.saveScore(score5)
 
-            // console.log('s5: ',s5)
+            console.log('s5: ',s5)
 
-            // let daily1 = await DailyScore.find()
+            let daily1 = await DailyScore.find()
 
-            // console.log("S5 End Daily list: ", daily1)
+            console.log("S5 End Daily list: ", daily1)
 
             let s7 = await scoreService.saveScore(score7)
 
-            // console.log('s7: ',s7)
+            console.log('s7: ',s7)
 
             let daily = await DailyScore.find()
 

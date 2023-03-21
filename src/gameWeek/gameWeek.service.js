@@ -15,12 +15,15 @@ const addGameWeek = (GameWeek) => async ({ startDate, endDate, title, status }) 
 
     date.setHours(0,0,0,0);
 
-    console.log(`Dates: start - ${startDate} ; end - ${endDate} ; date - ${date}`)
+    // console.log(`Dates: start - ${startDate} ; end - ${endDate} ; date - ${date}`)
    
     let stDate = new Date(startDate);
+    stDate.setHours(0,0,0,0);
     let edDate = new Date(endDate);
+    edDate.setHours(0,0,0,0);
 
-    console.log(`Dates: start - ${stDate} ; end - ${edDate} ; date - ${date}`)
+
+    // console.log(`Dates: start - ${stDate} ; end - ${edDate} ; date - ${date}`)
    
     if(date < stDate){
         nStatus = 'Scheduled';

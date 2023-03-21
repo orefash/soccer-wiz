@@ -83,7 +83,7 @@ describe('Load Questions from sources ', () => {
 
             // expect(data.values.length).toBe(5)
 
-            const formatedData = await formatDataForQuestionService(testD, 'demo')
+            const formatedData = await formatDataForQuestionService(testD, 'demo', "gameweek")
 
             // console.log("formatted Data: ", JSON.stringify(formatedData))
     

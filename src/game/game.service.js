@@ -29,19 +29,19 @@ const submitGame = (Game, userService, scoreService, GameWeek, rewardService) =>
 
     let gameWeekData = await GameWeek.findOne({ _id: gameWeek });
 
-    let isValidDateCHeck1 = isValidTimePeriod({
-        startDate: gameWeekData.startDate, 
-        endDate: today
-    });
-    let isValidDateCHeck2 = isValidTimePeriod({
-        startDate: today, endDate: gameWeekData.endDate
-    });
+    // let isValidDateCHeck1 = isValidTimePeriod({
+    //     startDate: gameWeekData.startDate, 
+    //     endDate: today
+    // });
+    // let isValidDateCHeck2 = isValidTimePeriod({
+    //     startDate: today, endDate: gameWeekData.endDate
+    // });
 
 
     // console.log(`CHecks d1: ${isValidDateCHeck1}  -  -  d2: ${isValidDateCHeck2}  -  -  `)
 
 
-    if (!demo && gameWeekData && isValidDateCHeck1 && isValidDateCHeck2 ) {
+    if (!demo && gameWeekData && gameWeekData.status === 'Live' ) {
 
         // console.log('date check valid ')
         const updatedUser = await userService.updateGameRecords({ id: player, score: gScore.totalScore })
@@ -55,7 +55,7 @@ const submitGame = (Game, userService, scoreService, GameWeek, rewardService) =>
         const gameScore = await scoreService.saveScore({ score: gScore.totalScore, category, gameWeek, date: today, userId: player, username: user.username })
 
         const rewards = await rewardService.saveReward({score: gScore.totalScore, userId: player, gameWeek})
-        // console.log('updated score: game: ', gameScore)
+        console.log('updated score: game: ', gameScore)
 
         if(rewards){
             responseData.reward_level = 'Tier '+rewards.tier

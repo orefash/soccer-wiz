@@ -6,8 +6,7 @@ const saveScore = (DailyScore, WeeklyScore, MonthlyScore, gameCategoryService) =
     if(!existing)
         throw new Error('Invalid Category')
 
-
-    let data = { daily: false, weekly: false, monthly: false }
+    let data = { daily: false, weekly: false, monthly: false, user: username }
 
     const daily = await scoreCheck(DailyScore, { category, username });
 
@@ -86,9 +85,9 @@ const getScores = (DailyScore, WeeklyScore, MonthlyScore) => async (period) => {
         3: MonthlyScore
     }
 
-    // console.log(' period: ', Object.keys(periods))
+    console.log(' period: ', Object.keys(periods))
 
-    if (!Object.keys(periods).includes(period)) throw new Error('Invalid Period')
+    if (!Object.keys(periods).includes(period)) throw new Error(`invalid Period: ${period}`)
 
     let Model = periods[period];
     // console.log('in leaderboard: - model ', Model)

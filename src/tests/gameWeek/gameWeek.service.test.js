@@ -72,6 +72,8 @@ describe('GameWeek Service', () => {
             let game1 = await gameWeekService.addGameWeek(live1);
             let game2 = await gameWeekService.addGameWeek(live2);
             let game4 = await gameWeekService.addGameWeek(schd);
+
+            // console.log('game 3')
             let game3 = await gameWeekService.addGameWeek(live3);
             let game5 = await gameWeekService.addGameWeek(live4);
 

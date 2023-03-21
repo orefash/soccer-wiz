@@ -44,9 +44,9 @@ const loadQuestionsFromGoogleSheets = async (spreadsheetId, sheetRange = "Sheet1
 
 }
 
-const formatDataForQuestionService = async (data, category) => {
+const formatDataForQuestionService = async (data, category, gameWeek) => {
 
-    // console.log("Array d: ", data)
+    console.log("GW: ",gameWeek)
 
     if (!data || !Array.isArray(data) || data.length < 2) throw new Error('Invalid data')
 
@@ -62,10 +62,11 @@ const formatDataForQuestionService = async (data, category) => {
 
     data.forEach((question) => {
         let q = {}
-        if (question && question.length == 7) {
+        if (question && question.length == 6) {
 
             let answers = []
             q.category = category;
+            q.gameWeek = gameWeek;
             q.question = question[0]
             for (let i = 1; i < 5; i++) {
                 let a = {}
@@ -78,7 +79,6 @@ const formatDataForQuestionService = async (data, category) => {
                 answers.push(a)
             }
             q.answers = answers
-            q.gameWeek = question[6]
             questions.push(q)
         }
         

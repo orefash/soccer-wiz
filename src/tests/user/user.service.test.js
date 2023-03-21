@@ -79,6 +79,7 @@ describe('User Service', () => {
             const savedUser = await userService.addLocalUser(newUser);
 
             expect(savedUser.email).toEqual(newUser.email)
+            expect(savedUser.wallet_balance).toEqual(20)
             // expect(savedUser.profilePhoto).toEqual(newUser.profilePhoto)
             expect(savedUser.source).toEqual("local")
 
@@ -205,7 +206,7 @@ describe('User Service', () => {
                 country: "Nigeria"
             }
 
-            const user = new User(newUser1)
+            const user = User(newUser1)
             const createdUser =  await user.save()
 
             const updateData = {

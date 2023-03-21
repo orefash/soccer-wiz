@@ -3,7 +3,7 @@
 const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 
     const user = new User({
-        googleId, email, profilePhoto, source: "google",
+        googleId, email, profilePhoto, source: "google", wallet_balance: 20
     })
     return await user.save()
 }
@@ -11,15 +11,15 @@ const addGoogleUser = (User) => async ({ googleId, email, profilePhoto }) => {
 const addFacebookUser = (User) => async ({ facebookId, email, profilePhoto }) => {
 
     const user = new User({
-        facebookId, email, profilePhoto, source: "facebook",
+        facebookId, email, profilePhoto, source: "facebook", wallet_balance: 20
     })
     return await user.save()
 }
 
-const addLocalUser = (User) => async ({ email, phone, password, country, role }) => {
+const addLocalUser = (User) => async ({ email, phone, password, country, role, username }) => {
 
     const user = new User({
-        email, password, source: "local", country, phone, role
+        email, password, source: "local", country, phone, role, username, wallet_balance: 20
     })
     return user.save()
 }

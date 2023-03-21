@@ -65,6 +65,8 @@ const addMultipleQuestions = (Question, gameCategoryService, gameWeekService) =>
 
 const addBulkQuestions = (Question, gameCategoryService, gameWeekService) => async (data) => {
 
+    console.log("Data: ", data)
+
     if (!data.category || !data.spreadsheetId ) throw new Error('Incomplete parameters')
     let dataRange = "Sheet1!A:G";
 
@@ -75,7 +77,7 @@ const addBulkQuestions = (Question, gameCategoryService, gameWeekService) => asy
 
 
     if(data.category !== 'demo'){
-        const gameWeekData = await gameWeekService.getGameById(gameWeek);
+        const gameWeekData = await gameWeekService.getGameById(data.gameWeek);
 
         if(!gameWeekData)
             throw new Error('Invalid Gameweek');
@@ -86,9 +88,12 @@ const addBulkQuestions = (Question, gameCategoryService, gameWeekService) => asy
 
         // console.log("Fetched Q: ", rawData)
 
-        let formattedData = await formatDataForQuestionService(rawData, data.category)
+
+
+        let formattedData = await formatDataForQuestionService(rawData, data.category, data.gameWeek)
 
         // console.log("format Q: ", JSON.stringify(formattedData))
+        console.log("format-Q: ", formattedData)
 
         let insertedData = await Question.insertMany(formattedData);
 
@@ -257,7 +262,7 @@ module.exports = (Question, userService, gameCategoryService, gameSettingService
 
         addQuestion: addQuestion(Question, gameCategoryService, gameWeekService),
         addMultipleQuestions: addMultipleQuestions(Question, gameCategoryService, gameWeekService),
-        addBulkQuestions: addBulkQuestions(Question, gameCategoryService),
+        addBulkQuestions: addBulkQuestions(Question, gameCategoryService, gameWeekService),
         deleteQuestion: deleteQuestion(Question),
         deleteAllQuestions: deleteAllQuestions(Question),
         updateQuestion: updateQuestion(Question),

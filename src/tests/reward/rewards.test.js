@@ -6,6 +6,7 @@ describe('Rewards',  () => {
     it('should return correct reward based on score', async () => {
 
         expect(getReward(14)).toEqual(null)
+        expect(getReward(7)).toEqual(null)
         expect(getReward(16)).toEqual(rewards.t1)
         expect(getReward(17)).toEqual(rewards.t1)
         expect(getReward(19)).toEqual(rewards.t2)
