@@ -8,6 +8,13 @@ if(isProduction)
 else
     redis_url = process.env.REDIS_URL_DEV
 
-const redis = new Redis(redis_url);
+let redis = null;
+
+try {
+    redis = new Redis(redis_url);
+} catch (error) {
+    console.log('Redis Error: ', error.message)
+}
+
 
 module.exports = redis;

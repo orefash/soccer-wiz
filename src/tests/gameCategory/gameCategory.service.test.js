@@ -34,6 +34,37 @@ describe('Game Category Service', () => {
         })
     })
 
+
+    describe('updateCategory', () => {
+        it('should update game category', async () => {
+
+            const savedCategory = await gameCategoryService.saveCategory(gameCategory1);
+
+            let description = savedCategory.description+ 'Description';
+            // await gameSettingService.saveSettings(gameSetting);
+
+            let updatedCategory = await gameCategoryService.updateCategory(savedCategory._id, { description})
+
+            expect(savedCategory.description).toBe(gameCategory1.description)
+            expect(updatedCategory.description).toBe(description)
+            
+
+        })
+        it('should throw error if id is invalid', async () => {
+
+            const savedCategory = await gameCategoryService.saveCategory(gameCategory1);
+
+            let description = savedCategory.description+ 'Description';
+
+            await expect(gameCategoryService.updateCategory("636f550593cce015384f47e5", { description})).rejects.toThrow()
+        
+            // expect(savedCategory.description).toBe(gameCategory1.description)
+            // expect(updatedCategory.description).toBe(description)
+            
+
+        })
+    })
+
     describe('getCategories', () => {
         it('should return game categories', async () => {
 

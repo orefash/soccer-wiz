@@ -27,15 +27,18 @@ const deleteAllCategories = (GameCategory) => async (id) => {
     return data;
 }
 
-// const updateSetting = (GameSetting) => async (id, data) => {
+const updateCategory = (GameCategory) => async (id, data) => {
 
-//     const updatedSetting = await GameSetting.findByIdAndUpdate(id, data, {
-//         new: true,
-//     });
+    const updatedCategory = await GameCategory.findByIdAndUpdate(id, data, {
+        new: true,
+    });
 
-//     return updatedSetting
+    if(updatedCategory === null)
+        throw new Error("Invalid Category ID")
 
-// }
+    return updatedCategory
+
+}
 
 
 const getCategoryByName = (GameCategory) => async (category) => {
@@ -77,10 +80,8 @@ module.exports = (GameCategory) => {
         getCategories: getCategories(GameCategory),
         deleteCategory: deleteCategory(GameCategory),
         getCategoryByName: getCategoryByName(GameCategory),
-        deleteAllCategories: deleteAllCategories(GameCategory)
-        // updateSetting: updateSetting(GameSetting),
-        // getSettings: getSettings(GameSetting),
-        // getActiveCategories: getActiveCategories(GameSetting)
+        deleteAllCategories: deleteAllCategories(GameCategory),
+        updateCategory: updateCategory(GameCategory)
 
     }
 }

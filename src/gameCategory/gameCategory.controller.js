@@ -7,7 +7,7 @@ const requireAdminJwtAuth = require('../middleware/requireAdminJwtAuth');
 function categoryRoutes(gameCategoryService) {
     const router = express.Router();
 
-    router.post('/', requireAdminJwtAuth, async (req, res, next) => {
+    router.post('/', requireAdminJwtAuth, async (req, res) => {
 
         try {
             const { category, isActive, description } = req.body;
@@ -21,6 +21,33 @@ function categoryRoutes(gameCategoryService) {
             }
 
             const categoryData = await gameCategoryService.saveCategory(data);
+
+            res.status(200).json({
+                success: true,
+                category: categoryData
+            });
+
+
+        } catch (err) {
+            // return next(err);
+            // console.log("reg erro: ", err)
+            res.json({ success: false, message: err.message });
+        }
+    });
+
+
+    router.patch('/:id', requireAdminJwtAuth, async (req, res) => {
+
+        try {
+            const { category, isActive, description } = req.body;
+
+            const id = req.params.id;
+
+            let data = {
+                category, isActive, description
+            }
+
+            const categoryData = await gameCategoryService.updateCategory(id, data);
 
             res.status(200).json({
                 success: true,
