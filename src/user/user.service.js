@@ -128,7 +128,7 @@ const toggleUserStatus = (User) => async (id) => {
 
     let user = await getUserById(User)(id);
 
-    if (!user) throw new Error('Username Does not Exist!!!')
+    if (!user) throw new Error('User Does not Exist!!!')
 
     if (user.status == activeStatus) setStatus = suspendedStatus
 
