@@ -142,7 +142,7 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
 
                 userService.updateWalletBalance({ id: transactionDetails.userId, credits: noOfCredits }, session)
 
-                await walletTransactionService.saveWalletTransaction({ credits: noOfCredits, userId: transactionDetails.userId, isInflow: true, amount: transactionDetails.amount, currency: transactionDetails.currency, description: "Purchase of credits", status: "successful", paymentMethod: "flutterwave" }, session);
+                await walletTransactionService.saveWalletTransaction({ credits: noOfCredits, userId: transactionDetails.userId, isInflow: true, value: transactionDetails.amount, currency: transactionDetails.currency, description: "Purchase of credits", status: "successful", paymentMethod: "flutterwave" }, session);
 
                 await gatewayTransactionService.updateGatewayTransactions({ id: transactionDetails._id, paymentStatus: "successful" }, session)
 
