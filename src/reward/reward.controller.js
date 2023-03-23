@@ -36,6 +36,7 @@ function rewardRoutes(rewardService) {
             });
 
         } catch (error) {
+            console.log('Re error: ', error)
             res.status(500).json({
                 success: false,
                 message: error.message
@@ -44,37 +45,7 @@ function rewardRoutes(rewardService) {
     });
 
 
-    // router.post("/", async (req, res) => {
-    //     try {
-    //         const { gameWeek, userId, value, currency, type } = req.body;
-
-    //         // if (!question || !category || !answers) {
-    //         //     throw Error("Incomplete Request details")
-    //         // }
-
-    //         let uid = userId;
-
-    //         let user = await userService.getUserById(uid)
-
-    //         if(!user) throw new Error('User does not exist')
-
-    //         const rewardData = req.body;
-
-    //         const savedReward = await rewardService.saveReward(rewardData);
-    //         res.status(200).json({
-    //             success: true,
-    //             reward: savedReward
-    //         });
-
-    //     } catch (error) {
-    //         console.log("Error in rewards: ", error.message)
-    //         res.status(500).json({
-    //             success: false,
-    //             message: error.message
-    //         });
-    //     }
-
-    // });
+    
 
 
     router.post("/claim",requireJwtAuth, async (req, res) => {

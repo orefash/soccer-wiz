@@ -44,8 +44,8 @@ gameWeekSchema.methods.toJSON = function () {
 
     return {
         id: this._id,
-        startDate: this.startDate.toISOString().split('T')[0],
-        endDate: this.endDate.toISOString().split('T')[0],
+        startDate: this.startDate? this.startDate.toISOString().split('T')[0] : this.startDate,
+        endDate: this.endDate? this.endDate.toISOString().split('T')[0] : this.endDate,
         endTime: this.endTime,
         startTime: this.startTime,
         title: this.title,

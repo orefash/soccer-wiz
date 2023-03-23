@@ -4,6 +4,7 @@ const { connect, clearDatabase, closeDatabase } = require('../db');
 
 const RewardService = require('../../reward/reward.service');
 const Reward = require('../../reward/reward.model');
+const GameWeek = require('../../gameWeek/gameWeek.model');
 
 const { rewards } = require('../../reward/rewards');
 

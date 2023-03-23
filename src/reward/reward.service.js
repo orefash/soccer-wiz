@@ -71,7 +71,9 @@ const getRewardsByUser = (Reward) => async (userId) => {
 
     // console.log('uid: ', userId)
 
-    const rewards = await Reward.find({ "userId": userId});
+    const rewards = await Reward
+                .find({ "userId": userId})
+                .populate('gameWeek', {id: 1, title: 1});
 
 
     let data = {  };
