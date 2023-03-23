@@ -47,6 +47,13 @@ const rewardSchema = Schema(
             enum: ["NGN", "USD", "EUR", "GBP"],
         },
 
+        status: {
+            type: String,
+            default: "Unclaimed",
+            required: [true, "status is required"],
+            enum: ["Paid", "Suspended", "Requested", "Unclaimed"],
+        },
+
         issueDate: {
             type: Date,
         },

@@ -26,7 +26,7 @@ const claimReward = (Reward) => async ({rewardId, userId}) => {
 
     if(rewards.userId != userId) throw new Error('Invalid User')
 
-    const updatedReward = await Reward.findByIdAndUpdate(rewardId, { claimed: true, claimDate: new Date() }, {
+    const updatedReward = await Reward.findByIdAndUpdate(rewardId, { claimed: true, claimDate: new Date(), status: "Requested"  }, {
         new: true,
     });
 
@@ -48,7 +48,7 @@ const issueReward = (Reward) => async (id) => {
 
     if(rewards.claimed !== true) throw new Error('Reward not claimed by user')
 
-    const updatedReward = await Reward.findByIdAndUpdate(id, { issued: true, issueDate: new Date() }, {
+    const updatedReward = await Reward.findByIdAndUpdate(id, { issued: true, issueDate: new Date(), status: "Paid" }, {
         new: true,
     });
 

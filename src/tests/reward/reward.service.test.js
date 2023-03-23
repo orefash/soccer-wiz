@@ -64,6 +64,7 @@ describe('Reward Service', () => {
             const fetchedRewards = await rewardService.getRewards()
 
             expect(fetchedRewards.length).toBe(2)
+            expect(fetchedRewards[0].status).toEqual("Unclaimed")
         })
     })
 
@@ -79,7 +80,7 @@ describe('Reward Service', () => {
         it('should return null when user is invalid', async () => {
             const rewards = await rewardService.getRewardsByUser(user3);
 
-            console.log('in fetchby user: ', rewards);
+            // console.log('in fetchby user: ', rewards);
 
             expect(rewards).not.toBeFalsy();
             expect(rewards.available.length).toBe(0);
@@ -108,7 +109,7 @@ describe('Reward Service', () => {
             const rewards = await rewardService.claimReward(data)
 
             expect(rewards.claimed).toBe(true);
-
+            expect(rewards.status).toBe("Requested");
         })
 
         it('should allow Admin to issue User Claimed rewards', async () => {
@@ -125,6 +126,7 @@ describe('Reward Service', () => {
 
             expect(rewards.claimed).toBe(true)
             expect(issuedReward.issued).toBe(true);
+            expect(issuedReward.status).toEqual("Paid");
 
         })
 
