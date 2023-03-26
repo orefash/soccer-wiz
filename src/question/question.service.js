@@ -122,9 +122,10 @@ const deleteAllQuestions = (Question) => async () => {
 }
 
 
-const updateQuestion = (Question) => async (id, { question, active, answers }) => {
+const updateQuestion = (Question) => async (id, { question, answers }) => {
 
-    const updatedQuestion = await Question.findByIdAndUpdate(id, { question, active, answers }, {
+
+    const updatedQuestion = await Question.findByIdAndUpdate(id, { active: true, question, answers }, {
         new: true,
     });
 
