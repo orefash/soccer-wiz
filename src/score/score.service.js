@@ -8,7 +8,7 @@ const saveScore = (DailyScore, WeeklyScore, MonthlyScore, gameCategoryService) =
 
     let data = { daily: false, weekly: false, monthly: false, user: username }
 
-    const daily = await scoreCheck(DailyScore, { category, username });
+    const daily = await scoreCheck(DailyScore, { category, userId });
 
     // console.log(`daily - ${username} : `, daily)
 
@@ -25,7 +25,7 @@ const saveScore = (DailyScore, WeeklyScore, MonthlyScore, gameCategoryService) =
     data.daily = true;
 
 
-    const weekly = await scoreCheck(WeeklyScore, { category, username });
+    const weekly = await scoreCheck(WeeklyScore, { category, userId });
 
     if (weekly && weekly.score >= score) return data
 
@@ -38,7 +38,7 @@ const saveScore = (DailyScore, WeeklyScore, MonthlyScore, gameCategoryService) =
     data.weekly = true;
 
 
-    const monthly = await scoreCheck(MonthlyScore, { category, username });
+    const monthly = await scoreCheck(MonthlyScore, { category, userId });
 
     if (monthly && monthly.score >= score) return data
 
@@ -70,8 +70,8 @@ const saveOrUpdate = async (Model, { score, userId, category, username, id }) =>
 
 }
 
-const scoreCheck = async (Model, { category, username }) => {
-    let data = await Model.findOne({ category: category, username: username });
+const scoreCheck = async (Model, { category, userId }) => {
+    let data = await Model.findOne({ category: category, userId: userId });
 
     return data
 }

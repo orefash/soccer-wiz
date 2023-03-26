@@ -14,6 +14,9 @@ const { appLogger } = require("./logger")
 
 const scheduledGameWeekFunctions = require('./gameWeek/gameWeek.cron');
 
+const { initDailyScoreReset, initMonthlyScoreReset, initWeeklyScoreReset } = require('./score/score.cron');
+
+
 app.use(appLogger)
 
 
@@ -96,5 +99,8 @@ app.use("/api/payments", FlwController);
 app.use("/api/gameWeeks", GameWeekController);
 
 scheduledGameWeekFunctions.initScheduledJobs();
+initDailyScoreReset();
+initMonthlyScoreReset();
+initWeeklyScoreReset();
 
 module.exports = app;

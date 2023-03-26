@@ -6,7 +6,7 @@ const CronJob = require('cron').CronJob;
 
 exports.initScheduledJobs = () => {
     cronLogger.info('Before update Gameweek job instantiation');
-    const job = new CronJob('0 21 * * *', async function () {
+    const job = new CronJob('0 0 * * *', async function () {
         // const job = new CronJob('* * * * * *', async function () {
         const d = new Date();
         cronLogger.info(`At Midnight: ${d}`);
