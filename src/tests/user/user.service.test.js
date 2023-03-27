@@ -2,7 +2,7 @@ const { when } = require('jest-when')
 
 const { connect, clearDatabase, closeDatabase } = require('../db')
 
-const { User } = require('../../user/user.model')
+const User = require('../../user/user.model')
 const UserService = require('../../user/user.service');
 
 const userService = UserService(User);
@@ -77,6 +77,8 @@ describe('User Service', () => {
             }
 
             const savedUser = await userService.addLocalUser(newUser);
+
+            console.log("user create: ", savedUser);
 
             expect(savedUser.email).toEqual(newUser.email)
             expect(savedUser.wallet_balance).toEqual(20)

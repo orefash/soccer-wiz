@@ -7,7 +7,7 @@ const requireAdminAuth = require('../../middleware/requireAdminAuth');
 
 const logoutRedis = require('../../middleware/logoutRedis');
 
-function authRoutes() {
+function authRoutes(UserService) {
     const router = express.Router();
 
     router.post('/login', requireLocalAuth, (req, res) => {
@@ -42,12 +42,15 @@ function authRoutes() {
             if (existingUser) throw new Error('User with email already exists')
 
             try {
-                const newUser = await new User({
+
+                // const newUser = await UserService.addLocalUser()
+                const newUser =  new User({
                     source: 'local',
                     email,
                     password,
                     phone,
-                    country
+                    country,
+                    wallet_balance: 20
                 });
 
                 newUser.registerUser(newUser, (err, user) => {
