@@ -151,9 +151,12 @@ const fundWalletWithFlutterwave = (walletTransactionService, userService, gatewa
 
                 session.endSession();
 
+                const redirect_url = process.env.CLIENT_URL_PROD+'/game'
+
                 return {
                     success: true,
-                    amount: transactionDetails.amount
+                    amount: transactionDetails.amount,
+                    redirect: redirect_url
                 }
 
             } catch (error) {

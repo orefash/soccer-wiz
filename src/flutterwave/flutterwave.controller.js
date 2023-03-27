@@ -19,9 +19,11 @@ function flwRoutes(flwService) {
 
             const flwData = await flwService.fundWalletWithFlutterwave(data);
 
-            res.status(200).json({
-                flwData
-            });
+            // res.status(200).json({
+            //     flwData
+            // });
+
+            res.status(301).redirect(flwData.redirect)
 
 
         } catch (err) {
