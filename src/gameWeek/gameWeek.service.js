@@ -269,9 +269,44 @@ const deleteGameWeeks = (GameWeek) => async () => {
     return data;
 }
 
-const updateGameWeek = (GameWeek) => async (id, updateQuery = {}) => {
+const updateGameWeek = (GameWeek) => async (id, updateQuery) => {
 
-    const updatedGameWeek = await GameWeek.findByIdAndUpdate(id, updateQuery, {
+    let { startDate, endDate, title } = updateQuery;
+
+    if (!startDate || !endDate || !title)
+        throw new Error('Invalid parameters');
+
+    if (!isValidTimePeriod({ startDate, endDate }))
+        throw new Error('Invalid Time Period');
+
+    let nStatus = 'Scheduled';
+
+    let date = new Date();
+
+    date.setHours(0,0,0,0);
+
+    // console.log(`Dates: start - ${startDate} ; end - ${endDate} ; date - ${date}`)
+   
+    let stDate = new Date(startDate);
+    stDate.setHours(0,0,0,0);
+    let edDate = new Date(endDate);
+    edDate.setHours(0,0,0,0);
+
+
+    // console.log(`Dates: start - ${stDate} ; end - ${edDate} ; date - ${date}`)
+   
+    if(date < stDate){
+        nStatus = 'Scheduled';
+    }else if(edDate < date){
+        nStatus = 'Passed'
+    }else{
+        nStatus = 'Live'
+    }
+
+    startDate = startDate + 'Z';
+    endDate = endDate + 'Z';
+
+    const updatedGameWeek = await GameWeek.findByIdAndUpdate(id, { startDate, endDate, status: nStatus, title }, {
         new: true,
     });
 
